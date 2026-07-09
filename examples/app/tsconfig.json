@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "paths": {
+      "rn_ui_kit": [
+        "../../src/index.ts"
+      ],
+      "rn_ui_kit/debug": [
+        "../../src/components/debug/index.ts"
+      ],
+      "rn_ui_kit/tamagui.config": [
+        "../../tamagui.config.ts"
+      ]
+    }
+  },
+  "include": [
+    "App.tsx",
+    "app.config.ts",
+    "tamagui.config.ts",
+    "themes.ts",
+    "*.js",
+    "../../src/**/*.ts",
+    "../../src/**/*.tsx",
+    "../../tamagui.config.ts",
+    "../../tamagui.build.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
