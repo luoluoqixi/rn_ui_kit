@@ -5,29 +5,44 @@ import {
   ListGroup,
   ListItem,
   NativeList,
+  NativeListItem,
   NativeListNavigationItem,
   NativeListSection,
   NativeListSelectItem,
   NativeListSwitchItem,
   ScrollView,
+  Switch,
   Text,
+  os,
 } from "rn_ui_kit";
 
 import { ExampleBlock, ExampleStack } from "../shared";
 import type { ComponentExampleDefinition } from "../types";
 
 function NativeListExample() {
-  const [enabled, setEnabled] = useState(true);
-  const [mode, setMode] = useState<string | null>("system");
+  const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
+  const [native, setNative] = useState(true);
+  const [theme, setTheme] = useState<string | null>("system");
   const [syncInterval, setSyncInterval] = useState<string | null>("hourly");
+  const [backupInterval, setBackupInterval] = useState("four-hours");
   const [lastAction, setLastAction] = useState("尚未点击");
 
   return (
     <ExampleStack>
-      <ExampleBlock description="同一列表同时放置导航、开关与自定义选择器。" title="工作区设置">
+      <ExampleBlock
+        description="完整覆盖导航、开关、单选、Select 与平台原生 picker 变体。"
+        title="工作区设置"
+      >
+        <Switch
+          checked={native}
+          label="使用原生 List 外观"
+          labelPosition="end"
+          native={false}
+          onCheckedChange={setNative}
+        />
         <View style={styles.nativeListFrame}>
-          <NativeList nestedScrollEnabled>
-            <NativeListSection title="NativeList">
+          <NativeList native={native} nestedScrollEnabled>
+            <NativeListSection footer="导航行适合跳转到更深层的设置页。" title="工作区">
               <NativeListNavigationItem
                 onPress={() => setLastAction("打开详情")}
                 subtitle="带有 chevron 的导航行"
@@ -39,27 +54,25 @@ function NativeListExample() {
                 title="成员"
               />
             </NativeListSection>
-            <NativeListSection title="同步">
+            <NativeListSection footer="Switch 适合即时生效的独立偏好。" title="同步">
               <NativeListSwitchItem
-                switchProps={{ checked: enabled, onCheckedChange: setEnabled }}
-                title="启用功能"
+                switchProps={{ checked: autoSyncEnabled, onCheckedChange: setAutoSyncEnabled }}
+                title="自动同步"
               />
               <NativeListSelectItem
                 selectProps={{
-                  native: "custom-sheet",
-                  onValueChange: setMode,
+                  onValueChange: setTheme,
                   options: [
                     { label: "浅色", value: "light" },
                     { label: "深色", value: "dark" },
                     { label: "跟随系统", value: "system" },
                   ],
-                  value: mode ?? undefined,
+                  value: theme ?? undefined,
                 }}
                 title="主题模式"
               />
               <NativeListSelectItem
                 selectProps={{
-                  native: "custom-sheet",
                   onValueChange: setSyncInterval,
                   options: [
                     { label: "每 15 分钟", value: "15-minutes" },
@@ -71,10 +84,75 @@ function NativeListExample() {
                 title="同步频率"
               />
             </NativeListSection>
+            <NativeListSection footer="selected 与 chevron={false} 可组合成互斥选择列表。" title="自动备份">
+              {[
+                ["thirty-minutes", "30 分钟"],
+                ["one-hour", "1 小时"],
+                ["four-hours", "4 小时"],
+                ["daily", "每天"],
+                ["never", "从不"],
+              ].map(([value, title]) => (
+                <NativeListItem
+                  chevron={false}
+                  key={value}
+                  onPress={() => setBackupInterval(value)}
+                  selected={backupInterval === value}
+                  title={title}
+                />
+              ))}
+            </NativeListSection>
+            <NativeListSection footer="同一个 Select 可根据平台选择不同的原生 picker 形态。" title="平台 picker">
+              <NativeListSelectItem
+                selectProps={{
+                  onValueChange: setTheme,
+                  options: [
+                    { label: "浅色", value: "light" },
+                    { label: "深色", value: "dark" },
+                    { label: "跟随系统", value: "system" },
+                  ],
+                  placeholder: "选择主题模式",
+                  value: theme ?? undefined,
+                }}
+                title="默认 Select"
+              />
+              {os() === "ios" ? (
+                <NativeListSelectItem
+                  selectProps={{
+                    nativePickerMode: "wheel",
+                    onValueChange: setTheme,
+                    options: [
+                      { label: "浅色", value: "light" },
+                      { label: "深色", value: "dark" },
+                      { label: "跟随系统", value: "system" },
+                    ],
+                    placeholder: "选择主题模式",
+                    value: theme ?? undefined,
+                  }}
+                  title="iOS Wheel"
+                />
+              ) : null}
+              {os() === "android" ? (
+                <NativeListSelectItem
+                  selectProps={{
+                    nativePickerMode: "dialog",
+                    onValueChange: setTheme,
+                    options: [
+                      { label: "浅色", value: "light" },
+                      { label: "深色", value: "dark" },
+                      { label: "跟随系统", value: "system" },
+                    ],
+                    placeholder: "选择主题模式",
+                    value: theme ?? undefined,
+                  }}
+                  title="Android Dialog"
+                />
+              ) : null}
+            </NativeListSection>
           </NativeList>
         </View>
         <Text opacity={0.6}>
-          最近动作：{lastAction} · 主题：{mode ?? "未选择"} · 频率：{syncInterval ?? "未选择"}
+          最近动作：{lastAction} · 自动同步：{autoSyncEnabled ? "开启" : "关闭"} · 主题：
+          {theme ?? "未选择"} · 频率：{syncInterval ?? "未选择"} · 备份：{backupInterval}
         </Text>
       </ExampleBlock>
     </ExampleStack>
@@ -238,6 +316,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 14,
   },
-  nativeListFrame: { height: 360, minHeight: 0 },
+  nativeListFrame: { height: 620, minHeight: 0 },
   scrollFrame: { height: 260, minHeight: 0 },
 });

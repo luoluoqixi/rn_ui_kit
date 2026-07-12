@@ -2,8 +2,8 @@ import { NavigationContainer, type NavigationProp, useNavigation } from "@react-
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { Platform, View } from "react-native";
-import { YStack } from "tamagui";
-import { NativeSheet, NativeSheetStack } from "rn_ui_kit";
+import { YStack, useTheme } from "tamagui";
+import { NativeSheet, NativeSheetStack, useAppBackgroundColors } from "rn_ui_kit";
 
 import { RnUiKitDebugHomePage } from "./pages/debug_home_page";
 import { RnUiKitDebugSectionPage } from "./pages/debug_section_page";
@@ -29,11 +29,32 @@ const Stack = createNativeStackNavigator<RnUiKitDebugStackParamList>();
 const DEBUG_PANEL_SHEET_OVERLAY_HOST = "rn-ui-kit-debug-panel-sheet-overlay";
 const DEBUG_SECTION_SHEET_OVERLAY_HOST = "rn-ui-kit-debug-section-sheet-overlay";
 const DEBUG_SECTION_SHEET_SNAP_POINTS = [50, 75, 100];
-const debugSheetStackScreenOptions = {
-  headerRight: undefined,
-  headerStatusBarHeight: 0,
-  headerStyle: { height: 56 },
-};
+
+function useDebugStackScreenOptions() {
+  const appBackgroundColors = useAppBackgroundColors();
+  const theme = useTheme();
+
+  return {
+    contentStyle: { backgroundColor: appBackgroundColors.screen },
+    headerShadowVisible: false,
+    headerStyle: { backgroundColor: appBackgroundColors.header },
+    headerTintColor: theme.color.val,
+    headerTitleStyle: { color: theme.color.val },
+  };
+}
+
+function useDebugSheetStackScreenOptions() {
+  const appBackgroundColors = useAppBackgroundColors();
+  const theme = useTheme();
+
+  return {
+    headerRight: undefined,
+    headerStatusBarHeight: 0,
+    headerStyle: { backgroundColor: appBackgroundColors.header, height: 56 },
+    headerTintColor: theme.color.val,
+    headerTitleStyle: { color: theme.color.val },
+  };
+}
 
 export function RnUiKitDebugPanel({
   defaultOpen = true,
@@ -82,6 +103,7 @@ function RnUiKitDebugPanelSheet({
   open: boolean;
   pages: RnUiKitDebugRouteDefinition[];
 }) {
+  const debugSheetStackScreenOptions = useDebugSheetStackScreenOptions();
   const [openSectionsInSheet, setOpenSectionsInSheet] = useState(false);
   const [sectionSheetPosition, setSectionSheetPosition] = useState(0);
   const [openSectionSheets, setOpenSectionSheets] = useState<Set<RnUiKitDebugRouteKey>>(new Set());
@@ -165,6 +187,7 @@ function RnUiKitDebugPanelContent({
   pages,
   ...props
 }: RnUiKitDebugPanelProps & { pages: RnUiKitDebugRouteDefinition[] }) {
+  const debugStackScreenOptions = useDebugStackScreenOptions();
   const [openSectionsInSheet, setOpenSectionsInSheet] = useState(false);
   const [panelSheetOpen, setPanelSheetOpen] = useState(false);
   const [sectionSheetPosition, setSectionSheetPosition] = useState(0);
@@ -173,7 +196,11 @@ function RnUiKitDebugPanelContent({
   return (
     <YStack background="$background" flex={1} {...props}>
       <NavigationContainer>
-        <Stack.Navigator id="rn-ui-kit-debug-stack" initialRouteName="index">
+        <Stack.Navigator
+          id="rn-ui-kit-debug-stack"
+          initialRouteName="index"
+          screenOptions={debugStackScreenOptions}
+        >
           <Stack.Screen name="index" options={{ title: "rn_ui_kit" }}>
             {() => (
               <RnUiKitDebugHomeRoute
@@ -286,6 +313,7 @@ function RnUiKitDebugSectionSheets({
   openKeys: Set<RnUiKitDebugRouteKey>;
   position: number;
 }) {
+  const debugSheetStackScreenOptions = useDebugSheetStackScreenOptions();
   const closeSheet = (key: RnUiKitDebugRouteKey, nextOpen: boolean) => {
     if (!nextOpen) {
       const next = new Set(openKeys);

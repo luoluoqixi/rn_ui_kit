@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Progress,
+  Separator,
   Slider,
   Spinner,
   Switch,
@@ -49,6 +50,7 @@ function ButtonExample() {
           <Button theme="red">删除</Button>
           <Button variant="outlined">次要操作</Button>
           <Button disabled>不可用</Button>
+          <Button native>Native</Button>
         </ExampleRow>
       </ExampleBlock>
     </ExampleStack>
@@ -99,7 +101,6 @@ function SwitchExample() {
           checked={syncEnabled}
           label="自动同步"
           labelPosition="end"
-          native={false}
           onCheckedChange={setSyncEnabled}
         />
         <Switch
@@ -107,12 +108,16 @@ function SwitchExample() {
           disabled={!syncEnabled}
           label="仅 Wi-Fi 同步"
           labelPosition="end"
-          native={false}
           onCheckedChange={setWifiOnly}
         />
-        <Text opacity={0.6}>
-          {syncEnabled ? (wifiOnly ? "将在 Wi-Fi 下自动同步" : "允许所有网络同步") : "同步已暂停"}
-        </Text>
+        <Switch
+          checked={wifiOnly}
+          disabled={!syncEnabled}
+          label="仅 Wi-Fi 同步（native=false）"
+          labelPosition="end"
+          onCheckedChange={setWifiOnly}
+          native={false}
+        />
       </ExampleBlock>
     </ExampleStack>
   );
@@ -141,7 +146,6 @@ function ToggleGroupExample() {
           items={[
             { label: "粗体", value: "bold" },
             { label: "斜体", value: "italic" },
-            { label: "删除线", value: "strike" },
           ]}
           onValueChange={setFormat}
           type="multiple"
@@ -159,6 +163,17 @@ function SliderExample() {
     <ExampleStack>
       <ExampleBlock description={`字号：${value}px`} title="可拖拽数值">
         <Slider
+          max={72}
+          min={12}
+          onValueChange={(next) => setValue(next[0] ?? 12)}
+          step={1}
+          value={[value]}
+        />
+        <Slider
+          style={{
+            marginVertical: 15,
+          }}
+          native={false}
           max={72}
           min={12}
           onValueChange={(next) => setValue(next[0] ?? 12)}
@@ -231,25 +246,35 @@ function ProgressExample() {
 
 function ToastExample() {
   const { toast } = useToast();
+  const [isNative, setIsNative] = useState(true);
 
   return (
     <ExampleStack>
       <ExampleBlock description="涵盖普通结果、持续加载与异步任务状态。" title="全局反馈">
         <ExampleRow>
+          <Switch checked={isNative} onCheckedChange={setIsNative} label="使用 Native Toast" />
+        </ExampleRow>
+        <ExampleRow>
           <Button
-            onPress={() => toast.success("保存成功", { description: "工作区配置已写入本地。" })}
+            onPress={() =>
+              toast.success("保存成功", { description: "工作区配置已写入本地。", native: isNative })
+            }
             theme="green"
           >
             成功
           </Button>
           <Button
-            onPress={() => toast.warning("空间不足", { description: "建议先清理附件缓存。" })}
+            onPress={() =>
+              toast.warning("空间不足", { description: "建议先清理附件缓存。", native: isNative })
+            }
             variant="outlined"
           >
             警告
           </Button>
           <Button
-            onPress={() => toast.error("同步失败", { description: "请检查网络连接。" })}
+            onPress={() =>
+              toast.error("同步失败", { description: "请检查网络连接。", native: isNative })
+            }
             theme="red"
           >
             失败
@@ -258,10 +283,15 @@ function ToastExample() {
         <ExampleRow>
           <Button
             onPress={() => {
-              const id = toast.loading("正在刷新索引", { duration: Number.POSITIVE_INFINITY });
+              const id = toast.loading("正在刷新索引", {
+                duration: Number.POSITIVE_INFINITY,
+                native: isNative,
+              });
               setTimeout(() => {
                 toast.close(id);
-                toast.success("索引已刷新");
+                toast.success("索引已刷新", {
+                  native: isNative,
+                });
               }, 900);
             }}
             variant="outlined"

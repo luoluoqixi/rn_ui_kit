@@ -7,6 +7,7 @@ import {
   NativeListSection,
   ScrollView,
   Text,
+  useAppBackgroundColors,
 } from "rn_ui_kit";
 
 import type { RnUiKitDebugSectionContentProps } from "../../types";
@@ -21,6 +22,7 @@ export function getComponentExampleRouteName(key: string) {
 
 /** The examples list lives on the debug panel stack; only its detail routes are separate screens. */
 export function RnUiKitComponentExamplesDebugPage({ header }: RnUiKitDebugSectionContentProps) {
+  const appBackgroundColors = useAppBackgroundColors();
   const navigation = useNavigation<NavigationProp<DebugPanelNavigationParamList>>();
   const groupedDefinitions = useMemo(() => {
     return Array.from(
@@ -34,7 +36,7 @@ export function RnUiKitComponentExamplesDebugPage({ header }: RnUiKitDebugSectio
   }, []);
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: appBackgroundColors.screen }]}>
       {header != null ? <View style={styles.routeHeader}>{header}</View> : null}
       <NativeList>
         {groupedDefinitions.map(([group, definitions]) => (
@@ -59,19 +61,24 @@ export function RnUiKitComponentExampleDetailPage({
 }: {
   definition: ComponentExampleDefinition;
 }) {
+  const appBackgroundColors = useAppBackgroundColors();
   const ActiveExample = definition.Component;
 
   if (definition.layout === "fill") {
     return (
-      <View style={styles.detailBody}>
+      <View style={[styles.detailBody, { backgroundColor: appBackgroundColors.screen }]}>
         <ActiveExample />
       </View>
     );
   }
 
   return (
-    <ScrollView nestedScrollEnabled showsVerticalScrollIndicator style={styles.detailBody}>
-      <View style={styles.scrollContent}>
+    <ScrollView
+      nestedScrollEnabled
+      showsVerticalScrollIndicator
+      style={[styles.detailBody, { backgroundColor: appBackgroundColors.screen }]}
+    >
+      <View style={[styles.scrollContent, { backgroundColor: appBackgroundColors.screen }]}>
         <Text opacity={0.6}>{definition.description}</Text>
         <ActiveExample />
       </View>
