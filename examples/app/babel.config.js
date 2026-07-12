@@ -12,6 +12,7 @@ module.exports = function babelConfig(api) {
           disableExtraction: process.env.NODE_ENV === "development",
         },
       ],
+      "@babel/plugin-proposal-export-namespace-from",
       "react-native-worklets/plugin",
     ],
   };

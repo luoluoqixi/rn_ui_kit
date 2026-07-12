@@ -1,21 +1,18 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "allowJs": true,
     "declaration": false,
     "jsx": "react-jsx",
     "noEmit": true,
     "paths": {
-      "rn_ui_kit": [
-        "../../packages/rn_ui_kit/src/index.ts"
-      ],
-      "rn_ui_kit_debug": [
-        "../../packages/rn_ui_kit_debug/src/index.ts"
-      ]
+      "rn_ui_kit": ["../../packages/rn_ui_kit/src/index.ts"],
+      "rn_ui_kit_debug": ["../../packages/rn_ui_kit_debug/src/index.ts"]
     }
   },
   "include": [
     "App.tsx",
+    "styles.d.ts",
     "app.config.ts",
     "tamagui.config.ts",
     "tamagui.build.ts",
@@ -26,7 +23,5 @@
     "../../packages/rn_ui_kit_debug/src/**/*.ts",
     "../../packages/rn_ui_kit_debug/src/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
