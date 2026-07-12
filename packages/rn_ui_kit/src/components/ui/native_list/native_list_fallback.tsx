@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "tamagui";
 
 import { isWeb, os } from "../utils/platform";
-import { useAppBackgroundColors } from "../utils/theme";
+import { useAppBackgroundColors, useUiPreferences } from "../utils/theme";
 
 import { FlashList, type ListRenderItemInfo } from "../flash_list";
 import { Select } from "../select";
@@ -87,8 +87,14 @@ function FallbackRowContainer({
 }: RowContainerProps) {
   const resolvedHaptics = useResolvedNativeHaptics(nativeHaptics);
   const appBackgroundColors = useAppBackgroundColors();
+  const { preferences } = useUiPreferences();
   const theme = useTheme();
   const [hovered, setHovered] = useState(false);
+  // When the page background follows an accent theme, color2 may be visually indistinguishable
+  // from theme.background. Use the next surface step so fallback rows retain list hierarchy.
+  const defaultRowBackground = preferences.appearance.backgroundFollowsTheme
+    ? (theme.color3?.val ?? appBackgroundColors.card)
+    : appBackgroundColors.card;
 
   const getRowBackground = (pressed = false) => ({
     backgroundColor:
@@ -96,7 +102,7 @@ function FallbackRowContainer({
         ? (theme.color4?.val ?? theme.backgroundPress?.val ?? theme.background?.val)
         : hovered && !disabled
           ? (theme.color3?.val ?? theme.backgroundHover?.val ?? theme.background?.val)
-          : (backgroundColor ?? appBackgroundColors.card),
+          : (backgroundColor ?? defaultRowBackground),
   });
 
   if (onPress == null) {
