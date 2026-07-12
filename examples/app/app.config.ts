@@ -30,6 +30,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundler: "metro",
     output: "single",
   },
+  plugins: [
+    [
+      "expo-build-properties",
+      {
+        ios: {
+          buildReactNativeFromSource: true,
+        },
+      },
+    ],
+  ],
   experiments: {
     typedRoutes: false,
     reactCompiler: true,
