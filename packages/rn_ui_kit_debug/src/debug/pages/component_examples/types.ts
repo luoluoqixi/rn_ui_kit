@@ -4,7 +4,7 @@ export type ComponentExampleLayout = "fill" | "scroll";
 
 export type ComponentExampleDefinition = {
   Component: ComponentType;
-  description: string;
+  description?: string;
   group: string;
   key: string;
   label: string;

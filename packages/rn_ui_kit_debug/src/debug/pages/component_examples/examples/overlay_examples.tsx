@@ -27,7 +27,9 @@ function DialogExample() {
         <Dialog
           actions={
             <ExampleRow>
-              <Button onPress={() => setOpen(false)} variant="outlined">取消</Button>
+              <Button onPress={() => setOpen(false)} variant="outlined">
+                取消
+              </Button>
               <Button
                 onPress={() => {
                   setSavedName(draftName || "未命名工作区");
@@ -92,7 +94,10 @@ function ContextMenuExample() {
 
   return (
     <ExampleStack>
-      <ExampleBlock description="在桌面端右键、在触控设备长按，均会打开同一组操作。" title="文件操作">
+      <ExampleBlock
+        description="在桌面端右键、在触控设备长按，均会打开同一组操作。"
+        title="文件操作"
+      >
         <ContextMenu
           arrow
           items={[
@@ -147,7 +152,10 @@ function PopoverExample() {
 
   return (
     <ExampleStack>
-      <ExampleBlock description="Popover 更适合锚定在触发元素旁的小范围编辑。" title={`当前名称：${name}`}>
+      <ExampleBlock
+        description="Popover 更适合锚定在触发元素旁的小范围编辑。"
+        title={`当前名称：${name}`}
+      >
         <Popover
           arrow
           content={
@@ -174,7 +182,10 @@ function SheetExample() {
 
   return (
     <ExampleStack>
-      <ExampleBlock description={`状态：${open ? `打开，position=${position}` : "关闭"}`} title="多档位操作面板">
+      <ExampleBlock
+        description={`状态：${open ? `打开，position=${position}` : "关闭"}`}
+        title="多档位操作面板"
+      >
         <Button onPress={openSheet}>打开 Sheet</Button>
         <Sheet
           content={
@@ -228,49 +239,42 @@ function TooltipExample() {
 export const overlayExamples = [
   {
     Component: DialogExample,
-    description: "包含输入、取消和保存的受控对话框。",
     group: "浮层与菜单",
     key: "dialog",
     label: "Dialog",
   },
   {
     Component: AlertDialogExample,
-    description: "危险操作的确认、取消和结果反馈。",
     group: "浮层与菜单",
     key: "alert-dialog",
     label: "AlertDialog",
   },
   {
     Component: ContextMenuExample,
-    description: "右键/长按文件操作与结果反馈。",
     group: "浮层与菜单",
     key: "context-menu",
     label: "ContextMenu",
   },
   {
     Component: MenuExample,
-    description: "按钮触发的多操作项目菜单。",
     group: "浮层与菜单",
     key: "menu",
     label: "Menu",
   },
   {
     Component: PopoverExample,
-    description: "锚定触发器的小范围内容编辑。",
     group: "浮层与菜单",
     key: "popover",
     label: "Popover",
   },
   {
     Component: SheetExample,
-    description: "多档位、可拖拽并可编程切换的 Sheet。",
     group: "浮层与菜单",
     key: "sheet",
     label: "Sheet",
   },
   {
     Component: TooltipExample,
-    description: "多触发器的补充说明与危险提示。",
     group: "浮层与菜单",
     key: "tooltip",
     label: "Tooltip",

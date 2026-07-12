@@ -12,10 +12,22 @@ function InputExample() {
     <ExampleStack>
       <ExampleBlock description="将受控字段用于名称与可发布的 URL 标识。" title="工作区信息">
         <Label htmlFor="component-example-name">显示名称</Label>
-        <Input id="component-example-name" onChangeText={setValue} placeholder="输入组件名称" value={value} />
+        <Input
+          id="component-example-name"
+          onChangeText={setValue}
+          placeholder="输入组件名称"
+          value={value}
+        />
         <Label htmlFor="component-example-slug">URL 标识</Label>
-        <Input id="component-example-slug" onChangeText={setSlug} placeholder="my-workspace" value={slug} />
-        <Text opacity={0.6}>将发布到 /workspaces/{slug || "…"}（名称：{value || "未填写"}）</Text>
+        <Input
+          id="component-example-slug"
+          onChangeText={setSlug}
+          placeholder="my-workspace"
+          value={slug}
+        />
+        <Text opacity={0.6}>
+          将发布到 /workspaces/{slug || "…"}（名称：{value || "未填写"}）
+        </Text>
       </ExampleBlock>
     </ExampleStack>
   );
@@ -26,9 +38,20 @@ function TextAreaExample() {
 
   return (
     <ExampleStack>
-      <ExampleBlock description={`${value.length} 个字符，可用作草稿或备注。`} title="自动保存的备注">
-        <TextArea onChangeText={setValue} placeholder="写下说明…" rows={6} style={{ minHeight: 140 }} value={value} />
-        <Button onPress={() => setValue("")} size="$3" variant="outlined">清空内容</Button>
+      <ExampleBlock
+        description={`${value.length} 个字符，可用作草稿或备注。`}
+        title="自动保存的备注"
+      >
+        <TextArea
+          onChangeText={setValue}
+          placeholder="写下说明…"
+          rows={6}
+          style={{ minHeight: 140 }}
+          value={value}
+        />
+        <Button onPress={() => setValue("")} size="$3" variant="outlined">
+          清空内容
+        </Button>
       </ExampleBlock>
     </ExampleStack>
   );
@@ -117,7 +140,9 @@ function FormExample() {
             value={description}
           />
         </Form>
-        <Text opacity={0.6}>已提交 {submitCount} 次：{name || "未命名"} · {description.length} 个字符</Text>
+        <Text opacity={0.6}>
+          已提交 {submitCount} 次：{name || "未命名"} · {description.length} 个字符
+        </Text>
       </ExampleBlock>
     </ExampleStack>
   );
@@ -144,42 +169,36 @@ function LabelExample() {
 export const formExamples = [
   {
     Component: InputExample,
-    description: "多字段、Label 关联和实时预览。",
     group: "输入与表单",
     key: "input",
     label: "Input",
   },
   {
     Component: TextAreaExample,
-    description: "多行草稿、字符计数和清空操作。",
     group: "输入与表单",
     key: "text-area",
     label: "TextArea",
   },
   {
     Component: SelectExample,
-    description: "分组、禁用项和 custom-sheet trigger。",
     group: "输入与表单",
     key: "select",
     label: "Select",
   },
   {
     Component: RadioGroupExample,
-    description: "用于排序条件的受控单选组。",
     group: "输入与表单",
     key: "radio-group",
     label: "RadioGroup",
   },
   {
     Component: FormExample,
-    description: "多字段提交与提交结果摘要。",
     group: "输入与表单",
     key: "form",
     label: "Form",
   },
   {
     Component: LabelExample,
-    description: "Label 与 Input 的可访问性关联。",
     group: "输入与表单",
     key: "label",
     label: "Label",

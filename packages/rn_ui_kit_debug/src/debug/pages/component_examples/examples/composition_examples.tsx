@@ -16,7 +16,10 @@ import type { ComponentExampleDefinition } from "../types";
 function AccordionExample() {
   return (
     <ExampleStack>
-      <ExampleBlock description="单选模式适合 FAQ、设置分组等一次只关注一项的内容。" title="单项展开">
+      <ExampleBlock
+        description="单选模式适合 FAQ、设置分组等一次只关注一项的内容。"
+        title="单项展开"
+      >
         <Accordion
           collapsible
           items={[
@@ -26,7 +29,9 @@ function AccordionExample() {
               value: "structure",
             },
             {
-              content: <Text>通过 items 可以快速生成多个条目，也能统一配置 Header 和 Trigger。</Text>,
+              content: (
+                <Text>通过 items 可以快速生成多个条目，也能统一配置 Header 和 Trigger。</Text>
+              ),
               title: "数据驱动",
               value: "items",
             },
@@ -43,7 +48,11 @@ function AccordionExample() {
         <Accordion
           items={[
             { content: <Text>支持同时展开多个面板。</Text>, title: "缓存策略", value: "cache" },
-            { content: <Text>内容区域可以放任意 React 节点。</Text>, title: "同步策略", value: "sync" },
+            {
+              content: <Text>内容区域可以放任意 React 节点。</Text>,
+              title: "同步策略",
+              value: "sync",
+            },
           ]}
           type="multiple"
         />
@@ -57,7 +66,10 @@ function TabsExample() {
 
   return (
     <ExampleStack>
-      <ExampleBlock description={`当前标签：${value}；每个 Tab 的内容会保留在自己的区域。`} title="编辑器工作区">
+      <ExampleBlock
+        description={`当前标签：${value}；每个 Tab 的内容会保留在自己的区域。`}
+        title="编辑器工作区"
+      >
         <Tabs
           items={[
             {
@@ -66,12 +78,16 @@ function TabsExample() {
               value: "preview",
             },
             {
-              content: <Text style={styles.tabContent}>这里可以放接口说明、快捷键或辅助信息。</Text>,
+              content: (
+                <Text style={styles.tabContent}>这里可以放接口说明、快捷键或辅助信息。</Text>
+              ),
               label: "说明",
               value: "notes",
             },
             {
-              content: <Text style={styles.tabContent}>提交记录、构建日志等较长内容也可以独立组织。</Text>,
+              content: (
+                <Text style={styles.tabContent}>提交记录、构建日志等较长内容也可以独立组织。</Text>
+              ),
               label: "历史",
               value: "history",
             },
@@ -139,21 +155,18 @@ function SplitLayoutExample() {
 export const compositionExamples = [
   {
     Component: AccordionExample,
-    description: "单选与多选两种可展开内容分组。",
     group: "组合与布局",
     key: "accordion",
     label: "Accordion",
   },
   {
     Component: TabsExample,
-    description: "三种工作区视图和独立内容区域。",
     group: "组合与布局",
     key: "tabs",
     label: "Tabs",
   },
   {
     Component: SplitLayoutExample,
-    description: "可拖拽分栏、显隐控制和重置尺寸。",
     group: "组合与布局",
     key: "split-view",
     label: "SplitView / SplitLayout",

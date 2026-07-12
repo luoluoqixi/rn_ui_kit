@@ -129,7 +129,7 @@ function RnUiKitDebugPanelSheet({
           >
             {() => (
               <RnUiKitDebugSectionPage
-                contentTitle={definition.label}
+                contentTitle={definition.contentTitle}
                 instanceId={`panel-sheet-stack-${definition.key}`}
                 layoutHost="nativeSheet"
                 pages={pages}
@@ -200,7 +200,7 @@ function RnUiKitDebugPanelContent({
             >
               {() => (
                 <RnUiKitDebugSectionPage
-                  contentTitle={definition.label}
+                  contentTitle={definition.contentTitle}
                   instanceId={`stack-${definition.key}`}
                   pages={pages}
                   sectionKey={definition.key}
@@ -345,7 +345,7 @@ function RnUiKitDebugSectionSheets({
       >
         <View style={{ flex: 1 }}>
           <RnUiKitDebugSectionPage
-            contentTitle={definition.label}
+            contentTitle={definition.contentTitle}
             instanceId={`${instancePrefix}-${definition.key}`}
             layoutHost={
               Platform.OS === "ios" || Platform.OS === "android" ? "nativeSheet" : "default"

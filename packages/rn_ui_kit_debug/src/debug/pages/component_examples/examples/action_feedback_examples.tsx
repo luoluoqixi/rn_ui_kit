@@ -65,17 +65,23 @@ function CheckboxExample() {
         <Checkbox
           checked={permissions.updates}
           label="产品更新"
-          onCheckedChange={(updates) => setPermissions((current) => ({ ...current, updates: updates === true }))}
+          onCheckedChange={(updates) =>
+            setPermissions((current) => ({ ...current, updates: updates === true }))
+          }
         />
         <Checkbox
           checked={permissions.weekly}
           label="每周摘要"
-          onCheckedChange={(weekly) => setPermissions((current) => ({ ...current, weekly: weekly === true }))}
+          onCheckedChange={(weekly) =>
+            setPermissions((current) => ({ ...current, weekly: weekly === true }))
+          }
         />
         <Checkbox
           checked={permissions.analytics}
           label="匿名使用分析"
-          onCheckedChange={(analytics) => setPermissions((current) => ({ ...current, analytics: analytics === true }))}
+          onCheckedChange={(analytics) =>
+            setPermissions((current) => ({ ...current, analytics: analytics === true }))
+          }
         />
       </ExampleBlock>
     </ExampleStack>
@@ -104,7 +110,9 @@ function SwitchExample() {
           native={false}
           onCheckedChange={setWifiOnly}
         />
-        <Text opacity={0.6}>{syncEnabled ? (wifiOnly ? "将在 Wi-Fi 下自动同步" : "允许所有网络同步") : "同步已暂停"}</Text>
+        <Text opacity={0.6}>
+          {syncEnabled ? (wifiOnly ? "将在 Wi-Fi 下自动同步" : "允许所有网络同步") : "同步已暂停"}
+        </Text>
       </ExampleBlock>
     </ExampleStack>
   );
@@ -150,11 +158,23 @@ function SliderExample() {
   return (
     <ExampleStack>
       <ExampleBlock description={`字号：${value}px`} title="可拖拽数值">
-        <Slider max={72} min={12} onValueChange={(next) => setValue(next[0] ?? 12)} step={1} value={[value]} />
+        <Slider
+          max={72}
+          min={12}
+          onValueChange={(next) => setValue(next[0] ?? 12)}
+          step={1}
+          value={[value]}
+        />
         <ExampleRow>
-          <Button onPress={() => setValue(12)} size="$3" variant="outlined">最小</Button>
-          <Button onPress={() => setValue(42)} size="$3" variant="outlined">默认</Button>
-          <Button onPress={() => setValue(72)} size="$3" variant="outlined">最大</Button>
+          <Button onPress={() => setValue(12)} size="$3" variant="outlined">
+            最小
+          </Button>
+          <Button onPress={() => setValue(42)} size="$3" variant="outlined">
+            默认
+          </Button>
+          <Button onPress={() => setValue(72)} size="$3" variant="outlined">
+            最大
+          </Button>
         </ExampleRow>
       </ExampleBlock>
     </ExampleStack>
@@ -186,9 +206,23 @@ function ProgressExample() {
       <ExampleBlock description={`文件上传：${value}%`} title="受控进度">
         <Progress max={100} value={value} width="100%" />
         <ExampleRow>
-          <Button onPress={() => setValue((current) => Math.max(0, current - 10))} size="$3" variant="outlined">-10</Button>
-          <Button onPress={() => setValue((current) => Math.min(100, current + 10))} size="$3" variant="outlined">+10</Button>
-          <Button onPress={() => setValue(100)} size="$3" theme="green">完成</Button>
+          <Button
+            onPress={() => setValue((current) => Math.max(0, current - 10))}
+            size="$3"
+            variant="outlined"
+          >
+            -10
+          </Button>
+          <Button
+            onPress={() => setValue((current) => Math.min(100, current + 10))}
+            size="$3"
+            variant="outlined"
+          >
+            +10
+          </Button>
+          <Button onPress={() => setValue(100)} size="$3" theme="green">
+            完成
+          </Button>
         </ExampleRow>
       </ExampleBlock>
     </ExampleStack>
@@ -202,9 +236,24 @@ function ToastExample() {
     <ExampleStack>
       <ExampleBlock description="涵盖普通结果、持续加载与异步任务状态。" title="全局反馈">
         <ExampleRow>
-          <Button onPress={() => toast.success("保存成功", { description: "工作区配置已写入本地。" })} theme="green">成功</Button>
-          <Button onPress={() => toast.warning("空间不足", { description: "建议先清理附件缓存。" })} variant="outlined">警告</Button>
-          <Button onPress={() => toast.error("同步失败", { description: "请检查网络连接。" })} theme="red">失败</Button>
+          <Button
+            onPress={() => toast.success("保存成功", { description: "工作区配置已写入本地。" })}
+            theme="green"
+          >
+            成功
+          </Button>
+          <Button
+            onPress={() => toast.warning("空间不足", { description: "建议先清理附件缓存。" })}
+            variant="outlined"
+          >
+            警告
+          </Button>
+          <Button
+            onPress={() => toast.error("同步失败", { description: "请检查网络连接。" })}
+            theme="red"
+          >
+            失败
+          </Button>
         </ExampleRow>
         <ExampleRow>
           <Button
@@ -219,7 +268,9 @@ function ToastExample() {
           >
             加载后完成
           </Button>
-          <Button onPress={() => toast.closeAll()} variant="outlined">关闭全部</Button>
+          <Button onPress={() => toast.closeAll()} variant="outlined">
+            关闭全部
+          </Button>
         </ExampleRow>
       </ExampleBlock>
     </ExampleStack>
@@ -252,13 +303,58 @@ function NativeDialogExample() {
 }
 
 export const actionFeedbackExamples = [
-  { Component: ButtonExample, description: "保存流程、操作层级与禁用联动。", group: "动作与反馈", key: "button", label: "Button" },
-  { Component: CheckboxExample, description: "多项偏好设置与汇总状态。", group: "动作与反馈", key: "checkbox", label: "Checkbox" },
-  { Component: SwitchExample, description: "带依赖条件的即时设置。", group: "动作与反馈", key: "switch", label: "Switch" },
-  { Component: ToggleGroupExample, description: "单选视图与多选格式工具栏。", group: "动作与反馈", key: "toggle-group", label: "ToggleGroup" },
-  { Component: SliderExample, description: "范围、步长、快捷值与受控状态。", group: "动作与反馈", key: "slider", label: "Slider" },
-  { Component: SpinnerExample, description: "加载占位与运行状态切换。", group: "动作与反馈", key: "spinner", label: "Spinner" },
-  { Component: ProgressExample, description: "上传进度的受控更新。", group: "动作与反馈", key: "progress", label: "Progress" },
-  { Component: ToastExample, description: "结果、加载和全局关闭操作。", group: "动作与反馈", key: "toast", label: "Toast" },
-  { Component: NativeDialogExample, description: "多按钮的原生确认操作。", group: "动作与反馈", key: "native-dialog", label: "Native Dialog" },
+  {
+    Component: ButtonExample,
+    group: "动作与反馈",
+    key: "button",
+    label: "Button",
+  },
+  {
+    Component: CheckboxExample,
+    group: "动作与反馈",
+    key: "checkbox",
+    label: "Checkbox",
+  },
+  {
+    Component: SwitchExample,
+    group: "动作与反馈",
+    key: "switch",
+    label: "Switch",
+  },
+  {
+    Component: ToggleGroupExample,
+    group: "动作与反馈",
+    key: "toggle-group",
+    label: "ToggleGroup",
+  },
+  {
+    Component: SliderExample,
+    group: "动作与反馈",
+    key: "slider",
+    label: "Slider",
+  },
+  {
+    Component: SpinnerExample,
+    group: "动作与反馈",
+    key: "spinner",
+    label: "Spinner",
+  },
+  {
+    Component: ProgressExample,
+    group: "动作与反馈",
+    key: "progress",
+    label: "Progress",
+  },
+  {
+    Component: ToastExample,
+    group: "动作与反馈",
+    key: "toast",
+    label: "Toast",
+  },
+  {
+    Component: NativeDialogExample,
+    group: "动作与反馈",
+    key: "native-dialog",
+    label: "Native Dialog",
+  },
 ] satisfies ComponentExampleDefinition[];

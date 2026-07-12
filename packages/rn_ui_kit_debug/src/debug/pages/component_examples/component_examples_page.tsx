@@ -1,7 +1,13 @@
 import { type NavigationProp, useNavigation } from "@react-navigation/native";
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { NativeList, NativeListNavigationItem, NativeListSection, ScrollView, Text } from "rn_ui_kit";
+import {
+  NativeList,
+  NativeListNavigationItem,
+  NativeListSection,
+  ScrollView,
+  Text,
+} from "rn_ui_kit";
 
 import type { RnUiKitDebugSectionContentProps } from "../../types";
 import { componentExampleDefinitions } from "./catalog";
@@ -14,9 +20,7 @@ export function getComponentExampleRouteName(key: string) {
 }
 
 /** The examples list lives on the debug panel stack; only its detail routes are separate screens. */
-export function RnUiKitComponentExamplesDebugPage({
-  header,
-}: RnUiKitDebugSectionContentProps) {
+export function RnUiKitComponentExamplesDebugPage({ header }: RnUiKitDebugSectionContentProps) {
   const navigation = useNavigation<NavigationProp<DebugPanelNavigationParamList>>();
   const groupedDefinitions = useMemo(() => {
     return Array.from(

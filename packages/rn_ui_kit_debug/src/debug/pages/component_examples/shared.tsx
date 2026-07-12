@@ -22,9 +22,7 @@ export function ExampleBlock({
           {title}
         </Text>
       ) : null}
-      {description != null ? (
-        <Text opacity={0.6}>{description}</Text>
-      ) : null}
+      {description != null ? <Text opacity={0.6}>{description}</Text> : null}
       <View style={styles.blockContent}>{children}</View>
     </View>
   );

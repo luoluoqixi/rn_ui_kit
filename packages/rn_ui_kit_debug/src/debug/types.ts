@@ -13,6 +13,7 @@ export type RnUiKitDebugRouteDefinition = {
   description?: string;
   key: RnUiKitDebugRouteKey;
   label: string;
+  contentTitle?: string;
   order?: number;
   Page: ComponentType<RnUiKitDebugSectionContentProps>;
   presentation: RnUiKitDebugSectionPresentation;
