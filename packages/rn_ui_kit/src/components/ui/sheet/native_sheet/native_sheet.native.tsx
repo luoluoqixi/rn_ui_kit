@@ -15,7 +15,7 @@ let nativeSheetCounter = 0;
 const ANDROID_FIT_DETENT = 1;
 
 type NativeSheetDetent = NonNullable<TrueSheetProps["detents"]>[number];
-type NativeDetentNormalization = {
+export type NativeDetentNormalization = {
   detents: NativeSheetDetent[];
   sourceDetentCount: number;
   toNativeIndex: (index: number) => number;
@@ -156,7 +156,7 @@ function normalizeIos15Detents(
   };
 }
 
-function resolveNativeDetents(
+export function resolveNativeDetents(
   snapPoints: NativeSheetProps["snapPoints"],
   snapPointsMode: NativeSheetProps["snapPointsMode"],
   windowHeight: number,
@@ -203,7 +203,7 @@ function resolveNativeDetents(
   };
 }
 
-function clampDetentIndex(index: number | undefined, detentCount: number) {
+export function clampDetentIndex(index: number | undefined, detentCount: number) {
   if (detentCount <= 0 || index == null || !Number.isFinite(index)) {
     return 0;
   }
