@@ -28,11 +28,9 @@ function omitNativeOption(options: ToastShowOptions | undefined): ToastShowOptio
 function resolveScopedToastOptions(
   options: ToastShowOptions | undefined,
   viewportName: string | undefined,
-  preserveScopeOnMobile = false,
 ): ToastShowOptions | undefined {
   const resolvedOptions = omitNativeOption(options);
-  const shouldSkipMobileScope = isMobile() && !preserveScopeOnMobile && options?.native !== false;
-  if (viewportName == null || shouldSkipMobileScope) {
+  if (viewportName == null) {
     return resolvedOptions;
   }
 
@@ -145,7 +143,7 @@ export function useToast(): ToastContext {
     jsx: (id: string | number) => React.ReactElement,
     options?: ToastShowOptions,
   ) => {
-    return tamaguiToast.custom(jsx, resolveScopedToastOptions(options, viewportName, true));
+    return tamaguiToast.custom(jsx, resolveScopedToastOptions(options, viewportName));
   };
   const promiseFunction = <ToastData>(
     promise: PromiseT<ToastData>,
