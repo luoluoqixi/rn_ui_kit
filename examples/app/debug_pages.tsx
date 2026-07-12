@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import {
   Card,
   NativeList,
+  NativeListCustomItem,
   NativeListSection,
   NativeListSelectItem,
   NativeListSwitchItem,
@@ -23,67 +24,71 @@ function createThemeDebugPage(preferences: UiPreferences, updatePreferences: Upd
     );
 
     return (
-      <NativeList>
-        <NativeListSection title="主题">
-          <NativeListSelectItem
-            selectProps={{
-              options: accentOptions,
-              onValueChange: (value) => {
-                if (value == null) return;
-                updatePreferences((current) => ({
-                  ...current,
-                  appearance: {
-                    ...current.appearance,
-                    accentColor: value as UiPreferences["appearance"]["accentColor"],
-                  },
-                }));
-              },
-              value: preferences.appearance.accentColor,
-            }}
-            title="主题色"
-          />
-          <NativeListSelectItem
-            selectProps={{
-              options: [
-                { label: "浅色", value: "light" },
-                { label: "深色", value: "dark" },
-                { label: "跟随系统", value: "system" },
-              ],
-              onValueChange: (value) => {
-                if (value == null) return;
-                updatePreferences((current) => ({
-                  ...current,
-                  appearance: {
-                    ...current.appearance,
-                    themeMode: value as UiPreferences["appearance"]["themeMode"],
-                  },
-                }));
-              },
-              value: preferences.appearance.themeMode,
-            }}
-            title="主题模式"
-          />
-          <NativeListSwitchItem
-            switchProps={{
-              checked: preferences.appearance.backgroundFollowsTheme,
-              onCheckedChange: (value) => {
-                updatePreferences((current) => ({
-                  ...current,
-                  appearance: { ...current.appearance, backgroundFollowsTheme: value },
-                }));
-              },
-            }}
-            title="背景跟随主题"
-          />
-        </NativeListSection>
-        <NativeListSection title="预览">
-          <View style={styles.preview}>
-            <Card borderWidth={1} padding="$4">
-              <Text>修改设置后，RootProvider 会立即应用新的主题。</Text>
-            </Card>
-          </View>
-        </NativeListSection>
-      </NativeList>
+      <View style={styles.nativeListHost}>
+        <NativeList>
+          <NativeListSection title="主题">
+            <NativeListSelectItem
+              selectProps={{
+                options: accentOptions,
+                onValueChange: (value) => {
+                  if (value == null) return;
+                  updatePreferences((current) => ({
+                    ...current,
+                    appearance: {
+                      ...current.appearance,
+                      accentColor: value as UiPreferences["appearance"]["accentColor"],
+                    },
+                  }));
+                },
+                value: preferences.appearance.accentColor,
+              }}
+              title="主题色"
+            />
+            <NativeListSelectItem
+              selectProps={{
+                options: [
+                  { label: "浅色", value: "light" },
+                  { label: "深色", value: "dark" },
+                  { label: "跟随系统", value: "system" },
+                ],
+                onValueChange: (value) => {
+                  if (value == null) return;
+                  updatePreferences((current) => ({
+                    ...current,
+                    appearance: {
+                      ...current.appearance,
+                      themeMode: value as UiPreferences["appearance"]["themeMode"],
+                    },
+                  }));
+                },
+                value: preferences.appearance.themeMode,
+              }}
+              title="主题模式"
+            />
+            <NativeListSwitchItem
+              switchProps={{
+                checked: preferences.appearance.backgroundFollowsTheme,
+                onCheckedChange: (value) => {
+                  updatePreferences((current) => ({
+                    ...current,
+                    appearance: { ...current.appearance, backgroundFollowsTheme: value },
+                  }));
+                },
+              }}
+              title="背景跟随主题"
+            />
+          </NativeListSection>
+          <NativeListSection title="预览">
+            <NativeListCustomItem>
+              <View style={styles.preview}>
+                <Card borderWidth={1} padding="$4">
+                  <Text>修改设置后，RootProvider 会立即应用新的主题。</Text>
+                </Card>
+              </View>
+            </NativeListCustomItem>
+          </NativeListSection>
+        </NativeList>
+      </View>
     );
   };
 }
@@ -113,6 +118,6 @@ export function createAppDebugPages(
 }
 
 const styles = StyleSheet.create({
-  container: { gap: 12, padding: 16 },
+  nativeListHost: { flex: 1, minHeight: 0 },
   preview: { paddingHorizontal: 16 },
 });

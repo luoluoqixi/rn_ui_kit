@@ -49,7 +49,7 @@ export function RnUiKitDebugSectionPage({
   }
 
   return (
-    <YStack gap="$3">
+    <YStack flex={1} gap="$3" style={styles.scrollPage}>
       <SectionPage header={header} instanceId={instanceId} />
     </YStack>
   );
@@ -59,4 +59,5 @@ const styles = StyleSheet.create({
   staticContentHeader: { paddingHorizontal: 20, paddingTop: 8 },
   staticScrollContent: { paddingBottom: 12 },
   staticScrollView: { flex: 1, minHeight: 0 },
+  scrollPage: { minHeight: 0 },
 });
