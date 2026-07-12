@@ -1,9 +1,13 @@
+import { Maximize2, Minimize2 } from "@tamagui/lucide-icons-2";
+import { StyleSheet, View } from "react-native";
 import {
   NativeList,
   NativeListButtonItem,
+  NativeListCustomItem,
   NativeListNavigationItem,
   NativeListSection,
   NativeListSwitchItem,
+  Slider,
 } from "rn_ui_kit";
 
 import { rnUiKitDebugRouteDefinitions } from "../routes";
@@ -13,12 +17,16 @@ import type { RnUiKitDebugRouteKey } from "../types";
 export function RnUiKitDebugHomePage({
   openSectionsInSheet,
   onOpenPanelSheet,
+  sectionSheetPosition,
   onOpenSection,
+  onSectionSheetPositionChange,
   onOpenSectionsInSheetChange,
 }: {
   openSectionsInSheet: boolean;
   onOpenPanelSheet?: () => void;
+  sectionSheetPosition: number;
   onOpenSection?: (key: RnUiKitDebugRouteKey) => void;
+  onSectionSheetPositionChange?: (position: number) => void;
   onOpenSectionsInSheetChange?: (openInSheet: boolean) => void;
 }) {
   return (
@@ -34,27 +42,48 @@ export function RnUiKitDebugHomePage({
         ))}
       </NativeListSection>
 
-      <NativeListSection
-        footer="关闭时通过 Stack 进入子页面；开启后点击分区会改为 NativeSheet 弹出。"
-        title="分区打开方式"
-      >
+      <NativeListSection title="分区行为">
         <NativeListSwitchItem
           switchProps={{
             checked: openSectionsInSheet,
             onCheckedChange: onOpenSectionsInSheetChange,
           }}
-          title="用 NativeSheet 打开分区"
+          title="分区嵌套 NativeSheet"
         />
+        {openSectionsInSheet ? (
+          <NativeListCustomItem>
+            <View style={styles.detentSliderRow}>
+              <Minimize2 color="$color10" size={18} />
+              <View style={styles.detentSliderControl}>
+                <Slider
+                  max={2}
+                  min={0}
+                  onValueChange={(value) => onSectionSheetPositionChange?.(value[0] ?? 0)}
+                  step={1}
+                  value={[sectionSheetPosition]}
+                />
+              </View>
+              <Maximize2 color="$color10" size={18} />
+            </View>
+          </NativeListCustomItem>
+        ) : null}
       </NativeListSection>
 
       {onOpenPanelSheet != null ? (
         <NativeListSection title="面板模式">
-          <NativeListButtonItem
-            onPress={onOpenPanelSheet}
-            title="以 NativeSheet 打开调试首页"
-          />
+          <NativeListButtonItem onPress={onOpenPanelSheet} title="以 NativeSheet 打开调试首页" />
         </NativeListSection>
       ) : null}
     </NativeList>
   );
 }
+
+const styles = StyleSheet.create({
+  detentSliderControl: { flex: 1, minWidth: 0 },
+  detentSliderRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 12,
+    width: "100%",
+  },
+});

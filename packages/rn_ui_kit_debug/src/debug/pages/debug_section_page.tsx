@@ -1,5 +1,6 @@
+import { StyleSheet, View } from "react-native";
 import { ScrollView, YStack } from "tamagui";
-import { Text } from "rn_ui_kit";
+import { NativeSheetScrollContent, Text } from "rn_ui_kit";
 
 import { getRnUiKitDebugRouteDefinition } from "../routes";
 
@@ -8,10 +9,12 @@ import type { RnUiKitDebugRouteKey } from "../types";
 export function RnUiKitDebugSectionPage({
   contentTitle,
   instanceId,
+  layoutHost = "default",
   sectionKey,
 }: {
   contentTitle?: string;
   instanceId?: string;
+  layoutHost?: "default" | "nativeSheet";
   sectionKey: RnUiKitDebugRouteKey;
 }) {
   const definition = getRnUiKitDebugRouteDefinition(sectionKey);
@@ -22,6 +25,18 @@ export function RnUiKitDebugSectionPage({
         {contentTitle}
       </Text>
     );
+
+  if (layoutHost === "nativeSheet" && definition.presentation === "static") {
+    return (
+      <NativeSheetScrollContent
+        contentContainerStyle={styles.staticScrollContent}
+        style={styles.staticScrollView}
+      >
+        {header != null ? <View style={styles.staticContentHeader}>{header}</View> : null}
+        <SectionPage instanceId={instanceId} />
+      </NativeSheetScrollContent>
+    );
+  }
 
   if (definition.presentation === "static") {
     return (
@@ -37,3 +52,9 @@ export function RnUiKitDebugSectionPage({
     </YStack>
   );
 }
+
+const styles = StyleSheet.create({
+  staticContentHeader: { paddingHorizontal: 20, paddingTop: 8 },
+  staticScrollContent: { paddingBottom: 12 },
+  staticScrollView: { flex: 1, minHeight: 0 },
+});
