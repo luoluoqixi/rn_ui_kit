@@ -1,8 +1,5 @@
-import {
-  RootProvider,
-  RnUiKitDebugPanel,
-  type UiPreferences,
-} from "rn_ui_kit";
+import { RootProvider, type UiPreferences } from "rn_ui_kit";
+import { RnUiKitDebugPanel } from "rn_ui_kit_debug";
 
 import config from "./tamagui.config";
 import { accentThemeNames } from "./themes";

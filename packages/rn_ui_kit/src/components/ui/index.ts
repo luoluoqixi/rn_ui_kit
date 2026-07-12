@@ -32,6 +32,7 @@ export * from "./switch";
 export * from "./tabs";
 export * from "./text";
 export * from "./text_area";
+export * from "./toast";
 export * from "./toggle_group";
 export * from "./tooltip";
 export * from "./utils";

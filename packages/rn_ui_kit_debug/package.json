@@ -1,0 +1,44 @@
+{
+  "name": "rn_ui_kit_debug",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Debug pages and examples for rn_ui_kit.",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "react-native": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.ts",
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "peerDependencies": {
+    "@tamagui/lucide-icons-2": "=2.4.0",
+    "react": "=19.2.5",
+    "react-native": "=0.83.9",
+    "tamagui": "=2.4.0",
+    "rn_ui_kit": "workspace:*"
+  },
+  "dependencies": {
+    "rn_ui_kit": "workspace:*"
+  },
+  "devDependencies": {
+    "@tamagui/lucide-icons-2": "=2.4.0",
+    "@types/react": "=19.2.16",
+    "react": "=19.2.5",
+    "react-native": "=0.83.9",
+    "tamagui": "=2.4.0",
+    "typescript": "=5.9.2"
+  }
+}

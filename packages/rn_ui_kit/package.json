@@ -21,11 +21,6 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./debug": {
-      "react-native": "./src/components/debug/index.ts",
-      "types": "./src/components/debug/index.ts",
-      "default": "./src/components/debug/index.ts"
-    },
     "./tamagui.config": {
       "types": "./tamagui.config.ts",
       "default": "./tamagui.config.ts"

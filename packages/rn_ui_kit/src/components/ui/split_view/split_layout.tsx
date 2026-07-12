@@ -48,6 +48,9 @@ const IS_WEB = isWeb();
 const IS_MOBILE = isMobile();
 const FALLBACK_SASH_ACTIVE_COLOR = "#2563eb";
 
+const getWebClassNameProps = (className: string | undefined) =>
+  IS_WEB && className ? ({ className } as { className?: string }) : {};
+
 const resolveThemeColor = (value: unknown, fallback: string) => {
   const resolvedColor = getVariableValue(value);
   return typeof resolvedColor === "string" && resolvedColor.length > 0 ? resolvedColor : fallback;
@@ -648,7 +651,7 @@ const SplitLayoutInner = forwardRef<SplitLayoutHandle, SplitLayoutProps>(
 
     return (
       <View
-        className={className}
+        {...getWebClassNameProps(className)}
         onLayout={handleLayout}
         style={[styles.root, styles.webRoot, style]}
       >
@@ -663,7 +666,7 @@ const SplitLayoutInner = forwardRef<SplitLayoutHandle, SplitLayoutProps>(
             return (
               <View
                 key={pane.key}
-                className={pane.className}
+                {...getWebClassNameProps(pane.className)}
                 pointerEvents={visible[index] ? undefined : "none"}
                 style={[styles.pane, paneStyle, pane.style] as StyleProp<ViewStyle>}
               >
@@ -774,7 +777,7 @@ const SplitLayoutInner = forwardRef<SplitLayoutHandle, SplitLayoutProps>(
 const SplitLayoutPane = forwardRef<View, SplitLayoutPaneProps>(
   ({ className, children, style }, ref) => {
     return (
-      <View ref={ref} className={className} style={style}>
+      <View ref={ref} {...getWebClassNameProps(className)} style={style}>
         {children}
       </View>
     );

@@ -4,9 +4,6 @@
   "workspaces": {
     "": {
       "name": "rn_ui_kit",
-      "devDependencies": {
-        "rn_ui_kit": "workspace:*",
-      },
     },
     "examples/app": {
       "name": "rn-ui-kit-example",
@@ -70,6 +67,7 @@
         "react-native-web": "=0.21.2",
         "react-native-worklets": "=0.8.1",
         "rn_ui_kit": "workspace:*",
+        "rn_ui_kit_debug": "workspace:*",
         "tamagui": "=2.4.0",
         "zeego": "=3.0.6",
       },
@@ -203,6 +201,28 @@
         "react-native-worklets": "=0.8.1",
         "tamagui": "=2.4.0",
         "zeego": "=3.0.6",
+      },
+    },
+    "packages/rn_ui_kit_debug": {
+      "name": "rn_ui_kit_debug",
+      "version": "0.1.0",
+      "dependencies": {
+        "rn_ui_kit": "workspace:*",
+      },
+      "devDependencies": {
+        "@tamagui/lucide-icons-2": "=2.4.0",
+        "@types/react": "=19.2.16",
+        "react": "=19.2.5",
+        "react-native": "=0.83.9",
+        "tamagui": "=2.4.0",
+        "typescript": "=5.9.2",
+      },
+      "peerDependencies": {
+        "@tamagui/lucide-icons-2": "=2.4.0",
+        "react": "=19.2.5",
+        "react-native": "=0.83.9",
+        "rn_ui_kit": "workspace:*",
+        "tamagui": "=2.4.0",
       },
     },
   },
@@ -1653,6 +1673,8 @@
     "rn-ui-kit-example": ["rn-ui-kit-example@workspace:examples/app"],
 
     "rn_ui_kit": ["rn_ui_kit@workspace:packages/rn_ui_kit"],
+
+    "rn_ui_kit_debug": ["rn_ui_kit_debug@workspace:packages/rn_ui_kit_debug"],
 
     "run-parallel": ["run-parallel@1.2.0", "", { "dependencies": { "queue-microtask": "^1.2.2" } }, "sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA=="],
 
