@@ -5,7 +5,7 @@ import type { RnUiKitDebugRouteDefinition, RnUiKitDebugRouteKey } from "./types"
 export const rnUiKitDebugRouteDefinitions = [
   {
     Page: RnUiKitUiComponentsDebugPage,
-    description: "完整展示 rn_ui_kit 组件与交互行为。",
+    description: "完整展示组件与交互行为。",
     key: "components",
     label: "组件总览",
     presentation: "static",

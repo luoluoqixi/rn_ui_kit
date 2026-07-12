@@ -1,55 +1,118 @@
-import { Button, Card, Text } from "rn_ui_kit";
-import { RnUiKitUiComponentsDebugPage } from "rn_ui_kit_debug";
+import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
+import {
+  Card,
+  NativeList,
+  NativeListSection,
+  NativeListSelectItem,
+  NativeListSwitchItem,
+  Text,
+  type UiPreferences,
+} from "rn_ui_kit";
+import { RnUiKitUiComponentsDebugPage, type RnUiKitDebugRouteDefinition } from "rn_ui_kit_debug";
 
-import type { RnUiKitDebugRouteDefinition } from "rn_ui_kit_debug";
+import { accentThemeNames } from "./themes";
 
-function AppRuntimeDebugPage() {
-  return (
-    <View style={styles.container}>
-      <Text fontSize="$6" fontWeight="700">App runtime</Text>
-      <Text color="$color10">这里是由 examples/app 传入的调试页面。</Text>
-      <Button onPress={() => console.log("runtime debug action")}>执行示例操作</Button>
-    </View>
-  );
+type UpdatePreferences = (updater: (current: UiPreferences) => UiPreferences) => void;
+
+function createThemeDebugPage(preferences: UiPreferences, updatePreferences: UpdatePreferences) {
+  return function AppThemeDebugPage() {
+    const accentOptions = useMemo(
+      () => accentThemeNames.map((value) => ({ label: value, value })),
+      [],
+    );
+
+    return (
+      <NativeList>
+        <NativeListSection title="主题">
+          <NativeListSelectItem
+            selectProps={{
+              options: accentOptions,
+              onValueChange: (value) => {
+                if (value == null) return;
+                updatePreferences((current) => ({
+                  ...current,
+                  appearance: {
+                    ...current.appearance,
+                    accentColor: value as UiPreferences["appearance"]["accentColor"],
+                  },
+                }));
+              },
+              value: preferences.appearance.accentColor,
+            }}
+            title="主题色"
+          />
+          <NativeListSelectItem
+            selectProps={{
+              options: [
+                { label: "浅色", value: "light" },
+                { label: "深色", value: "dark" },
+                { label: "跟随系统", value: "system" },
+              ],
+              onValueChange: (value) => {
+                if (value == null) return;
+                updatePreferences((current) => ({
+                  ...current,
+                  appearance: {
+                    ...current.appearance,
+                    themeMode: value as UiPreferences["appearance"]["themeMode"],
+                  },
+                }));
+              },
+              value: preferences.appearance.themeMode,
+            }}
+            title="主题模式"
+          />
+          <NativeListSwitchItem
+            switchProps={{
+              checked: preferences.appearance.backgroundFollowsTheme,
+              onCheckedChange: (value) => {
+                updatePreferences((current) => ({
+                  ...current,
+                  appearance: { ...current.appearance, backgroundFollowsTheme: value },
+                }));
+              },
+            }}
+            title="背景跟随主题"
+          />
+        </NativeListSection>
+        <NativeListSection title="预览">
+          <View style={styles.preview}>
+            <Card borderWidth={1} padding="$4">
+              <Text>修改设置后，RootProvider 会立即应用新的主题。</Text>
+            </Card>
+          </View>
+        </NativeListSection>
+      </NativeList>
+    );
+  };
 }
 
-function AppThemeDebugPage() {
-  return (
-    <View style={styles.container}>
-      <Text fontSize="$6" fontWeight="700">Theme preview</Text>
-      <Card borderWidth={1} padding="$4">
-        <Text>外部页面与内置组件总览使用相同的导航、Stack 和嵌套 Sheet 逻辑。</Text>
-      </Card>
-    </View>
-  );
+export function createAppDebugPages(
+  preferences: UiPreferences,
+  updatePreferences: UpdatePreferences,
+): RnUiKitDebugRouteDefinition[] {
+  return [
+    {
+      Page: RnUiKitUiComponentsDebugPage,
+      description: "完整展示组件与交互行为。",
+      key: "components",
+      label: "组件总览",
+      order: 999,
+      presentation: "static",
+    },
+    {
+      Page: createThemeDebugPage(preferences, updatePreferences),
+      description: "切换示例应用的主题色、模式和背景行为。",
+      key: "app-theme",
+      label: "主题切换",
+      presentation: "scroll",
+      section: "Demo",
+    },
+  ] satisfies RnUiKitDebugRouteDefinition[];
 }
 
-export const appDebugPages = [
-  {
-    Page: RnUiKitUiComponentsDebugPage,
-    description: "完整展示 rn_ui_kit 组件与交互行为。",
-    key: "components",
-    label: "组件总览",
-    order: 999,
-    presentation: "static",
-  },
-  {
-    Page: AppRuntimeDebugPage,
-    description: "查看示例应用运行时状态与操作。",
-    key: "app-runtime",
-    label: "应用运行时",
-    presentation: "scroll",
-    section: "示例分区",
-  },
-  {
-    Page: AppThemeDebugPage,
-    description: "预览示例应用主题和外部页面接入。",
-    key: "app-theme",
-    label: "主题预览",
-    presentation: "scroll",
-    section: "示例分区",
-  },
-] satisfies RnUiKitDebugRouteDefinition[];
-
-const styles = StyleSheet.create({ container: { gap: 12, padding: 16 } });
+const styles = StyleSheet.create({
+  container: { gap: 12, padding: 16 },
+  preview: { paddingHorizontal: 16 },
+});
