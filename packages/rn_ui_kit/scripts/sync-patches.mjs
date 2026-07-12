@@ -16,7 +16,7 @@ const patchDir = resolve(packageRoot, "patches");
 
 function parseArgs(argv) {
   const options = {
-    copy: false,
+    copy: true,
     cwd: process.cwd(),
     pathRoot: undefined,
   };
@@ -26,6 +26,11 @@ function parseArgs(argv) {
 
     if (arg === "--copy") {
       options.copy = true;
+      continue;
+    }
+
+    if (arg === "--no-copy") {
+      options.copy = false;
       continue;
     }
 
@@ -143,7 +148,7 @@ for (const [dependency, patchFile] of patchDependencies) {
 
   const patchPath = options.copy ? join(targetPatchDir, patchFile) : join(installedPatchDir, patchFile);
 
-  if (options.copy) {
+  if (options.copy && sourcePath !== patchPath) {
     copyFileSync(sourcePath, patchPath);
   }
 
