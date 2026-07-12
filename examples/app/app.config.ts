@@ -29,6 +29,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   experiments: {
     typedRoutes: false,
-    reactCompiler: false,
+    reactCompiler: true,
   },
 });
