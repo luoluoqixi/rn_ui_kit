@@ -3,7 +3,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { Platform, View } from "react-native";
 import { YStack, useTheme } from "tamagui";
-import { NativeSheet, NativeSheetStack, useAppBackgroundColors } from "rn_ui_kit";
+import {
+  NativeSheet,
+  NativeSheetStack,
+  nativeStackStatusBarOptions,
+  useAppBackgroundColors,
+  useColorSchemeSettings,
+} from "rn_ui_kit";
 
 import { RnUiKitDebugHomePage } from "./pages/debug_home_page";
 import { RnUiKitDebugSectionPage } from "./pages/debug_section_page";
@@ -32,9 +38,11 @@ const DEBUG_SECTION_SHEET_SNAP_POINTS = [50, 75, 100];
 
 function useDebugStackScreenOptions() {
   const appBackgroundColors = useAppBackgroundColors();
+  const { resolvedColorScheme } = useColorSchemeSettings();
   const theme = useTheme();
 
   return {
+    ...nativeStackStatusBarOptions(resolvedColorScheme),
     contentStyle: { backgroundColor: appBackgroundColors.screen },
     headerShadowVisible: false,
     headerStyle: { backgroundColor: appBackgroundColors.header },

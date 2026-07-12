@@ -1,7 +1,12 @@
 import "rn_ui_kit/initialize";
 
 import "./tamagui.generated.css";
-import { RootProvider, type UiPreferences } from "rn_ui_kit";
+import {
+  AppStatusBar,
+  RootProvider,
+  type UiPreferences,
+  useColorSchemeSettings,
+} from "rn_ui_kit";
 import { RnUiKitDebugPanel } from "rn_ui_kit_debug";
 import { useMemo, useState } from "react";
 
@@ -17,6 +22,12 @@ const preferences = {
   },
 } satisfies UiPreferences;
 
+function DemoStatusBar() {
+  const { resolvedColorScheme } = useColorSchemeSettings();
+
+  return <AppStatusBar colorScheme={resolvedColorScheme} />;
+}
+
 export default function App() {
   const [currentPreferences, setCurrentPreferences] = useState<UiPreferences>(preferences);
   const pages = useMemo(
@@ -30,6 +41,7 @@ export default function App() {
       preferences={currentPreferences}
       tamaguiConfig={config}
     >
+      <DemoStatusBar />
       <RnUiKitDebugPanel pages={pages} />
     </RootProvider>
   );

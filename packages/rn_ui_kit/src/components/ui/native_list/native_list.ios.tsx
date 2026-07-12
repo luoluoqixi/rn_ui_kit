@@ -497,13 +497,15 @@ function NativeListSection({ children, footer, title }: NativeListSectionProps) 
       <NativeHostedContent>{title}</NativeHostedContent>
     ) : undefined;
   const footerView =
-    footer != null && stringFooter == null ? (
+    stringFooter != null ? (
+      <SwiftText modifiers={SUBTITLE_MODIFIERS}>{stringFooter}</SwiftText>
+    ) : footer != null ? (
       <NativeHostedContent>{footer}</NativeHostedContent>
     ) : undefined;
 
   return (
     <SwiftUISection
-      footer={footerView ?? stringFooter ?? undefined}
+      footer={footerView}
       header={header}
       title={stringTitle ?? undefined}
     >

@@ -37,7 +37,6 @@ function NativeListExample() {
           checked={native}
           label="使用原生 List 外观"
           labelPosition="end"
-          native={false}
           onCheckedChange={setNative}
         />
         <View style={styles.nativeListFrame}>
@@ -84,7 +83,10 @@ function NativeListExample() {
                 title="同步频率"
               />
             </NativeListSection>
-            <NativeListSection footer="selected 与 chevron={false} 可组合成互斥选择列表。" title="自动备份">
+            <NativeListSection
+              footer="selected 与 chevron={false} 可组合成互斥选择列表。"
+              title="自动备份"
+            >
               {[
                 ["thirty-minutes", "30 分钟"],
                 ["one-hour", "1 小时"],
@@ -101,7 +103,10 @@ function NativeListExample() {
                 />
               ))}
             </NativeListSection>
-            <NativeListSection footer="同一个 Select 可根据平台选择不同的原生 picker 形态。" title="平台 picker">
+            <NativeListSection
+              footer="同一个 Select 可根据平台选择不同的原生 picker 形态。"
+              title="平台 picker"
+            >
               <NativeListSelectItem
                 selectProps={{
                   onValueChange: setTheme,

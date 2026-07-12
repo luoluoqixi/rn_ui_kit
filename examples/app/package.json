@@ -6,8 +6,8 @@
   "scripts": {
     "start": "expo start",
     "web": "expo start --web",
-    "ios": "expo run:ios --configuration Release --device --no-bundler",
-    "android": "expo run:android --variant release --device --no-bundler",
+    "ios": "expo run:ios --device",
+    "android": "expo run:android --device",
     "prebuild:android": "npx expo prebuild --platform android",
     "prebuild:ios": "npx expo prebuild --platform ios",
     "build:android": "expo run:android --variant release --device --no-bundler",
