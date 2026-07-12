@@ -42,6 +42,8 @@
     "react-dom": "=19.2.5",
     "react-native": "=0.83.9",
     "react-native-gesture-handler": "=2.31.1",
+    "react-native-ios-context-menu": "^3.2.1",
+    "react-native-ios-utilities": "=5.2.0",
     "react-native-reanimated": "=4.3.0",
     "react-native-safe-area-context": "=5.7.0",
     "react-native-screens": "=4.24.0",
@@ -92,6 +94,7 @@
     "@tamagui/toast@2.4.0": "examples/app/patches/@tamagui+toast@2.4.0.patch",
     "@tamagui/web@2.4.0": "examples/app/patches/@tamagui+web@2.4.0.patch",
     "expo-haptics@55.0.14": "examples/app/patches/expo-haptics@55.0.14.patch",
+    "react-native-ios-utilities@5.2.0": "examples/app/patches/react-native-ios-utilities@5.2.0.patch",
     "react-native-reanimated@4.3.0": "examples/app/patches/react-native-reanimated@4.3.0.patch",
     "zeego@3.0.6": "examples/app/patches/zeego@3.0.6.patch"
   }
