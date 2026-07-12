@@ -313,6 +313,24 @@ export const SheetImplementationCustom = React.forwardRef<View, SheetProps>(
 
     // safety fallback timer for sheet close opacity
     const opacityFallbackTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    // A close can reach the target during a direct drag, without starting a separate
+    // animation. Keep the completion notification idempotent across that path and
+    // the normal animation callback.
+    const closeCompletionNotifiedRef = React.useRef(false);
+
+    const notifyAnimationComplete = useEvent((isOpenAnimation: boolean) => {
+      if (!isOpenAnimation) {
+        if (closeCompletionNotifiedRef.current) {
+          return;
+        }
+        closeCompletionNotifiedRef.current = true;
+      }
+
+      onAnimationComplete?.({ open: isOpenAnimation });
+      // also notify the SheetController so a parent (e.g. Dialog adapt)
+      // can hold the sheet's children mounted until the slide-out is done
+      controller?.onAnimationComplete?.({ open: isOpenAnimation });
+    });
 
     useAnimatedNumberReaction(
       {
@@ -364,13 +382,27 @@ export const SheetImplementationCustom = React.forwardRef<View, SheetProps>(
 
       const closeTarget = isWeb ? Math.max(screenSize, getMaxViewportHeight()) : screenSize;
       const toValue = isHidden || position === -1 ? closeTarget : activePositions[position];
+      const isOpenAnimation = position !== -1 && !isHidden;
 
-      if (at.current === toValue) return;
+      if (at.current === toValue) {
+        // `at` is updated synchronously when the drag writes directly to the
+        // animated value. If no close animation has been scheduled, the sheet is
+        // already offscreen and there will be no completion callback to clear the
+        // overlay. Do not take this branch while a normal close animation is in
+        // flight: its target is also stored in `at` before it visually completes.
+        if (
+          !isOpenAnimation &&
+          !openRef.current &&
+          opacityFallbackTimer.current === null
+        ) {
+          setOpacity(0);
+          notifyAnimationComplete(false);
+        }
+        return;
+      }
 
       at.current = toValue;
       stopSpring();
-
-      const isOpenAnimation = position !== -1 && !isHidden;
 
       // clear any pending fallback timer
       if (opacityFallbackTimer.current) {
@@ -389,10 +421,7 @@ export const SheetImplementationCustom = React.forwardRef<View, SheetProps>(
         if (!isOpenAnimation && !openRef.current) {
           setOpacity(0);
         }
-        onAnimationComplete?.({ open: isOpenAnimation });
-        // also notify the SheetController so a parent (e.g. Dialog adapt)
-        // can hold the sheet's children mounted until the slide-out is done
-        controller?.onAnimationComplete?.({ open: isOpenAnimation });
+        notifyAnimationComplete(isOpenAnimation);
       };
 
       // safety fallback: if animation callback never fires, still hide the sheet
@@ -788,12 +817,15 @@ export const SheetImplementationCustom = React.forwardRef<View, SheetProps>(
     // we need to set this *after* fully closed to 0, to avoid it overlapping
     // the page when resizing quickly on web for example
     const [opacity, setOpacity] = React.useState(open ? 1 : 0);
-    if (open && opacity === 0) {
-      setOpacity(1);
-      // cancel any pending close fallback — sheet is reopening
-      if (opacityFallbackTimer.current) {
-        clearTimeout(opacityFallbackTimer.current);
-        opacityFallbackTimer.current = null;
+    if (open) {
+      closeCompletionNotifiedRef.current = false;
+      if (opacity === 0) {
+        setOpacity(1);
+        // cancel any pending close fallback — sheet is reopening
+        if (opacityFallbackTimer.current) {
+          clearTimeout(opacityFallbackTimer.current);
+          opacityFallbackTimer.current = null;
+        }
       }
     }
 
