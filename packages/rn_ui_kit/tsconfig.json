@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.json",
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx",
-    "tamagui.config.ts",
-    "tamagui.build.ts"
+    "src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

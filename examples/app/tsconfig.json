@@ -11,9 +11,6 @@
       ],
       "rn_ui_kit_debug": [
         "../../packages/rn_ui_kit_debug/src/index.ts"
-      ],
-      "rn_ui_kit/tamagui.config": [
-        "../../packages/rn_ui_kit/tamagui.config.ts"
       ]
     }
   },
@@ -21,14 +18,13 @@
     "App.tsx",
     "app.config.ts",
     "tamagui.config.ts",
+    "tamagui.build.ts",
     "themes.ts",
     "*.js",
     "../../packages/rn_ui_kit/src/**/*.ts",
     "../../packages/rn_ui_kit/src/**/*.tsx",
     "../../packages/rn_ui_kit_debug/src/**/*.ts",
-    "../../packages/rn_ui_kit_debug/src/**/*.tsx",
-    "../../packages/rn_ui_kit/tamagui.config.ts",
-    "../../packages/rn_ui_kit/tamagui.build.ts"
+    "../../packages/rn_ui_kit_debug/src/**/*.tsx"
   ],
   "exclude": [
     "node_modules"

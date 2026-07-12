@@ -21,10 +21,6 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./tamagui.config": {
-      "types": "./tamagui.config.ts",
-      "default": "./tamagui.config.ts"
-    },
     "./initialize": {
       "react-native": "./src/initialize/index.ts",
       "types": "./src/initialize/index.ts",
@@ -35,8 +31,6 @@
     "src",
     "patches",
     "scripts",
-    "tamagui.config.ts",
-    "tamagui.build.ts",
     "README.md",
     "LICENSE"
   ],

@@ -1,7 +1,6 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TamaguiProvider, Theme } from "tamagui";
 
-import config from "../../../../tamagui.config";
 import { NativeDialogProvider } from "../native_dialog";
 import { Toaster } from "../toast/toaster";
 import { NativeHapticsProvider } from "../utils";
@@ -23,7 +22,7 @@ export function UIProvider({
   );
 
   return (
-    <TamaguiProvider config={tamaguiConfig ?? config} defaultTheme={colorScheme} insets={insets}>
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme} insets={insets}>
       <UiPreferencesProvider accentThemeNames={accentThemeNames} preferences={preferences}>
         <Theme name={resolvedAccentThemeName as never}>
           <NativeDialogProvider>

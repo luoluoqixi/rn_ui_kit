@@ -1,4 +1,4 @@
-﻿import type { TamaguiBuildOptions } from "tamagui";
+import type { TamaguiBuildOptions } from "tamagui";
 
 export default {
   components: ["tamagui", "rn_ui_kit"],

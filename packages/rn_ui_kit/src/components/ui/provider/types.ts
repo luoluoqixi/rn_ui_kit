@@ -15,7 +15,7 @@ export interface UIProviderProps {
   colorScheme?: ResolvedColorScheme;
   defaultNativeHapticsEnabled?: boolean;
   preferences?: Partial<UiPreferences>;
-  tamaguiConfig?: ComponentProps<typeof TamaguiProvider>["config"];
+  tamaguiConfig: ComponentProps<typeof TamaguiProvider>["config"];
 }
 
 export interface RootProviderProps extends Omit<UIProviderProps, "children"> {
