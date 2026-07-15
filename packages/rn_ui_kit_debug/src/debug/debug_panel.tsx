@@ -174,7 +174,9 @@ function RnUiKitDebugPanelSheet({
             name={getComponentExampleRouteName(definition.key)}
             options={{ title: definition.label }}
           >
-            {() => <RnUiKitComponentExampleDetailPage definition={definition} />}
+            {() => (
+              <RnUiKitComponentExampleDetailPage definition={definition} layoutHost="nativeSheet" />
+            )}
           </NativeSheetStack.Screen>
         ))}
       </NativeSheetStack>
@@ -360,7 +362,9 @@ function RnUiKitDebugSectionSheets({
               name={getComponentExampleRouteName(example.key)}
               options={{ title: example.label }}
             >
-              {() => <RnUiKitComponentExampleDetailPage definition={example} />}
+              {() => (
+                <RnUiKitComponentExampleDetailPage definition={example} layoutHost="nativeSheet" />
+              )}
             </NativeSheetStack.Screen>
           ))}
         </NativeSheetStack>

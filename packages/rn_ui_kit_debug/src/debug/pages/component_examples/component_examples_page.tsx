@@ -5,6 +5,7 @@ import {
   NativeList,
   NativeListNavigationItem,
   NativeListSection,
+  NativeSheetScrollContent,
   ScrollView,
   Text,
   useAppBackgroundColors,
@@ -58,8 +59,10 @@ export function RnUiKitComponentExamplesDebugPage({ header }: RnUiKitDebugSectio
 
 export function RnUiKitComponentExampleDetailPage({
   definition,
+  layoutHost = "default",
 }: {
   definition: ComponentExampleDefinition;
+  layoutHost?: "default" | "nativeSheet";
 }) {
   const appBackgroundColors = useAppBackgroundColors();
   const ActiveExample = definition.Component;
@@ -72,16 +75,29 @@ export function RnUiKitComponentExampleDetailPage({
     );
   }
 
+  const contents = (
+    <View style={[styles.scrollContent, { backgroundColor: appBackgroundColors.screen }]}>
+      <Text opacity={0.6}>{definition.description}</Text>
+      <ActiveExample />
+    </View>
+  );
+
+  const scrollStyle = [styles.detailBody, { backgroundColor: appBackgroundColors.screen }];
+  if (layoutHost === "nativeSheet") {
+    return (
+      <NativeSheetScrollContent
+        nestedScrollEnabled
+        showsVerticalScrollIndicator
+        style={scrollStyle}
+      >
+        {contents}
+      </NativeSheetScrollContent>
+    );
+  }
+
   return (
-    <ScrollView
-      nestedScrollEnabled
-      showsVerticalScrollIndicator
-      style={[styles.detailBody, { backgroundColor: appBackgroundColors.screen }]}
-    >
-      <View style={[styles.scrollContent, { backgroundColor: appBackgroundColors.screen }]}>
-        <Text opacity={0.6}>{definition.description}</Text>
-        <ActiveExample />
-      </View>
+    <ScrollView nestedScrollEnabled showsVerticalScrollIndicator style={scrollStyle}>
+      {contents}
     </ScrollView>
   );
 }
