@@ -66,6 +66,9 @@ function useDebugSheetStackScreenOptions() {
   const transparentHeader = isIos26Plus();
 
   return {
+    contentStyle: {
+      backgroundColor: transparentHeader ? "transparent" : appBackgroundColors.sheet,
+    },
     headerRight: undefined,
     headerStatusBarHeight: 0,
     headerStyle: {
