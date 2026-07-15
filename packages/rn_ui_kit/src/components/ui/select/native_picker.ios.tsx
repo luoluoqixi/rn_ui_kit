@@ -14,7 +14,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ListItem as TamaguiListItem, Text, YStack } from "tamagui";
+import { ListItem as TamaguiListItem } from "tamagui";
 
 import { Button } from "../button";
 import { Menu } from "../menu";
