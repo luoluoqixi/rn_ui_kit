@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { ScrollView, YStack } from "tamagui";
-import { NativeSheetScrollContent, Text } from "rn_ui_kit";
+import { YStack } from "tamagui";
+import { NativeSheetScrollContent, ScrollView, Text } from "rn_ui_kit";
 
 import { getRnUiKitDebugRouteDefinition } from "../routes";
 

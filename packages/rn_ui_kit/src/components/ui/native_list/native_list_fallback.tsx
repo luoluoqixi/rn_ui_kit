@@ -740,6 +740,7 @@ export function NativeListRoot({
   void _native;
   const {
     alwaysBounceVertical,
+    automaticallyAdjustsScrollIndicatorInsets,
     contentInset,
     contentInsetAdjustmentBehavior,
     contentOffset,
@@ -788,6 +789,8 @@ export function NativeListRoot({
     contentInset == null &&
     contentInsetAdjustmentBehavior == null &&
     contentOffset == null;
+  const manuallyAdjustNormalPageIndicator =
+    os() === "ios" && !insideTrueSheet && automaticallyAdjustsScrollIndicatorInsets == null;
   const contentTopPadding =
     contentMarginTop ?? (shouldUseManualHeaderSpacing ? headerHeight + 8 : undefined);
   const contentBottomPadding =
@@ -823,6 +826,9 @@ export function NativeListRoot({
 
   return (
     <FlashList
+      automaticallyAdjustsScrollIndicatorInsets={
+        manuallyAdjustNormalPageIndicator ? false : automaticallyAdjustsScrollIndicatorInsets
+      }
       alwaysBounceVertical={alwaysBounceVertical ?? (!insideTrueSheet && os() === "ios")}
       contentInset={contentInset}
       contentContainerStyle={[
@@ -859,7 +865,13 @@ export function NativeListRoot({
               ...scrollIndicatorInsets,
               bottom: indicatorBottomInset,
             }
-          : scrollIndicatorInsets
+          : manuallyAdjustNormalPageIndicator
+            ? {
+                ...scrollIndicatorInsets,
+                // 自动 inset 关闭后显式保留底部安全区，顶部维持 0。
+                bottom: scrollIndicatorInsets?.bottom ?? insets.bottom,
+              }
+            : scrollIndicatorInsets
       }
       style={[styles.root, rootBackground, style]}
       {...scrollViewProps}

@@ -1,9 +1,9 @@
 # Expo UI 补丁说明:
 # - iOS 26: 当没有 label slot 时，改用不带标签的 Slider 初始化方式。
 # - RNHostView: 允许横向和纵向内容分别独立匹配。
-# - SwiftUI List: 补充 viewport clipping 补偿、content margins，以及初始滚动目标支持。
+# - SwiftUI List: 补充 viewport clipping 补偿、content margins、初始滚动目标，以及原生 scroll indicator 自动 inset 开关。
 diff --git a/ios/SliderView.swift b/ios/SliderView.swift
-index 1ffa70e3..50927129 100644
+index 1ffa70e..5092712 100644
 --- a/ios/SliderView.swift
 +++ b/ios/SliderView.swift
 @@ -40,51 +40,91 @@ struct SliderView: ExpoSwiftUI.View {
@@ -136,7 +136,7 @@ index 1ffa70e3..50927129 100644
      }
    }
 diff --git a/src/swift-ui/RNHostView.tsx b/src/swift-ui/RNHostView.tsx
-index 4e634d0c..6a60b0e2 100644
+index 4e634d0..6a60b0e 100644
 --- a/src/swift-ui/RNHostView.tsx
 +++ b/src/swift-ui/RNHostView.tsx
 @@ -9,7 +9,7 @@ export type RNHostViewProps = {
@@ -172,7 +172,7 @@ index 4e634d0c..6a60b0e2 100644
    );
  }
 diff --git a/build/swift-ui/RNHostView.d.ts b/build/swift-ui/RNHostView.d.ts
-index e1c5cded..c488bbca 100644
+index e1c5cde..c488bbc 100644
 --- a/build/swift-ui/RNHostView.d.ts
 +++ b/build/swift-ui/RNHostView.d.ts
 @@ -5,7 +5,10 @@ export type RNHostViewProps = {
@@ -188,7 +188,7 @@ index e1c5cded..c488bbca 100644
       * The RN View to be hosted.
       */
 diff --git a/src/jetpack-compose/RNHostView/index.tsx b/src/jetpack-compose/RNHostView/index.tsx
-index 290f9d4e..1340fb16 100644
+index 290f9d4..1340fb1 100644
 --- a/src/jetpack-compose/RNHostView/index.tsx
 +++ b/src/jetpack-compose/RNHostView/index.tsx
 @@ -12,7 +12,7 @@ export interface RNHostProps extends PrimitiveBaseProps {
@@ -250,7 +250,7 @@ index 290f9d4e..1340fb16 100644
    );
  }
 diff --git a/build/jetpack-compose/RNHostView/index.d.ts b/build/jetpack-compose/RNHostView/index.d.ts
-index f8ad9a4e..3a147273 100644
+index f8ad9a4..3a14727 100644
 --- a/build/jetpack-compose/RNHostView/index.d.ts
 +++ b/build/jetpack-compose/RNHostView/index.d.ts
 @@ -8,7 +8,10 @@ export interface RNHostProps extends PrimitiveBaseProps {
@@ -266,7 +266,7 @@ index f8ad9a4e..3a147273 100644
       * The RN View to be hosted.
       */
 diff --git a/ios/RNHostView.swift b/ios/RNHostView.swift
-index f8cba36a..ced9b626 100644
+index f8cba36..ced9b62 100644
 --- a/ios/RNHostView.swift
 +++ b/ios/RNHostView.swift
 @@ -4,7 +4,9 @@ import SwiftUI
@@ -388,7 +388,7 @@ index f8cba36a..ced9b626 100644
  
    func body(content: Content) -> some View {
 diff --git a/android/src/main/java/expo/modules/ui/RNHostView.kt b/android/src/main/java/expo/modules/ui/RNHostView.kt
-index 79076729..b7d071e8 100644
+index 7907672..b7d071e 100644
 --- a/android/src/main/java/expo/modules/ui/RNHostView.kt
 +++ b/android/src/main/java/expo/modules/ui/RNHostView.kt
 @@ -7,8 +7,11 @@ import android.view.MotionEvent
@@ -508,7 +508,7 @@ index 79076729..b7d071e8 100644
        }
      }
 diff --git a/src/swift-ui/modifiers/index.ts b/src/swift-ui/modifiers/index.ts
-index d64100ee..6a3440ae 100644
+index d64100e..6a3440a 100644
 --- a/src/swift-ui/modifiers/index.ts
 +++ b/src/swift-ui/modifiers/index.ts
 @@ -569,6 +569,28 @@ export const scrollDismissesKeyboard = (
@@ -550,7 +550,7 @@ index d64100ee..6a3440ae 100644
    | ReturnType<typeof scrollDisabled>
    | ReturnType<typeof defaultScrollAnchor>
 diff --git a/build/swift-ui/modifiers/index.d.ts b/build/swift-ui/modifiers/index.d.ts
-index 1e0d2ba0..d0d1a5de 100644
+index 1e0d2ba..d0d1a5d 100644
 --- a/build/swift-ui/modifiers/index.d.ts
 +++ b/build/swift-ui/modifiers/index.d.ts
 @@ -455,6 +455,26 @@ export declare const scrollDismissesKeyboard: (mode: "automatic" | "never" | "in
@@ -597,7 +597,7 @@ index 1e0d2ba0..d0d1a5de 100644
 \ No newline at end of file
 +//# sourceMappingURL=index.d.ts.map
 diff --git a/ios/Modifiers/ViewModifierRegistry.swift b/ios/Modifiers/ViewModifierRegistry.swift
-index 552adc52..3a44a626 100644
+index 552adc5..3a44a62 100644
 --- a/ios/Modifiers/ViewModifierRegistry.swift
 +++ b/ios/Modifiers/ViewModifierRegistry.swift
 @@ -120,6 +120,25 @@ internal struct OpacityModifier: ViewModifier, Record {
@@ -649,7 +649,7 @@ index 552adc52..3a44a626 100644
        return try ScrollTargetBehaviorModifier(from: params, appContext: appContext)
      }
 diff --git a/ios/Modifiers/ContainerRelativeFrameModifier.swift b/ios/Modifiers/ContainerRelativeFrameModifier.swift
-index ee649568..be7d2ab2 100644
+index ee64956..be7d2ab 100644
 --- a/ios/Modifiers/ContainerRelativeFrameModifier.swift
 +++ b/ios/Modifiers/ContainerRelativeFrameModifier.swift
 @@ -40,3 +40,36 @@ internal struct ContainerRelativeFrameModifier: ViewModifier, Record {
@@ -690,20 +690,21 @@ index ee649568..be7d2ab2 100644
 +  }
 +}
 diff --git a/ios/ListView.swift b/ios/ListView.swift
-index a7ca51df..3faeae09 100644
+index a7ca51d..61d7ad8 100644
 --- a/ios/ListView.swift
 +++ b/ios/ListView.swift
-@@ -4,6 +4,9 @@ import ExpoModulesCore
+@@ -4,6 +4,10 @@ import ExpoModulesCore
  import SwiftUI
  
  final class ListProps: UIBaseViewProps {
++  @Field var automaticallyAdjustsScrollIndicatorInsets: Bool?
 +  @Field var compensatesForViewportClipping = false
 +  @Field var initialScrollAnchor: UnitPointOptions = .center
 +  @Field var initialScrollTarget: Either<String, Double>?
    @Field var selection: [Either<String, Double>]?
    var onSelectionChange = EventDispatcher()
  }
-@@ -11,19 +14,72 @@ final class ListProps: UIBaseViewProps {
+@@ -11,19 +15,77 @@ final class ListProps: UIBaseViewProps {
  struct ListView: ExpoSwiftUI.View {
    @ObservedObject var props: ListProps
    @State private var selection = Set<AnyHashable>()
@@ -747,6 +748,11 @@ index a7ca51df..3faeae09 100644
 +      List(selection: $selection) {
 +        Children()
 +      }
++      .background {
++        ScrollIndicatorInsetAdjustmentView(
++          automaticallyAdjustsScrollIndicatorInsets: props.automaticallyAdjustsScrollIndicatorInsets ?? true
++        )
++      }
 +      .onAppear {
 +        selection = Self.getHashableSetFromEither(props.selection)
 +        scrollToInitialTarget(proxy)
@@ -784,14 +790,114 @@ index a7ca51df..3faeae09 100644
      }
    }
  
+@@ -55,3 +117,93 @@ struct ListView: ExpoSwiftUI.View {
+     return result
+   }
+ }
++
++private struct ScrollIndicatorInsetAdjustmentView: UIViewRepresentable {
++  let automaticallyAdjustsScrollIndicatorInsets: Bool
++
++  func makeUIView(context: Context) -> ScrollIndicatorInsetAdjustmentUIView {
++    let view = ScrollIndicatorInsetAdjustmentUIView()
++    view.isUserInteractionEnabled = false
++    view.automaticallyAdjustsScrollIndicatorInsets = automaticallyAdjustsScrollIndicatorInsets
++    return view
++  }
++
++  func updateUIView(_ uiView: ScrollIndicatorInsetAdjustmentUIView, context: Context) {
++    uiView.automaticallyAdjustsScrollIndicatorInsets = automaticallyAdjustsScrollIndicatorInsets
++  }
++}
++
++private final class ScrollIndicatorInsetAdjustmentUIView: UIView {
++  var automaticallyAdjustsScrollIndicatorInsets = true {
++    didSet {
++      scheduleUpdate()
++    }
++  }
++
++  private weak var configuredScrollView: UIScrollView?
++  private var updateScheduled = false
++
++  override func didMoveToWindow() {
++    super.didMoveToWindow()
++    scheduleUpdate()
++  }
++
++  override func layoutSubviews() {
++    super.layoutSubviews()
++
++    if configuredScrollView?.window == nil {
++      configuredScrollView = nil
++      scheduleUpdate()
++    }
++  }
++
++  private func scheduleUpdate() {
++    guard !updateScheduled else { return }
++    updateScheduled = true
++
++    DispatchQueue.main.async { [weak self] in
++      guard let self else { return }
++      self.updateScheduled = false
++      self.applyAdjustment()
++    }
++  }
++
++  private func applyAdjustment() {
++    guard let scrollView = configuredScrollView ?? findListScrollView() else { return }
++
++    configuredScrollView = scrollView
++    guard scrollView.automaticallyAdjustsScrollIndicatorInsets != automaticallyAdjustsScrollIndicatorInsets else {
++      return
++    }
++
++    scrollView.automaticallyAdjustsScrollIndicatorInsets = automaticallyAdjustsScrollIndicatorInsets
++    scrollView.setNeedsLayout()
++  }
++
++  private func findListScrollView() -> UIScrollView? {
++    var ancestor: UIView? = superview
++
++    while let current = ancestor {
++      if let collectionView = findCollectionView(in: current) {
++        return collectionView
++      }
++      ancestor = current.superview
++    }
++
++    return nil
++  }
++
++  private func findCollectionView(in view: UIView) -> UICollectionView? {
++    if let collectionView = view as? UICollectionView {
++      return collectionView
++    }
++
++    for child in view.subviews {
++      if let collectionView = findCollectionView(in: child) {
++        return collectionView
++      }
++    }
++
++    return nil
++  }
++}
 diff --git a/src/swift-ui/List/index.tsx b/src/swift-ui/List/index.tsx
-index 73c2193b..2639cb1d 100644
+index 73c2193..f7f8fb9 100644
 --- a/src/swift-ui/List/index.tsx
 +++ b/src/swift-ui/List/index.tsx
-@@ -21,6 +21,35 @@ function transformListProps(props: Omit<ListProps, 'children'>): Omit<NativeList
+@@ -21,6 +21,41 @@ function transformListProps(props: Omit<ListProps, 'children'>): Omit<NativeList
  }
  
  export interface ListProps extends CommonViewModifierProps {
++  /**
++   * Whether UIKit automatically adjusts the native scroll indicator insets.
++   * @default true
++   */
++  automaticallyAdjustsScrollIndicatorInsets?: boolean;
++
 +  /**
 +   * Shrinks the list viewport when its host extends below the physical screen boundary.
 +   * Useful for native sheet containers that clip hosted SwiftUI content at smaller detents.
@@ -825,13 +931,18 @@ index 73c2193b..2639cb1d 100644
     * The children elements to be rendered inside the list.
     */
 diff --git a/build/swift-ui/List/index.d.ts b/build/swift-ui/List/index.d.ts
-index 02e9345c..20eb4274 100644
+index 02e9345..3711b34 100644
 --- a/build/swift-ui/List/index.d.ts
 +++ b/build/swift-ui/List/index.d.ts
-@@ -1,6 +1,22 @@
+@@ -1,6 +1,27 @@
  import { ListForEach, type ListForEachProps } from './ListForEach';
  import { type CommonViewModifierProps } from '../types';
  export interface ListProps extends CommonViewModifierProps {
++    /**
++     * Whether UIKit automatically adjusts the native scroll indicator insets.
++     * @default true
++     */
++    automaticallyAdjustsScrollIndicatorInsets?: boolean;
 +    /**
 +     * Shrinks the list viewport when its host extends below the physical screen boundary.
 +     * Useful for native sheet containers that clip hosted SwiftUI content at smaller detents.
@@ -851,7 +962,7 @@ index 02e9345c..20eb4274 100644
      /**
       * The children elements to be rendered inside the list.
       */
-@@ -23,4 +39,4 @@ export declare namespace List {
+@@ -23,4 +44,4 @@ export declare namespace List {
      var ForEach: typeof ListForEach;
  }
  export { ListForEach, ListForEachProps };

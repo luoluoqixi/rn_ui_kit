@@ -378,12 +378,14 @@ function NativePressRow({
 }
 
 function NativeListRoot({
+  automaticallyAdjustsScrollIndicatorInsets,
   backgroundColor,
   children,
   contentMarginBottom,
   contentMarginTop,
   initialScrollTarget,
   native = true,
+  scrollIndicatorInsets,
   style,
   scrollable = true,
   ...fallbackProps
@@ -402,7 +404,9 @@ function NativeListRoot({
       <NativeListContext.Provider value={{ native: false }}>
         <FallbackRoot
           {...fallbackProps}
+          automaticallyAdjustsScrollIndicatorInsets={automaticallyAdjustsScrollIndicatorInsets}
           backgroundColor={backgroundColor}
+          scrollIndicatorInsets={scrollIndicatorInsets}
           style={style}
           scrollable={scrollable}
         >
@@ -420,10 +424,18 @@ function NativeListRoot({
           safeAreaBottom: insets.bottom,
         })
       : 0;
+  const manuallyAdjustNormalPageIndicator =
+    !insideTrueSheet && automaticallyAdjustsScrollIndicatorInsets == null;
+  const normalPageIndicatorBottomInset = scrollIndicatorInsets?.bottom ?? insets.bottom;
   return (
     <NativeListContext.Provider value={{ native: true }}>
       <Host style={[styles.nativeRoot, style]}>
         <List
+          // Native-stack 已将普通页面放在 header 下方，UIKit 再自动避让会让 indicator 重复下移。
+          // TrueSheet 仍需要系统根据 Sheet viewport 处理 indicator，因此保持开启。
+          automaticallyAdjustsScrollIndicatorInsets={
+            manuallyAdjustNormalPageIndicator ? false : automaticallyAdjustsScrollIndicatorInsets
+          }
           compensatesForViewportClipping={insideTrueSheet}
           initialScrollAnchor="center"
           initialScrollTarget={initialScrollTarget}
@@ -471,6 +483,15 @@ function NativeListRoot({
                     }),
                   ]
                 : []),
+            ...(manuallyAdjustNormalPageIndicator && normalPageIndicatorBottomInset > 0
+              ? [
+                  contentMargins({
+                    edges: "bottom",
+                    length: normalPageIndicatorBottomInset,
+                    placement: "scrollIndicators",
+                  }),
+                ]
+              : []),
             scrollDisabled(!scrollable),
           ]}
         >

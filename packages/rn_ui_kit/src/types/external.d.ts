@@ -3,9 +3,9 @@ import type { ModifierConfig } from "@expo/ui/swift-ui/modifiers/createModifier"
 
 declare module "@expo/ui/swift-ui/modifiers" {
   export function contentMargins(options: {
-    edges?: "top" | "bottom" | "leading" | "trailing" | "all";
+    edges?: "top" | "bottom" | "leading" | "trailing" | "horizontal" | "vertical" | "all";
     length?: number;
-    placement?: "automatic" | "scrollContent";
+    placement?: "automatic" | "scrollContent" | "scrollIndicators";
   }): ModifierConfig;
 
   export function viewID(id: string | number): ModifierConfig;
@@ -13,6 +13,7 @@ declare module "@expo/ui/swift-ui/modifiers" {
 
 declare module "@expo/ui/swift-ui" {
   export interface ListProps {
+    automaticallyAdjustsScrollIndicatorInsets?: boolean;
     compensatesForViewportClipping?: boolean;
     initialScrollAnchor?: string;
     initialScrollTarget?: string | number;
