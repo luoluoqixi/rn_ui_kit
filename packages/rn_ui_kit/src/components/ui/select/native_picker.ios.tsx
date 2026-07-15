@@ -14,7 +14,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text, YStack, getFontSize } from "tamagui";
+import { ListItem as TamaguiListItem, Text, YStack } from "tamagui";
 
 import { Button } from "../button";
 import { Menu } from "../menu";
@@ -37,6 +37,8 @@ let wheelSheetCounter = 0;
 
 /** wheel sheet 默认 detent 配置（iOS 16+ 有效，iOS < 16 降级为 mediumDetent） */
 const WHEEL_SHEET_DETENT_DEFAULT = 0.3;
+const DEFAULT_TRIGGER_HOVER_STYLE = { background: "$color3" } as const;
+const DEFAULT_TRIGGER_PRESS_STYLE = { background: "$color4" } as const;
 
 /** wheel 模式共享的 TrueSheet 弹出层 */
 function WheelTrueSheet({
@@ -113,6 +115,38 @@ function WheelTrueSheet({
   );
 }
 
+/**
+ * 非 nativeTrigger 的 iOS 原生 Picker 入口。
+ * 使用 Tamagui Select.Trigger 相同的 ListItem componentName，确保组件主题色、尺寸和边框一致。
+ */
+function NativePickerDefaultTrigger({
+  label,
+  placeholder,
+  onPress,
+}: {
+  label: React.ReactNode;
+  placeholder: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <TamaguiListItem
+      componentName="SelectTrigger"
+      background="$background"
+      rounded="$4"
+      borderWidth={1}
+      hoverStyle={DEFAULT_TRIGGER_HOVER_STYLE}
+      iconAfter={ChevronDown}
+      onPress={onPress}
+      pressStyle={DEFAULT_TRIGGER_PRESS_STYLE}
+      size="$true"
+    >
+      <TamaguiListItem.Text color="$color" opacity={placeholder ? 0.58 : 1}>
+        {label}
+      </TamaguiListItem.Text>
+    </TamaguiListItem>
+  );
+}
+
 /** wheel + 自定义 trigger */
 const NativePickerWheelSheet = React.forwardRef<
   NativePickerSwiftUIHandle,
@@ -163,30 +197,11 @@ const NativePickerWheelSheet = React.forwardRef<
 
   return (
     <>
-      <YStack
+      <NativePickerDefaultTrigger
+        label={selectedLabel ?? (typeof placeholder === "string" ? placeholder : "选择")}
         onPress={() => openSheet(true)}
-        background="$background"
-        borderColor="$borderColor"
-        borderWidth={1}
-        pressStyle={{
-          // @ts-expect-error backgroundColor 是存在的
-          backgroundColor: "$backgroundPress",
-        }}
-        style={{
-          borderRadius: 8,
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          minWidth: 180,
-        }}
-      >
-        <Text fontSize={getFontSize("$4")} color="$color">
-          {selectedLabel ?? (typeof placeholder === "string" ? placeholder : "选择")}
-        </Text>
-        <ChevronDown size={16} color="$color10" />
-      </YStack>
+        placeholder={selectedLabel == null}
+      />
 
       <WheelTrueSheet
         items={items}
@@ -398,30 +413,11 @@ function NativePickerDropdownCustom({
       value={value}
     />
   ) : (
-    <YStack
+    <NativePickerDefaultTrigger
+      label={selectedLabel ?? (typeof placeholder === "string" ? placeholder : "选择")}
       onPress={() => triggerNativeHaptics(resolvedNativeHaptics)}
-      background="$background"
-      borderColor="$borderColor"
-      borderWidth={1}
-      pressStyle={{
-        // @ts-expect-error backgroundColor 是存在的
-        backgroundColor: "$backgroundPress",
-      }}
-      style={{
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        minWidth: 180,
-      }}
-    >
-      <Text fontSize={getFontSize("$4")} color="$color">
-        {selectedLabel ?? (typeof placeholder === "string" ? placeholder : "选择")}
-      </Text>
-      <ChevronDown size={16} color="$color10" />
-    </YStack>
+      placeholder={selectedLabel == null}
+    />
   );
 
   return (
