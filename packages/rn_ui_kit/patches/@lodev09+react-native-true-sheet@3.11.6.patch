@@ -1,5 +1,6 @@
 # TrueSheet 补丁：
 # - iOS：保持 TrueSheet scroll indicator 的底部 inset 不小于 TrueSheet 自己的 bottom inset。
+# - iOS：支持通过 native tag 显式绑定 ScrollView；未绑定时保持原有两层自动查找。
 # - iOS：扩大 custom native grabber 的透明整行拖拽热区，同时保持 pill 的可见大小不变。
 # - Android：扩大 native grabber 的透明整行拖拽热区，并让该区域强制走 sheet drag。
 # - Android：增加 disableStackingTranslation 开关，可禁用子 sheet 打开时父 sheet 下移的 stacked translation。
@@ -550,7 +551,7 @@ index c744b19..0e33b72 100644
        sheetView.viewController.post {
          val childMinSheetTop = sheetView.viewController.detentCalculator.getSheetTopForDetentIndex(0)
 diff --git a/ios/TrueSheetContentView.mm b/ios/TrueSheetContentView.mm
-index a5c43ed..ec6bb15 100644
+index a5c43ed..c62178d 100644
 --- a/ios/TrueSheetContentView.mm
 +++ b/ios/TrueSheetContentView.mm
 @@ -31,6 +31,10 @@ @implementation TrueSheetContentView {
@@ -564,7 +565,31 @@ index a5c43ed..ec6bb15 100644
  + (ComponentDescriptorProvider)componentDescriptorProvider {
    return concreteComponentDescriptorProvider<TrueSheetContentViewComponentDescriptor>();
  }
-@@ -161,12 +165,13 @@ - (void)setupScrollable:(BOOL)enabled bottomInset:(CGFloat)bottomInset {
+@@ -39,6 +43,7 @@ - (instancetype)initWithFrame:(CGRect)frame {
+   if (self = [super initWithFrame:frame]) {
+     static const auto defaultProps = std::make_shared<const TrueSheetContentViewProps>();
+     _props = defaultProps;
++    _registeredScrollViewTag = -1;
+   }
+   return self;
+ }
+@@ -129,6 +134,15 @@ - (void)clearScrollable {
+   _originalIndicatorBottomInset = 0;
+ }
+ 
++- (void)setRegisteredScrollViewTag:(NSInteger)registeredScrollViewTag {
++  if (_registeredScrollViewTag == registeredScrollViewTag) {
++    return;
++  }
++
++  [self clearScrollable];
++  _registeredScrollViewTag = registeredScrollViewTag;
++}
++
+ - (void)setupScrollable:(BOOL)enabled bottomInset:(CGFloat)bottomInset {
+   if (!enabled) {
+     [self clearScrollable];
+@@ -161,12 +175,37 @@ - (void)setupScrollable:(BOOL)enabled bottomInset:(CGFloat)bottomInset {
  
    [self updateScrollViewHeight];
  
@@ -577,10 +602,83 @@ index a5c43ed..ec6bb15 100644
 -    [self setScrollViewContentInset:keyboardHeight indicatorInset:_originalIndicatorBottomInset + keyboardHeight];
 +    [self setScrollViewContentInset:keyboardHeight
 +                     indicatorInset:[self resolvedIndicatorBottomInset] + keyboardHeight];
++  }
++
++  // Explicitly registered ScrollViews can be mounted after the sheet has already reached its
++  // initial detent. Their wrapper frame is resized above, but UIKit has not yet laid out the
++  // inner UIScrollView using that final frame, so automatic scroll-indicator safe-area
++  // adjustment is stale until the sheet moves. Mirror the layout pass that a detent change
++  // would trigger without changing any inset values.
++  if (_registeredScrollViewTag >= 0) {
++    __weak TrueSheetContentView *weakSelf = self;
++    __weak RCTScrollViewComponentView *weakScrollView = scrollView;
++    dispatch_async(dispatch_get_main_queue(), ^{
++      TrueSheetContentView *strongSelf = weakSelf;
++      RCTScrollViewComponentView *registeredScrollView = weakScrollView;
++      if (!strongSelf || !registeredScrollView ||
++          strongSelf->_pinnedScrollView != registeredScrollView ||
++          ![registeredScrollView isDescendantOfView:strongSelf]) {
++        return;
++      }
++
++      [registeredScrollView setNeedsLayout];
++      [registeredScrollView layoutIfNeeded];
++      [registeredScrollView.scrollView setNeedsLayout];
++      [registeredScrollView.scrollView layoutIfNeeded];
++    });
    }
  }
  
-@@ -287,7 +292,7 @@ - (void)keyboardWillShow:(CGFloat)height duration:(NSTimeInterval)duration curve
+@@ -197,7 +236,24 @@ - (void)updateScrollViewHeight {
+   }
+ }
+ 
++- (void)refreshRegisteredScrollViewLayout {
++  if (_registeredScrollViewTag < 0 || !_pinnedScrollView ||
++      ![_pinnedScrollView isDescendantOfView:self]) {
++    return;
++  }
++
++  [self updateScrollViewHeight];
++  [_pinnedScrollView setNeedsLayout];
++  [_pinnedScrollView layoutIfNeeded];
++  [_pinnedScrollView.scrollView setNeedsLayout];
++  [_pinnedScrollView.scrollView layoutIfNeeded];
++}
++
+ - (RCTScrollViewComponentView *)findScrollView {
++  if (_registeredScrollViewTag >= 0) {
++    return [self findRegisteredScrollViewInView:self];
++  }
++
+   if (_pinnedScrollView) {
+     return _pinnedScrollView;
+   }
+@@ -220,6 +263,23 @@ - (RCTScrollViewComponentView *)findScrollView {
+   return scrollView;
+ }
+ 
++- (RCTScrollViewComponentView *)findRegisteredScrollViewInView:(UIView *)view {
++  if (view.tag == _registeredScrollViewTag &&
++      [view isKindOfClass:RCTScrollViewComponentView.class] &&
++      ![view isKindOfClass:TrueSheetView.class]) {
++    return (RCTScrollViewComponentView *)view;
++  }
++
++  for (UIView *subview in view.subviews) {
++    RCTScrollViewComponentView *scrollView = [self findRegisteredScrollViewInView:subview];
++    if (scrollView) {
++      return scrollView;
++    }
++  }
++
++  return nil;
++}
++
+ - (RCTScrollViewComponentView *)findScrollViewInSubviews:(NSArray<UIView *> *)subviews {
+   for (UIView *subview in subviews) {
+     if ([subview isKindOfClass:RCTScrollViewComponentView.class] && ![subview isKindOfClass:TrueSheetView.class]) {
+@@ -287,7 +347,7 @@ - (void)keyboardWillShow:(CGFloat)height duration:(NSTimeInterval)duration curve
                        options:curve | UIViewAnimationOptionBeginFromCurrentState
                     animations:^{
                       [self setScrollViewContentInset:height
@@ -589,7 +687,7 @@ index a5c43ed..ec6bb15 100644
                     }
                     completion:nil];
  
-@@ -360,7 +365,7 @@ - (void)keyboardWillHide:(NSTimeInterval)duration curve:(UIViewAnimationOptions)
+@@ -360,7 +420,7 @@ - (void)keyboardWillHide:(NSTimeInterval)duration curve:(UIViewAnimationOptions)
                        options:curve | UIViewAnimationOptionBeginFromCurrentState
                     animations:^{
                       [self setScrollViewContentInset:self->_bottomInset
@@ -721,3 +819,412 @@ index 247df7e..a4eacfe 100644
    scrollableOptions?: ScrollableOptionsType;
    footerOptions?: FooterOptionsType;
    presentation?: WithDefault<'page' | 'form', 'page'>;
+diff --git a/android/src/main/java/com/lodev09/truesheet/TrueSheetModule.kt b/android/src/main/java/com/lodev09/truesheet/TrueSheetModule.kt
+index 533f10d..fd92fac 100644
+--- a/android/src/main/java/com/lodev09/truesheet/TrueSheetModule.kt
++++ b/android/src/main/java/com/lodev09/truesheet/TrueSheetModule.kt
+@@ -150,6 +150,12 @@ class TrueSheetModule(reactContext: ReactApplicationContext) :
+     }
+   }
+ 
++  @ReactMethod
++  fun setScrollableViewByRef(viewTag: Double, scrollViewTag: Double, promise: Promise) {
++    // Explicit ScrollView binding is only needed on iOS. Keep Android behavior unchanged.
++    promise.resolve(null)
++  }
++
+   /**
+    * Helper method to get TrueSheetView by tag and execute closure
+    */
+diff --git a/ios/TrueSheetContainerView.h b/ios/TrueSheetContainerView.h
+index bd4d453..c510100 100644
+--- a/ios/TrueSheetContainerView.h
++++ b/ios/TrueSheetContainerView.h
+@@ -60,6 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
+  */
+ @property (nonatomic, strong, nullable) ScrollableOptions *scrollableOptions;
+ 
++/** React tag of the explicitly registered ScrollView, or -1 for automatic discovery. */
++@property (nonatomic, assign) NSInteger registeredScrollViewTag;
++
+ /**
+  * Returns the current content height
+  */
+@@ -102,6 +105,11 @@ NS_ASSUME_NONNULL_BEGIN
+  */
+ - (void)setupScrollable;
+ 
++/**
++ * Re-run layout for the explicitly registered ScrollView without changing its insets.
++ */
++- (void)refreshRegisteredScrollViewLayout;
++
+ /**
+  * Setup keyboard observer for content and footer
+  * @param viewController The sheet view controller to observe keyboard events for
+diff --git a/ios/TrueSheetContainerView.mm b/ios/TrueSheetContainerView.mm
+index 86dca5d..7c6c82a 100644
+--- a/ios/TrueSheetContainerView.mm
++++ b/ios/TrueSheetContainerView.mm
+@@ -75,6 +75,7 @@ - (instancetype)initWithFrame:(CGRect)frame {
+     _headerView = nil;
+     _footerView = nil;
+     _scrollableSet = NO;
++    _registeredScrollViewTag = -1;
+     self.isAccessibilityElement = NO;
+   }
+   return self;
+@@ -111,6 +112,11 @@ - (BOOL)hasAccessibilityFooterElements {
+ 
+ - (void)layoutSubviews {
+   [super layoutSubviews];
++  // Native stacks can mount their active screen after the explicit tag is registered.
++  // Retry discovery during layout until the requested ScrollView becomes available.
++  if (_registeredScrollViewTag >= 0) {
++    [self setupScrollable];
++  }
+   [_contentView updateScrollViewHeight];
+ }
+ 
+@@ -164,6 +170,11 @@ - (void)setScrollableOptions:(ScrollableOptions *)scrollableOptions {
+   _contentView.keyboardScrollOffset = scrollableOptions ? scrollableOptions.keyboardScrollOffset : 0;
+ }
+ 
++- (void)setRegisteredScrollViewTag:(NSInteger)registeredScrollViewTag {
++  _registeredScrollViewTag = registeredScrollViewTag;
++  _contentView.registeredScrollViewTag = registeredScrollViewTag;
++}
++
+ - (void)setupScrollable {
+   if (_scrollableSet && _contentView) {
+     CGFloat bottomInset = 0;
+@@ -178,6 +189,11 @@ - (void)setupScrollable {
+   }
+ }
+ 
++- (void)refreshRegisteredScrollViewLayout {
++  [self setupScrollable];
++  [_contentView refreshRegisteredScrollViewLayout];
++}
++
+ - (void)setupEdgeInteractions API_AVAILABLE(ios(26.0)) {
+   if (!_contentView) {
+     return;
+@@ -214,6 +230,7 @@ - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childCompone
+     }
+     _contentView = (TrueSheetContentView *)childComponentView;
+     _contentView.delegate = self;
++    _contentView.registeredScrollViewTag = _registeredScrollViewTag;
+ 
+     // Children mount bottom-up, so the content subtree is complete here.
+     // Late-mounted peek views attach themselves instead (see TrueSheetPeekView).
+diff --git a/ios/TrueSheetContentView.h b/ios/TrueSheetContentView.h
+index 45521c7..f91cd13 100644
+--- a/ios/TrueSheetContentView.h
++++ b/ios/TrueSheetContentView.h
+@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
+ @property (nonatomic, weak, nullable) id<TrueSheetContentViewDelegate> delegate;
+ @property (nonatomic, assign) CGFloat keyboardScrollOffset;
+ @property (nonatomic, weak, nullable) TrueSheetKeyboardObserver *keyboardObserver;
++/** React tag of the explicitly registered ScrollView, or -1 for automatic discovery. */
++@property (nonatomic, assign) NSInteger registeredScrollViewTag;
+ 
+ - (RCTScrollViewComponentView *_Nullable)findScrollView;
+ 
+@@ -47,6 +49,11 @@ NS_ASSUME_NONNULL_BEGIN
+  */
+ - (void)updateScrollViewHeight;
+ 
++/**
++ * Re-run layout for the explicitly registered ScrollView after its native stack transition.
++ */
++- (void)refreshRegisteredScrollViewLayout;
++
+ /**
+  * Apply scroll edge effects to the pinned scroll view (iOS 26+)
+  */
+diff --git a/ios/TrueSheetModule.mm b/ios/TrueSheetModule.mm
+index 3f2167f..791bda2 100644
+--- a/ios/TrueSheetModule.mm
++++ b/ios/TrueSheetModule.mm
+@@ -145,6 +145,23 @@ - (void)handleBackPress:(double)viewTag resolve:(RCTPromiseResolveBlock)resolve
+   resolve(nil);
+ }
+ 
++- (void)setScrollableViewByRef:(double)viewTag
++                 scrollViewTag:(double)scrollViewTag
++                       resolve:(RCTPromiseResolveBlock)resolve
++                        reject:(RCTPromiseRejectBlock)reject {
++  RCTExecuteOnMainQueue(^{
++    TrueSheetView *trueSheetView = [TrueSheetModule getTrueSheetViewByTag:@((NSInteger)viewTag)];
++
++    if (!trueSheetView) {
++      reject(@"SHEET_NOT_FOUND", [NSString stringWithFormat:@"No sheet found with tag %d", (int)viewTag], nil);
++      return;
++    }
++
++    [trueSheetView setRegisteredScrollViewTag:(NSInteger)scrollViewTag];
++    resolve(nil);
++  });
++}
++
+ - (void)dismissAll:(BOOL)animated resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+   RCTExecuteOnMainQueue(^{
+     @synchronized(viewRegistry) {
+diff --git a/ios/TrueSheetView.h b/ios/TrueSheetView.h
+index 53d2482..29d87ff 100644
+--- a/ios/TrueSheetView.h
++++ b/ios/TrueSheetView.h
+@@ -38,6 +38,9 @@ typedef void (^TrueSheetCompletionBlock)(BOOL success, NSError *_Nullable error)
+ 
+ - (void)dismissStackAnimated:(BOOL)animated completion:(nullable TrueSheetCompletionBlock)completion;
+ 
++/** Bind scrollable integration to a ScrollView React tag, or -1 for automatic discovery. */
++- (void)setRegisteredScrollViewTag:(NSInteger)scrollViewTag;
++
+ @end
+ 
+ NS_ASSUME_NONNULL_END
+diff --git a/ios/TrueSheetView.mm b/ios/TrueSheetView.mm
+index 2ce79bd..118a1d4 100644
+--- a/ios/TrueSheetView.mm
++++ b/ios/TrueSheetView.mm
+@@ -65,6 +65,7 @@ @implementation TrueSheetView {
+   BOOL _pendingPropsUpdate;
+   NSArray *_pendingDetents;
+   RNScreensEventObserver *_screensEventObserver;
++  NSInteger _registeredScrollViewTag;
+ }
+ 
+ #pragma mark - Initialization
+@@ -87,6 +88,7 @@ - (instancetype)initWithFrame:(CGRect)frame {
+     _initialDetentIndex = -1;
+     _initialDetentAnimated = YES;
+     _scrollable = NO;
++    _registeredScrollViewTag = -1;
+     _isSheetUpdatePending = NO;
+ 
+     _screensEventObserver = [[RNScreensEventObserver alloc] init];
+@@ -285,6 +287,19 @@ - (void)updateState:(const State::Shared &)state oldState:(const State::Shared &
+   }
+ }
+ 
++- (void)setRegisteredScrollViewTag:(NSInteger)scrollViewTag {
++  if (_registeredScrollViewTag == scrollViewTag) {
++    if (scrollViewTag >= 0) {
++      [_containerView refreshRegisteredScrollViewLayout];
++    }
++    return;
++  }
++
++  _registeredScrollViewTag = scrollViewTag;
++  _containerView.registeredScrollViewTag = scrollViewTag;
++  [self setupScrollable];
++}
++
+ /**
+  * Updates Fabric state with container dimensions for Yoga layout.
+  */
+@@ -374,6 +389,7 @@ - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childCompone
+ 
+   _containerView = (TrueSheetContainerView *)childComponentView;
+   _containerView.delegate = self;
++  _containerView.registeredScrollViewTag = _registeredScrollViewTag;
+ 
+   [_touchHandler attachToView:_containerView];
+   [_controller.view addSubview:_containerView];
+diff --git a/ios/tvos/TrueSheetStubs.mm b/ios/tvos/TrueSheetStubs.mm
+index 28bcc66..803d5fa 100644
+--- a/ios/tvos/TrueSheetStubs.mm
++++ b/ios/tvos/TrueSheetStubs.mm
+@@ -143,6 +143,13 @@ - (void)handleBackPress:(double)viewTag resolve:(RCTPromiseResolveBlock)resolve
+   resolve(nil);
+ }
+ 
++- (void)setScrollableViewByRef:(double)viewTag
++                 scrollViewTag:(double)scrollViewTag
++                       resolve:(RCTPromiseResolveBlock)resolve
++                        reject:(RCTPromiseRejectBlock)reject {
++  resolve(nil);
++}
++
+ - (void)dismissAll:(BOOL)animated resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+   resolve(nil);
+ }
+diff --git a/lib/module/TrueSheet.js b/lib/module/TrueSheet.js
+index 449b9a0..2292870 100644
+--- a/lib/module/TrueSheet.js
++++ b/lib/module/TrueSheet.js
+@@ -299,6 +299,17 @@ export class TrueSheet extends PureComponent {
+   async resize(index) {
+     await TrueSheetModule?.resizeByRef(this.handle, index);
+   }
++  /**
++   * Explicitly select the native ScrollView used by this sheet's scrollable integration.
++   * Passing null clears the registration and restores automatic discovery.
++   */
++  async setScrollableView(scrollView) {
++    const scrollViewTag = scrollView == null ? -1 : findNodeHandle(scrollView);
++    if (scrollView != null && (scrollViewTag == null || scrollViewTag === -1)) {
++      throw new Error('Could not get native ScrollView tag');
++    }
++    await TrueSheetModule?.setScrollableViewByRef(this.handle, scrollViewTag ?? -1);
++  }
+ 
+   /**
+    * Dismiss this sheet and all sheets presented on top of it in a single animation.
+@@ -468,4 +479,4 @@ const styles = StyleSheet.create({
+     right: 0
+   }
+ });
+-//# sourceMappingURL=TrueSheet.js.map
+\ No newline at end of file
++//# sourceMappingURL=TrueSheet.js.map
+diff --git a/lib/typescript/src/TrueSheet.d.ts b/lib/typescript/src/TrueSheet.d.ts
+index 3aa0625..899a7fe 100644
+--- a/lib/typescript/src/TrueSheet.d.ts
++++ b/lib/typescript/src/TrueSheet.d.ts
+@@ -1,4 +1,4 @@
+-import { PureComponent, type ReactNode } from 'react';
++import { PureComponent, type Component, type ReactNode } from 'react';
+ import type { TrueSheetProps, TrueSheetMethods } from './TrueSheet.types';
+ interface TrueSheetState {
+     shouldRenderNativeView: boolean;
+@@ -96,6 +96,11 @@ export declare class TrueSheet extends PureComponent<TrueSheetProps, TrueSheetSt
+      * @param index - The detent index to resize to
+      */
+     resize(index: number): Promise<void>;
++    /**
++     * Explicitly select the native ScrollView used by this sheet's scrollable integration.
++     * Passing null clears the registration and restores automatic discovery.
++     */
++    setScrollableView(scrollView: Component<any, any> | number | null): Promise<void>;
+     /**
+      * Dismiss this sheet and all sheets presented on top of it in a single animation.
+      * @param animated - Whether to animate the dismissal (default: true)
+@@ -113,4 +118,4 @@ export declare class TrueSheet extends PureComponent<TrueSheetProps, TrueSheetSt
+     render(): ReactNode;
+ }
+ export {};
+-//# sourceMappingURL=TrueSheet.d.ts.map
+\ No newline at end of file
++//# sourceMappingURL=TrueSheet.d.ts.map
+diff --git a/lib/typescript/src/TrueSheet.types.d.ts b/lib/typescript/src/TrueSheet.types.d.ts
+index 0319201..a951825 100644
+--- a/lib/typescript/src/TrueSheet.types.d.ts
++++ b/lib/typescript/src/TrueSheet.types.d.ts
+@@ -1,4 +1,4 @@
+-import type { ComponentType, ReactElement } from 'react';
++import type { Component, ComponentType, ReactElement } from 'react';
+ import type { ColorValue, NativeSyntheticEvent, StyleProp, ViewProps, ViewStyle } from 'react-native';
+ export interface DetentInfoEventPayload {
+     /**
+@@ -540,6 +540,11 @@ export interface TrueSheetMethods {
+      * @param animated - Whether to animate the dismissal (default: `true`). Ignored on web.
+      */
+     dismissStack(animated?: boolean): Promise<void>;
++    /**
++     * Explicitly selects the native ScrollView used by the sheet's scrollable integration.
++     * Pass `null` to restore automatic ScrollView discovery.
++     */
++    setScrollableView(scrollView: Component<any, any> | number | null): Promise<void>;
+ }
+ /**
+  * Static methods exposed on the `TrueSheet` component for controlling sheets by `name`.
+diff --git a/lib/typescript/src/specs/NativeTrueSheetModule.d.ts b/lib/typescript/src/specs/NativeTrueSheetModule.d.ts
+index 098f09c..32026a9 100644
+--- a/lib/typescript/src/specs/NativeTrueSheetModule.d.ts
++++ b/lib/typescript/src/specs/NativeTrueSheetModule.d.ts
+@@ -38,6 +38,11 @@ interface Spec extends TurboModule {
+      * @returns Promise that resolves when resize is complete
+      */
+     resizeByRef(viewTag: number, index: number): Promise<void>;
++    /**
++     * Explicitly bind the sheet's scrollable behavior to a native ScrollView tag.
++     * Pass -1 to clear the binding and restore automatic discovery.
++     */
++    setScrollableViewByRef(viewTag: number, scrollViewTag: number): Promise<void>;
+     /**
+      * Dismiss all presented sheets
+      * @param animated - Whether to animate the dismissals
+@@ -53,4 +58,4 @@ interface Spec extends TurboModule {
+ }
+ declare const _default: Spec | null;
+ export default _default;
+-//# sourceMappingURL=NativeTrueSheetModule.d.ts.map
+\ No newline at end of file
++//# sourceMappingURL=NativeTrueSheetModule.d.ts.map
+diff --git a/src/TrueSheet.tsx b/src/TrueSheet.tsx
+index 0a3e82f..ee7c25f 100644
+--- a/src/TrueSheet.tsx
++++ b/src/TrueSheet.tsx
+@@ -1,6 +1,7 @@
+ import {
+   PureComponent,
+   type RefObject,
++  type Component,
+   createRef,
+   type ReactNode,
+   type ComponentRef,
+@@ -401,6 +402,21 @@ export class TrueSheet
+     await TrueSheetModule?.resizeByRef(this.handle, index);
+   }
+ 
++  /**
++   * Explicitly select the native ScrollView used by this sheet's scrollable integration.
++   * Passing null clears the registration and restores automatic discovery.
++   */
++  public async setScrollableView(
++    scrollView: Component<any, any> | number | null
++  ): Promise<void> {
++    const scrollViewTag = scrollView == null ? -1 : findNodeHandle(scrollView);
++    if (scrollView != null && (scrollViewTag == null || scrollViewTag === -1)) {
++      throw new Error('Could not get native ScrollView tag');
++    }
++
++    await TrueSheetModule?.setScrollableViewByRef(this.handle, scrollViewTag ?? -1);
++  }
++
+   /**
+    * Dismiss this sheet and all sheets presented on top of it in a single animation.
+    * @param animated - Whether to animate the dismissal (default: true)
+diff --git a/src/TrueSheet.types.ts b/src/TrueSheet.types.ts
+index c46910e..70174d0 100644
+--- a/src/TrueSheet.types.ts
++++ b/src/TrueSheet.types.ts
+@@ -1,4 +1,4 @@
+-import type { ComponentType, ReactElement } from 'react';
++import type { Component, ComponentType, ReactElement } from 'react';
+ import type {
+   ColorValue,
+   NativeSyntheticEvent,
+@@ -632,6 +632,12 @@ export interface TrueSheetMethods {
+    * @param animated - Whether to animate the dismissal (default: `true`). Ignored on web.
+    */
+   dismissStack(animated?: boolean): Promise<void>;
++
++  /**
++   * Explicitly selects the native ScrollView used by the sheet's scrollable integration.
++   * Pass `null` to restore automatic ScrollView discovery.
++   */
++  setScrollableView(scrollView: Component<any, any> | number | null): Promise<void>;
+ }
+ 
+ /**
+diff --git a/src/specs/NativeTrueSheetModule.ts b/src/specs/NativeTrueSheetModule.ts
+index c3a5efb..a1ca216 100644
+--- a/src/specs/NativeTrueSheetModule.ts
++++ b/src/specs/NativeTrueSheetModule.ts
+@@ -45,6 +45,12 @@ interface Spec extends TurboModule {
+    */
+   resizeByRef(viewTag: number, index: number): Promise<void>;
+ 
++  /**
++   * Explicitly bind the sheet's scrollable behavior to a native ScrollView tag.
++   * Pass -1 to clear the binding and restore automatic discovery.
++   */
++  setScrollableViewByRef(viewTag: number, scrollViewTag: number): Promise<void>;
++
+   /**
+    * Dismiss all presented sheets
+    * @param animated - Whether to animate the dismissals

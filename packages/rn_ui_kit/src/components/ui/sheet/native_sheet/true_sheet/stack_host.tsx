@@ -30,6 +30,10 @@ import {
 import { createTrueSheetOverlayPortalHostName } from "./overlay_host_name";
 import { TrueSheetScrollLayoutProvider } from "./true_sheet_scroll_context";
 import { useTrueSheetOverlayLayoutSync } from "./use_true_sheet_overlay_layout_sync";
+import {
+  TrueSheetScrollableBindingProvider,
+  useTrueSheetScrollableBindingController,
+} from "./scrollable_binding_context";
 
 const platform = os();
 
@@ -83,6 +87,7 @@ function TrueSheetStackHostInner<ParamList extends ParamListBase = ParamListBase
   const overlayLayoutSync = useTrueSheetOverlayLayoutSync(sheetProps);
   const customSheetBackHandler = sheetProps?.onBackPress;
   const [presented, setPresented] = useState(false);
+  const scrollableBinding = useTrueSheetScrollableBindingController();
 
   const handleRequestClose = useCallback(() => {
     onRequestClose?.();
@@ -188,21 +193,24 @@ function TrueSheetStackHostInner<ParamList extends ParamListBase = ParamListBase
   );
 
   const sheetBody = (
-    <TrueSheetScrollLayoutProvider
-      automaticContentInsetAdjustment={Platform.OS === "ios"}
-      insetAdjustment={insetAdjustment}
-      nativeScrollInsetsApplied={false}
-    >
-      <GestureHandlerRootView style={[styles.gestureRoot, backgroundStyle]}>
-        <ScreenOverlayPortalProvider hostName={resolvedOverlayPortalHostName}>
-          {stackNavigation}
-        </ScreenOverlayPortalProvider>
-      </GestureHandlerRootView>
-    </TrueSheetScrollLayoutProvider>
+    <TrueSheetScrollableBindingProvider value={scrollableBinding.providerValue}>
+      <TrueSheetScrollLayoutProvider
+        automaticContentInsetAdjustment={Platform.OS === "ios"}
+        insetAdjustment={insetAdjustment}
+        nativeScrollInsetsApplied={false}
+      >
+        <GestureHandlerRootView style={[styles.gestureRoot, backgroundStyle]}>
+          <ScreenOverlayPortalProvider hostName={resolvedOverlayPortalHostName}>
+            {stackNavigation}
+          </ScreenOverlayPortalProvider>
+        </GestureHandlerRootView>
+      </TrueSheetScrollLayoutProvider>
+    </TrueSheetScrollableBindingProvider>
   );
 
   return (
     <TrueSheet
+      ref={scrollableBinding.setSheetRef}
       name={name}
       {...defaultSheetProps}
       {...resolvedSheetProps}

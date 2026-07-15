@@ -1,4 +1,4 @@
-import { type NavigationProp, useNavigation } from "@react-navigation/native";
+import { type NavigationProp, useIsFocused, useNavigation } from "@react-navigation/native";
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -65,6 +65,7 @@ export function RnUiKitComponentExampleDetailPage({
   layoutHost?: "default" | "nativeSheet";
 }) {
   const appBackgroundColors = useAppBackgroundColors();
+  const isFocused = useIsFocused();
   const ActiveExample = definition.Component;
 
   if (definition.layout === "fill") {
@@ -86,6 +87,7 @@ export function RnUiKitComponentExampleDetailPage({
   if (layoutHost === "nativeSheet") {
     return (
       <NativeSheetScrollContent
+        bindToNativeSheet={isFocused}
         nestedScrollEnabled
         showsVerticalScrollIndicator
         style={scrollStyle}

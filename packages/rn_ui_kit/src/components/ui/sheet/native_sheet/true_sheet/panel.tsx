@@ -22,6 +22,10 @@ import { TrueSheetToolbarHeader } from "./toolbar_header";
 import { TrueSheetScrollLayoutProvider } from "./true_sheet_scroll_context";
 import { useAndroidSheetBackHandler } from "./use_android_sheet_back_handler";
 import { useTrueSheetOverlayLayoutSync } from "./use_true_sheet_overlay_layout_sync";
+import {
+  TrueSheetScrollableBindingProvider,
+  useTrueSheetScrollableBindingController,
+} from "./scrollable_binding_context";
 
 const DEFAULT_NATIVE_GRABBER_TOP_MARGIN = 5;
 
@@ -81,6 +85,7 @@ function TrueSheetPanelInner({
   sheetProps,
 }: TrueSheetPanelProps) {
   const overlayLayoutSync = useTrueSheetOverlayLayoutSync(sheetProps);
+  const scrollableBinding = useTrueSheetScrollableBindingController();
   const [presented, setPresented] = useState(false);
   const showToolbar = chrome === "toolbar" && title != null;
   const grabber = resolveTrueSheetGrabber(chrome, grabberProp ?? sheetProps?.grabber);
@@ -154,29 +159,32 @@ function TrueSheetPanelInner({
   );
 
   const sheetBody = (
-    <TrueSheetScrollLayoutProvider
-      insetAdjustment={insetAdjustment}
-      nativeScrollInsetsApplied={shouldUseTrueSheetNativeScrollInsets(sheetScrollable)}
-    >
-      <GestureHandlerRootView
-        style={[
-          styles.gestureRoot,
-          backgroundStyle,
-          shouldReserveGrabberContentInset && {
-            paddingTop: resolvedGrabberContentInsetTop,
-          },
-          Platform.OS === "ios" && styles.gestureRootScrollSibling,
-        ]}
+    <TrueSheetScrollableBindingProvider value={scrollableBinding.providerValue}>
+      <TrueSheetScrollLayoutProvider
+        insetAdjustment={insetAdjustment}
+        nativeScrollInsetsApplied={shouldUseTrueSheetNativeScrollInsets(sheetScrollable)}
       >
-        {overlayBody}
-      </GestureHandlerRootView>
-    </TrueSheetScrollLayoutProvider>
+        <GestureHandlerRootView
+          style={[
+            styles.gestureRoot,
+            backgroundStyle,
+            shouldReserveGrabberContentInset && {
+              paddingTop: resolvedGrabberContentInsetTop,
+            },
+            Platform.OS === "ios" && styles.gestureRootScrollSibling,
+          ]}
+        >
+          {overlayBody}
+        </GestureHandlerRootView>
+      </TrueSheetScrollLayoutProvider>
+    </TrueSheetScrollableBindingProvider>
   );
 
   const mergedScrollable = sheetScrollable;
 
   return (
     <TrueSheet
+      ref={scrollableBinding.setSheetRef}
       backgroundColor={backgroundColor}
       header={resolvedHeader}
       name={name}
