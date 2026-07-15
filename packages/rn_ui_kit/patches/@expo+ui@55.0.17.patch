@@ -1,11 +1,27 @@
 # Expo UI 补丁说明:
+# - iOS 26+ SwiftUI Slider: 始终接受 JS `value` 更新，避免拖拽后 editing 状态阻断受控值同步。
 # - iOS 26: 当没有 label slot 时，改用不带标签的 Slider 初始化方式。
 # - RNHostView: 允许横向和纵向内容分别独立匹配。
 # - SwiftUI List: 补充 viewport clipping 补偿、content margins、初始滚动目标，以及原生 scroll indicator 自动 inset 开关。
 diff --git a/ios/SliderView.swift b/ios/SliderView.swift
-index 1ffa70e..5092712 100644
+index 1ffa70e..b538576 100644
 --- a/ios/SliderView.swift
 +++ b/ios/SliderView.swift
+@@ -17,8 +17,12 @@ struct SliderView: ExpoSwiftUI.View {
+         value = props.value ?? 0.0
+       }
+       .onChange(of: props.value) { newValue in
+-        guard !isEditing else { return }
+-        value = newValue ?? 0.0
++        if #available(iOS 26.0, *) {
++          value = newValue ?? 0.0
++        } else {
++          guard !isEditing else { return }
++          value = newValue ?? 0.0
++        }
+       }
+       .onChange(of: value) { newValue in
+         if props.value != newValue {
 @@ -40,51 +40,91 @@ struct SliderView: ExpoSwiftUI.View {
      let label = props.children?.slot("label")
      let minimumValueLabel = props.children?.slot("minimum")
