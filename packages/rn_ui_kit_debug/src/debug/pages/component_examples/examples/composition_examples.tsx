@@ -167,6 +167,7 @@ export const compositionExamples = [
   },
   {
     Component: SplitLayoutExample,
+    fullScreenBackGestureEnabled: false,
     group: "组合与布局",
     key: "split-view",
     label: "SplitView / SplitLayout",

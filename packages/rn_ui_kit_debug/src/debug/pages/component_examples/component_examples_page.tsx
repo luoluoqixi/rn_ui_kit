@@ -1,4 +1,6 @@
+import { HeaderHeightContext } from "@react-navigation/elements";
 import { type NavigationProp, useIsFocused, useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   NativeList,
@@ -69,12 +71,19 @@ export function RnUiKitComponentExampleDetailPage({
   layoutHost?: "default" | "nativeSheet";
 }) {
   const appBackgroundColors = useAppBackgroundColors();
+  const headerHeight = useContext(HeaderHeightContext) ?? 0;
   const isFocused = useIsFocused();
   const ActiveExample = definition.Component;
 
   if (definition.layout === "fill") {
     return (
-      <View style={[styles.detailBody, { backgroundColor: appBackgroundColors.screen }]}>
+      <View
+        style={[
+          styles.detailBody,
+          { backgroundColor: appBackgroundColors.screen },
+          headerTransparent && { paddingTop: headerHeight },
+        ]}
+      >
         <ActiveExample />
       </View>
     );

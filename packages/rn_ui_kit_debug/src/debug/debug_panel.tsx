@@ -129,6 +129,7 @@ function RnUiKitDebugPanelSheet({
   pages: RnUiKitDebugRouteDefinition[];
 }) {
   const debugSheetStackScreenOptions = useDebugSheetStackScreenOptions();
+  const headerTransparent = debugSheetStackScreenOptions.headerTransparent === true;
   const [openSectionsInSheet, setOpenSectionsInSheet] = useState(false);
   const [sectionSheetPosition, setSectionSheetPosition] = useState(0);
   const [openSectionSheets, setOpenSectionSheets] = useState<Set<RnUiKitDebugRouteKey>>(new Set());
@@ -190,10 +191,19 @@ function RnUiKitDebugPanelSheet({
           <NativeSheetStack.Screen
             key={getComponentExampleRouteName(definition.key)}
             name={getComponentExampleRouteName(definition.key)}
-            options={{ title: definition.label }}
+            options={{
+              title: definition.label,
+              ...(definition.fullScreenBackGestureEnabled === false
+                ? { fullScreenGestureEnabled: false }
+                : {}),
+            }}
           >
             {() => (
-              <RnUiKitComponentExampleDetailPage definition={definition} layoutHost="nativeSheet" />
+              <RnUiKitComponentExampleDetailPage
+                definition={definition}
+                headerTransparent={headerTransparent}
+                layoutHost="nativeSheet"
+              />
             )}
           </NativeSheetStack.Screen>
         ))}
@@ -270,7 +280,12 @@ function RnUiKitDebugPanelContent({
             <Stack.Screen
               key={getComponentExampleRouteName(definition.key)}
               name={getComponentExampleRouteName(definition.key)}
-              options={{ title: definition.label }}
+              options={{
+                title: definition.label,
+                ...(definition.fullScreenBackGestureEnabled === false
+                  ? { fullScreenGestureEnabled: false }
+                  : {}),
+              }}
             >
               {() => (
                 <RnUiKitComponentExampleDetailPage
@@ -356,6 +371,7 @@ function RnUiKitDebugSectionSheets({
   position: number;
 }) {
   const debugSheetStackScreenOptions = useDebugSheetStackScreenOptions();
+  const headerTransparent = debugSheetStackScreenOptions.headerTransparent === true;
   const closeSheet = (key: RnUiKitDebugRouteKey, nextOpen: boolean) => {
     if (!nextOpen) {
       const next = new Set(openKeys);
@@ -392,10 +408,19 @@ function RnUiKitDebugSectionSheets({
             <NativeSheetStack.Screen
               key={getComponentExampleRouteName(example.key)}
               name={getComponentExampleRouteName(example.key)}
-              options={{ title: example.label }}
+              options={{
+                title: example.label,
+                ...(example.fullScreenBackGestureEnabled === false
+                  ? { fullScreenGestureEnabled: false }
+                  : {}),
+              }}
             >
               {() => (
-                <RnUiKitComponentExampleDetailPage definition={example} layoutHost="nativeSheet" />
+                <RnUiKitComponentExampleDetailPage
+                  definition={example}
+                  headerTransparent={headerTransparent}
+                  layoutHost="nativeSheet"
+                />
               )}
             </NativeSheetStack.Screen>
           ))}
