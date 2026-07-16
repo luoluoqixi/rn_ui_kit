@@ -4,10 +4,28 @@
 # - RNHostView: 允许横向和纵向内容分别独立匹配。
 # - SwiftUI List: 补充 viewport clipping 补偿、content margins、初始滚动目标，以及原生 scroll indicator 自动 inset 开关。
 diff --git a/ios/SliderView.swift b/ios/SliderView.swift
-index 1ffa70e..b538576 100644
+index 1ffa70e..488c98b 100644
 --- a/ios/SliderView.swift
 +++ b/ios/SliderView.swift
-@@ -17,8 +17,12 @@ struct SliderView: ExpoSwiftUI.View {
+@@ -1,102 +1,146 @@
+ // Copyright 2025-present 650 Industries. All rights reserved.
+ 
+ import SwiftUI
+ import ExpoModulesCore
+ 
+ struct SliderView: ExpoSwiftUI.View {
+   @ObservedObject var props: SliderProps
+   @State var value: Float = 0.0
+   @State var isEditing: Bool = false
+   
+   init(props: SliderProps) {
+     self.props = props
+   }
+ 
+   var body: some View {
+ #if !os(tvOS)
+     sliderContent
+       .onAppear {
          value = props.value ?? 0.0
        }
        .onChange(of: props.value) { newValue in
@@ -22,7 +40,19 @@ index 1ffa70e..b538576 100644
        }
        .onChange(of: value) { newValue in
          if props.value != newValue {
-@@ -40,51 +40,91 @@ struct SliderView: ExpoSwiftUI.View {
+           props.onValueChanged([
+             "value": newValue
+           ])
+         }
+       }
+ #else
+     Text("Slider is not supported on tvOS")
+ #endif
+   }
+ 
+ #if !os(tvOS)
+   @ViewBuilder
+   private var sliderContent: some View {
      let label = props.children?.slot("label")
      let minimumValueLabel = props.children?.slot("minimum")
      let maximumValueLabel = props.children?.slot("maximum")
@@ -151,6 +181,18 @@ index 1ffa70e..b538576 100644
        }
      }
    }
+ #endif
+ }
+ 
+ final class SliderProps: UIBaseViewProps {
+   @Field var value: Float?
+   @Field var step: Float?
+   @Field var min: Float?
+   @Field var max: Float?
+   var onValueChanged = EventDispatcher()
+   var onEditingChanged = EventDispatcher()
+ }
+ 
 diff --git a/src/swift-ui/RNHostView.tsx b/src/swift-ui/RNHostView.tsx
 index 4e634d0..6a60b0e 100644
 --- a/src/swift-ui/RNHostView.tsx
