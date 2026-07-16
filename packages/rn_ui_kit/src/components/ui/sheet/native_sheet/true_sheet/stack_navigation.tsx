@@ -1,3 +1,4 @@
+import { getDefaultHeaderHeight } from "@react-navigation/elements";
 import {
   NavigationContainer,
   type NavigationContainerRef,
@@ -6,7 +7,7 @@ import {
   createNavigationContainerRef,
 } from "@react-navigation/native";
 import type { ReactNode, Ref } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 
 import { withNativeStackGestureOptions } from "../../../utils/navigation";
 
@@ -46,11 +47,25 @@ function TrueSheetStackNavigationInner({
   screenOptions,
 }: TrueSheetStackNavigationProps) {
   const ref = navigationRef as unknown as Ref<NavigationContainerRef<ParamListBase>>;
+  const layout = useWindowDimensions();
 
   if (trueSheetUsesNativeStackNavigator) {
-    const nativeScreenOptions = withNativeStackGestureOptions(
-      (screenOptions ?? {}) as NativeStackNavigationOptions,
-    );
+    const configuredScreenOptions = (screenOptions ?? {}) as NativeStackNavigationOptions;
+    const configuredGestureDistance = configuredScreenOptions.gestureResponseDistance ?? {};
+    // Keep the native header as a TrueSheet drag surface; full-screen back starts below it.
+    const defaultHeaderHeight = getDefaultHeaderHeight(layout, true, 0);
+    const configuredTop = configuredGestureDistance.top;
+    const fullScreenGestureTop =
+      configuredScreenOptions.headerShown === false
+        ? configuredTop
+        : Math.max(defaultHeaderHeight, configuredTop ?? 0);
+    const nativeScreenOptions = withNativeStackGestureOptions({
+      ...configuredScreenOptions,
+      gestureResponseDistance: {
+        ...configuredGestureDistance,
+        ...(fullScreenGestureTop == null ? {} : { top: fullScreenGestureTop }),
+      },
+    });
 
     return (
       <NavigationIndependentTree>

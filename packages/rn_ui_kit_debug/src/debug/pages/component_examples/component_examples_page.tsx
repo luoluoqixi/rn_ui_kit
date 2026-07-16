@@ -9,6 +9,7 @@ import {
   NativeSheetScrollContent,
   ScrollView,
   Text,
+  isIos26Plus,
   useAppBackgroundColors,
 } from "rn_ui_kit";
 
@@ -37,9 +38,13 @@ export function RnUiKitComponentExamplesDebugPage({
   const appBackgroundColors = useAppBackgroundColors();
   const navigation = useNavigation<NavigationProp<DebugPanelNavigationParamList>>();
   const adjustsForTransparentHeader = layoutHost === "default" && headerTransparent;
+  const pageBackgroundColor =
+    layoutHost === "nativeSheet" && isIos26Plus()
+      ? "transparent"
+      : appBackgroundColors.screen;
 
   return (
-    <View style={[styles.root, { backgroundColor: appBackgroundColors.screen }]}>
+    <View style={[styles.root, { backgroundColor: pageBackgroundColor }]}>
       {header != null ? <View style={styles.routeHeader}>{header}</View> : null}
       <NativeList
         automaticallyAdjustsScrollIndicatorInsets={
@@ -74,13 +79,17 @@ export function RnUiKitComponentExampleDetailPage({
   const headerHeight = useContext(HeaderHeightContext) ?? 0;
   const isFocused = useIsFocused();
   const ActiveExample = definition.Component;
+  const pageBackgroundColor =
+    layoutHost === "nativeSheet" && isIos26Plus()
+      ? "transparent"
+      : appBackgroundColors.screen;
 
   if (definition.layout === "fill") {
     return (
       <View
         style={[
           styles.detailBody,
-          { backgroundColor: appBackgroundColors.screen },
+          { backgroundColor: pageBackgroundColor },
           headerTransparent && { paddingTop: headerHeight },
         ]}
       >
@@ -90,13 +99,13 @@ export function RnUiKitComponentExampleDetailPage({
   }
 
   const contents = (
-    <View style={[styles.scrollContent, { backgroundColor: appBackgroundColors.screen }]}>
+    <View style={[styles.scrollContent, { backgroundColor: pageBackgroundColor }]}>
       <Text opacity={0.6}>{definition.description}</Text>
       <ActiveExample />
     </View>
   );
 
-  const scrollStyle = [styles.detailBody, { backgroundColor: appBackgroundColors.screen }];
+  const scrollStyle = [styles.detailBody, { backgroundColor: pageBackgroundColor }];
   if (layoutHost === "nativeSheet") {
     return (
       <NativeSheetScrollContent
