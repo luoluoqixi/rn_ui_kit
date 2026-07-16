@@ -13,6 +13,7 @@ import {
   nativeStackStatusBarOptions,
   useAppBackgroundColors,
   useColorSchemeSettings,
+  withNativeBackButton,
   withNativeStackGestureOptions,
 } from "rn_ui_kit";
 
@@ -238,7 +239,12 @@ function RnUiKitDebugPanelContent({
         <Stack.Navigator
           id="rn-ui-kit-debug-stack"
           initialRouteName="index"
-          screenOptions={debugStackScreenOptions}
+          screenOptions={({ navigation }) =>
+            withNativeBackButton(debugStackScreenOptions, {
+              label: "返回",
+              onPress: () => navigation.goBack(),
+            })
+          }
         >
           <Stack.Screen name="index" options={{ title: "rn_ui_kit" }}>
             {() => (
