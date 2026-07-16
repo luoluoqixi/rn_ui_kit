@@ -1,4 +1,10 @@
-export { NativeSheet, NativeSheetScrollContent, NativeSheetStack } from "./native_sheet";
+export {
+  NativeSheet,
+  NativeSheetFillContent,
+  NativeSheetScrollContent,
+  NativeSheetStack,
+} from "./native_sheet";
+export type { NativeSheetFillContentProps } from "./native_sheet";
 export type * from "./native_sheet";
 export { SheetProvider } from "./provider";
 

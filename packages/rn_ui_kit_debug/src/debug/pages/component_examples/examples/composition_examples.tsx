@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     minWidth: 0,
     padding: 16,
   },
-  splitRoot: { flex: 1, minHeight: 0 },
+  splitRoot: { flex: 1, minHeight: 0, paddingBottom: 48 },
   splitToolbar: {
     alignItems: "center",
     borderBottomColor: "rgba(128, 128, 128, 0.24)",

@@ -741,6 +741,10 @@ const SplitLayoutInner = forwardRef<SplitLayoutHandle, SplitLayoutProps>(
             const sashActive = activeSashIndex === index;
             const sashHovered = hoveredSashIndex === index;
             const sashLineActive = canDragSash && (sashActive || sashHovered);
+            const sashLineThickness = sashLineActive ? 3 : 1;
+            const sashLinePositionStyle = vertical
+              ? { top: (sashSize - sashLineThickness) / 2 }
+              : { left: (sashSize - sashLineThickness) / 2 };
 
             const sashKey = `${pane.key}-sash`;
             const sashView = (
@@ -784,6 +788,7 @@ const SplitLayoutInner = forwardRef<SplitLayoutHandle, SplitLayoutProps>(
                           }),
                     vertical && sashLineActive && styles.sashLineHorizontalActive,
                     !vertical && sashLineActive && styles.sashLineVerticalActive,
+                    sashLinePositionStyle,
                   ]}
                 />
                 {showMobileHandle ? (
@@ -990,21 +995,17 @@ const styles = StyleSheet.create({
     height: 1,
     left: 0,
     right: 0,
-    top: 4,
   },
   sashLineHorizontalActive: {
     height: 3,
-    top: 2,
   },
   sashLineVertical: {
     bottom: 0,
     borderLeftWidth: 0,
-    left: 4,
     top: 0,
     width: 0,
   },
   sashLineVerticalActive: {
-    left: 2,
     width: 3,
   },
   sashVertical: {

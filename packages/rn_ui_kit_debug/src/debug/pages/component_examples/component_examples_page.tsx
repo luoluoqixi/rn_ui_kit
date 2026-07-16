@@ -6,6 +6,7 @@ import {
   NativeList,
   NativeListNavigationItem,
   NativeListSection,
+  NativeSheetFillContent,
   NativeSheetScrollContent,
   ScrollView,
   Text,
@@ -85,14 +86,22 @@ export function RnUiKitComponentExampleDetailPage({
       : appBackgroundColors.screen;
 
   if (definition.layout === "fill") {
+    const fillBodyStyle = [
+      styles.detailBody,
+      { backgroundColor: pageBackgroundColor },
+      headerTransparent && { paddingTop: headerHeight },
+    ];
+
+    if (layoutHost === "nativeSheet") {
+      return (
+        <NativeSheetFillContent style={fillBodyStyle}>
+          <ActiveExample />
+        </NativeSheetFillContent>
+      );
+    }
+
     return (
-      <View
-        style={[
-          styles.detailBody,
-          { backgroundColor: pageBackgroundColor },
-          headerTransparent && { paddingTop: headerHeight },
-        ]}
-      >
+      <View style={fillBodyStyle}>
         <ActiveExample />
       </View>
     );
