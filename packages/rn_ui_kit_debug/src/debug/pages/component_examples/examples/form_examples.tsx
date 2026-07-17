@@ -10,6 +10,7 @@ import {
   Select,
   Text,
   TextArea,
+  Separator,
 } from "rn_ui_kit";
 
 import { ExampleBlock, ExampleStack } from "../shared";
@@ -365,6 +366,11 @@ function FormExample() {
     <ExampleStack>
       <ExampleBlock description="一个提交触发器管理多个受控字段。" title="创建工作区">
         <Form
+          triggerProps={{
+            style: {
+              marginTop: 10,
+            },
+          }}
           onSubmit={() => setSubmitCount((current) => current + 1)}
           trigger={<Button theme="accent">提交</Button>}
         >

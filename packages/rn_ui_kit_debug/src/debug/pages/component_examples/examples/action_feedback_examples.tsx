@@ -3,7 +3,6 @@ import {
   Button,
   Checkbox,
   Progress,
-  Separator,
   Slider,
   Spinner,
   Switch,
