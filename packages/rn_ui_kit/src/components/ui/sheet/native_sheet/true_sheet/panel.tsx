@@ -103,19 +103,21 @@ function TrueSheetPanelInner({
 
   const handleDidPresent = useCallback<NonNullable<TrueSheetProps["onDidPresent"]>>(
     (event) => {
+      scrollableBinding.setPresented(true);
       setPresented(true);
       overlayLayoutSync.onDidPresent(event);
     },
-    [overlayLayoutSync],
+    [overlayLayoutSync, scrollableBinding],
   );
 
   const handleDidDismiss = useCallback<NonNullable<TrueSheetProps["onDidDismiss"]>>(
     (event) => {
+      scrollableBinding.setPresented(false);
       setPresented(false);
       onDidDismiss?.();
       overlayLayoutSync.onDidDismiss(event);
     },
-    [onDidDismiss, overlayLayoutSync],
+    [onDidDismiss, overlayLayoutSync, scrollableBinding],
   );
 
   const toolbarHeader =

@@ -122,6 +122,7 @@ function TrueSheetStackHostInner<ParamList extends ParamListBase = ParamListBase
 
   const handleDidDismiss = useCallback<NonNullable<TrueSheetProps["onDidDismiss"]>>(
     (event) => {
+      scrollableBinding.setPresented(false);
       setPresented(false);
 
       if (navigationRef.isReady()) {
@@ -134,16 +135,17 @@ function TrueSheetStackHostInner<ParamList extends ParamListBase = ParamListBase
       onDidDismiss?.();
       overlayLayoutSync.onDidDismiss(event);
     },
-    [initialRouteName, navigationRef, onDidDismiss, overlayLayoutSync],
+    [initialRouteName, navigationRef, onDidDismiss, overlayLayoutSync, scrollableBinding],
   );
 
   const handleDidPresent = useCallback<NonNullable<TrueSheetProps["onDidPresent"]>>(
     (event) => {
+      scrollableBinding.setPresented(true);
       setPresented(true);
       onDidPresent?.();
       overlayLayoutSync.onDidPresent(event);
     },
-    [onDidPresent, overlayLayoutSync],
+    [onDidPresent, overlayLayoutSync, scrollableBinding],
   );
 
   const mergedScreenOptions: TrueSheetInnerStackScreenOptions = {

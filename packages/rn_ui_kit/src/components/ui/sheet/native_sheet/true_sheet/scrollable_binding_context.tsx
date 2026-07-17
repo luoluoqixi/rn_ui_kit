@@ -30,16 +30,25 @@ function applyScrollableView(sheet: TrueSheet | null, scrollView: ScrollView | n
 
 export function useTrueSheetScrollableBindingController(): {
   providerValue: TrueSheetScrollableBindingContextValue;
+  setPresented: (presented: boolean) => void;
   setSheetRef: (sheet: TrueSheet | null) => void;
 } {
   const sheetRef = useRef<TrueSheet | null>(null);
+  const presentedRef = useRef(false);
   const activeOwnerRef = useRef<ScrollableBindingOwner | null>(null);
   const scrollViewRef = useRef<ScrollView | null>(null);
 
   const setSheetRef = useCallback((sheet: TrueSheet | null) => {
     sheetRef.current = sheet;
-    if (sheet != null && activeOwnerRef.current != null) {
+    if (presentedRef.current && sheet != null && activeOwnerRef.current != null) {
       applyScrollableView(sheet, scrollViewRef.current);
+    }
+  }, []);
+
+  const setPresented = useCallback((presented: boolean) => {
+    presentedRef.current = presented;
+    if (presented && activeOwnerRef.current != null) {
+      applyScrollableView(sheetRef.current, scrollViewRef.current);
     }
   }, []);
 
@@ -48,7 +57,9 @@ export function useTrueSheetScrollableBindingController(): {
       if (scrollView != null) {
         activeOwnerRef.current = owner;
         scrollViewRef.current = scrollView;
-        applyScrollableView(sheetRef.current, scrollView);
+        if (presentedRef.current) {
+          applyScrollableView(sheetRef.current, scrollView);
+        }
         return;
       }
 
@@ -56,13 +67,21 @@ export function useTrueSheetScrollableBindingController(): {
       if (activeOwnerRef.current !== owner) return;
       activeOwnerRef.current = null;
       scrollViewRef.current = null;
-      applyScrollableView(sheetRef.current, null);
+      if (presentedRef.current) {
+        applyScrollableView(sheetRef.current, null);
+      }
     },
     [],
   );
 
   const refreshScrollableView = useCallback((owner: ScrollableBindingOwner) => {
-    if (activeOwnerRef.current !== owner || scrollViewRef.current == null) return;
+    if (
+      !presentedRef.current ||
+      activeOwnerRef.current !== owner ||
+      scrollViewRef.current == null
+    ) {
+      return;
+    }
     applyScrollableView(sheetRef.current, scrollViewRef.current);
   }, []);
 
@@ -71,7 +90,7 @@ export function useTrueSheetScrollableBindingController(): {
     [refreshScrollableView, registerScrollableView],
   );
 
-  return { providerValue, setSheetRef };
+  return { providerValue, setPresented, setSheetRef };
 }
 
 export function TrueSheetScrollableBindingProvider({
