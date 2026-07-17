@@ -103,7 +103,7 @@ function SeparatorExample() {
         <Text>下方内容</Text>
         <View style={styles.verticalSeparatorRow}>
           <Text>左侧</Text>
-          <Separator vertical />
+          <Separator height={24} vertical />
           <Text>右侧</Text>
         </View>
       </ExampleBlock>
