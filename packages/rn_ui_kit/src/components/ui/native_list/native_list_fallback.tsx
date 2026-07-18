@@ -95,13 +95,20 @@ function FallbackRowContainer({
   const defaultRowBackground = preferences.appearance.backgroundFollowsTheme
     ? (theme.color3?.val ?? appBackgroundColors.card)
     : appBackgroundColors.card;
+  // Read interactive colors while this component renders so Tamagui can track these
+  // theme tokens. Reading them only inside Pressable's render callback can retain the
+  // previous token values when "system" resolves to a different color scheme.
+  const pressedRowBackground =
+    theme.color4?.val ?? theme.backgroundPress?.val ?? theme.background?.val;
+  const hoveredRowBackground =
+    theme.color3?.val ?? theme.backgroundHover?.val ?? theme.background?.val;
 
   const getRowBackground = (pressed = false) => ({
     backgroundColor:
       pressed && !disabled
-        ? (theme.color4?.val ?? theme.backgroundPress?.val ?? theme.background?.val)
+        ? pressedRowBackground
         : hovered && !disabled
-          ? (theme.color3?.val ?? theme.backgroundHover?.val ?? theme.background?.val)
+          ? hoveredRowBackground
           : (backgroundColor ?? defaultRowBackground),
   });
 
