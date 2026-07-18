@@ -265,7 +265,11 @@ function ScrollViewExample() {
         title="独立滚动区域"
       >
         <View style={styles.scrollFrame}>
-          <ScrollView nestedScrollEnabled showsVerticalScrollIndicator>
+          <ScrollView
+            nestedScrollEnabled
+            showsVerticalScrollIndicator
+            style={styles.scrollView}
+          >
             {Array.from({ length: 20 }, (_, index) => (
               <View key={index} style={styles.listRow}>
                 <Text>ScrollView row {index + 1}</Text>
@@ -323,4 +327,5 @@ const styles = StyleSheet.create({
   },
   nativeListFrame: { height: 620, minHeight: 0 },
   scrollFrame: { height: 260, minHeight: 0 },
+  scrollView: { flex: 1 },
 });

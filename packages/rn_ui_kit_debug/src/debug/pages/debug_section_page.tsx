@@ -61,6 +61,7 @@ export function RnUiKitDebugSectionPage({
         }
         nestedScrollEnabled
         showsVerticalScrollIndicator
+        style={styles.staticScrollView}
       >
         <SectionPage
           header={header}
