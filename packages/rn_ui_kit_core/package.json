@@ -25,9 +25,11 @@
       "react-native": "./src/initialize/index.ts",
       "types": "./src/initialize/index.ts",
       "default": "./src/initialize/index.ts"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
+    "dist",
     "src",
     "patches",
     "scripts",
@@ -35,6 +37,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "build": "tsc -p tsconfig.build.json --pretty false",
     "typecheck": "tsc --noEmit --pretty false",
     "sync-patches": "bun scripts/sync-patches.mjs"
   },

@@ -36,7 +36,7 @@
 | TypeScript | 5.9.2 |
 | 包管理器 | Bun |
 
-`rn_ui_kit` 会安装并统一导出 core 与 debug；其中 core 将运行时框架和原生模块声明为
+`rn_ui_kit` 默认入口仅导出 core；debug API 需从 `rn_ui_kit/debug` 显式导入。其中 core 将运行时框架和原生模块声明为
 peer dependencies。接入已有应用时，请以
 [`packages/rn_ui_kit_core/package.json`](./packages/rn_ui_kit_core/package.json) 为准，并确保
 Expo、React Native、Tamagui 及原生模块版本兼容。
@@ -356,7 +356,7 @@ bun run sync-patches
 ```text
 rn_ui_kit/
 ├─ packages/
-│  ├─ rn_ui_kit/          # 对外聚合包，统一导出 core 与 debug
+│  ├─ rn_ui_kit/          # 对外聚合包，默认导出 core，并提供 debug 子路径
 │  ├─ rn_ui_kit_core/     # 核心组件、Provider、主题与平台适配
 │  └─ rn_ui_kit_debug/    # 组件目录、调试页面与示例界面
 ├─ examples/

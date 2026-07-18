@@ -41,7 +41,7 @@ The repository currently targets these major versions:
 | TypeScript | 5.9.2 |
 | Package manager | Bun |
 
-`rn_ui_kit` installs and re-exports both core and debug. Core declares its
+`rn_ui_kit` exports core from its default entry; debug APIs are opt-in through `rn_ui_kit/debug`. Core declares its
 runtime frameworks and native modules as peer dependencies. When adding the kit
 to an existing app, use
 [`packages/rn_ui_kit_core/package.json`](./packages/rn_ui_kit_core/package.json)

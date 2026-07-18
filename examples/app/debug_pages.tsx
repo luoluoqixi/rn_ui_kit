@@ -1,13 +1,15 @@
 import { useMemo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import {
+  RnUiKitUiComponentsDebugPage,
+  type RnUiKitDebugRouteDefinition,
+} from "rn_ui_kit/debug";
+import {
   NativeList,
   NativeListItem,
   NativeListSection,
   NativeListSelectItem,
   NativeListSwitchItem,
-  RnUiKitUiComponentsDebugPage,
-  type RnUiKitDebugRouteDefinition,
   type UiPreferences,
   isIos26Plus,
 } from "rn_ui_kit";

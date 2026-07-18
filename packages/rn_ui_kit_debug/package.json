@@ -24,6 +24,7 @@
     "typecheck": "tsc --noEmit --pretty false"
   },
   "peerDependencies": {
+    "@react-navigation/elements": "^2.9.26",
     "@react-navigation/native": "^7.3.4",
     "@react-navigation/native-stack": "^7.17.6",
     "@tamagui/lucide-icons-2": "=2.4.0",
@@ -35,6 +36,7 @@
     "rn_ui_kit_core": "workspace:*"
   },
   "devDependencies": {
+    "@react-navigation/elements": "^2.9.26",
     "@react-navigation/native": "^7.3.4",
     "@react-navigation/native-stack": "^7.17.6",
     "@tamagui/lucide-icons-2": "=2.4.0",
