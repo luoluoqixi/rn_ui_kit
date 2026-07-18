@@ -7,7 +7,7 @@
     "noEmit": true,
     "strict": true,
     "paths": {
-      "rn_ui_kit": ["../../packages/rn_ui_kit/src/index.ts"]
+      "rn-ui-kit": ["../../packages/rn-ui-kit/src/index.ts"]
     }
   },
   "include": [
@@ -18,8 +18,8 @@
     "tamagui.build.ts",
     "themes.ts",
     "*.js",
-    "../../packages/rn_ui_kit/src/**/*.ts",
-    "../../packages/rn_ui_kit/src/**/*.tsx",
+    "../../packages/rn-ui-kit/src/**/*.ts",
+    "../../packages/rn-ui-kit/src/**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "rn_ui_kit_workspace",
+  "name": "rn-ui-kit-workspace",
   "version": "1.0.1",
   "private": true,
   "workspaces": [
@@ -10,9 +10,9 @@
     "@babel/runtime": "7.29.7"
   },
   "scripts": {
-    "build": "bun --cwd packages/rn_ui_kit build",
+    "build": "bun --cwd packages/rn-ui-kit build",
     "package-release": "node scripts/package-release.js",
     "set-version": "node scripts/set-version.js",
-    "typecheck": "bun --cwd packages/rn_ui_kit typecheck && bun --cwd examples/app typecheck"
+    "typecheck": "bun --cwd packages/rn-ui-kit typecheck && bun --cwd examples/app typecheck"
   }
 }

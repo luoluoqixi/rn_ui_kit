@@ -7,7 +7,7 @@ const { resolve } = require("node:path");
 const projectRoot = resolve(__dirname, "..");
 const packageJsonPaths = [
   "package.json",
-  "packages/rn_ui_kit/package.json",
+  "packages/rn-ui-kit/package.json",
   "examples/app/package.json",
 ];
 const semverPattern =

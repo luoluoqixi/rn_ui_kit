@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import { type RnUiKitDebugRouteDefinition } from "rn_ui_kit/debug";
+import { type RnUiKitDebugRouteDefinition } from "rn-ui-kit/debug";
 import {
   NativeList,
   NativeListSection,
@@ -8,7 +8,7 @@ import {
   NativeListSwitchItem,
   type UiPreferences,
   isIos26Plus,
-} from "rn_ui_kit";
+} from "rn-ui-kit";
 
 import { accentThemeNames } from "./themes";
 

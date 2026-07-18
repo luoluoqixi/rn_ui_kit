@@ -1,10 +1,10 @@
-# rn_ui_kit 构建与发布分支说明
+# rn-ui-kit 构建与发布分支说明
 
 本工程使用“源码单包 + 编译产物发布分支”的发布方式。
 
-- 源码包：`packages/rn_ui_kit`
-- 发布包名：`rn_ui_kit`
-- 发布分支：`rn_ui_kit-<version>`
+- 源码包：`packages/rn-ui-kit`
+- 发布包名：`rn-ui-kit`
+- 发布分支：`rn-ui-kit-<version>`
 - 发布产物目录：`dist/`
 - 发布脚本：`scripts/package-release.js`
 - 构建脚本：`scripts/build-release-package.js`
@@ -22,13 +22,13 @@ bun run build
 该命令等价于：
 
 ```bash
-bun --cwd packages/rn_ui_kit build
+bun --cwd packages/rn-ui-kit build
 ```
 
-使用 `packages/rn_ui_kit/tsconfig.build.json` 编译源码，输出到：
+使用 `packages/rn-ui-kit/tsconfig.build.json` 编译源码，输出到：
 
 ```text
-packages/rn_ui_kit/dist/
+packages/rn-ui-kit/dist/
 ```
 
 执行完整类型检查：
@@ -48,7 +48,7 @@ bun run set-version 1.2.3
 该命令会更新：
 
 - 根 `package.json`
-- `packages/rn_ui_kit/package.json`
+- `packages/rn-ui-kit/package.json`
 - `examples/app/package.json`
 - `bun.lock`
 
@@ -74,7 +74,7 @@ bun run package-release --pack-only
 脚本读取：
 
 ```text
-packages/rn_ui_kit/package.json
+packages/rn-ui-kit/package.json
 ```
 
 并检查根 `package.json` 与包版本是否一致。
@@ -82,7 +82,7 @@ packages/rn_ui_kit/package.json
 假设当前版本为 `1.2.3`，发布名称为：
 
 ```text
-rn_ui_kit-1.2.3
+rn-ui-kit-1.2.3
 ```
 
 ### 3.2 创建干净的发布目录
@@ -90,7 +90,7 @@ rn_ui_kit-1.2.3
 脚本清理并重新创建：
 
 ```text
-dist/rn_ui_kit-1.2.3-package/
+dist/rn-ui-kit-1.2.3-package/
 ```
 
 只会修改 `dist` 下对应的发布目录，不会修改源码目录。
@@ -100,7 +100,7 @@ dist/rn_ui_kit-1.2.3-package/
 发布 manifest 基于：
 
 ```text
-packages/rn_ui_kit/package.json
+packages/rn-ui-kit/package.json
 ```
 
 生成。
@@ -128,11 +128,11 @@ packages/rn_ui_kit/package.json
 发布包提供以下 exports：
 
 ```text
-rn_ui_kit
-rn_ui_kit/core
-rn_ui_kit/debug
-rn_ui_kit/initialize
-rn_ui_kit/package.json
+rn-ui-kit
+rn-ui-kit/core
+rn-ui-kit/debug
+rn-ui-kit/initialize
+rn-ui-kit/package.json
 ```
 
 发布 manifest 会：
@@ -151,13 +151,13 @@ rn_ui_kit/package.json
 构建器直接编译：
 
 ```text
-packages/rn_ui_kit/src/
+packages/rn-ui-kit/src/
 ```
 
 输出到：
 
 ```text
-dist/rn_ui_kit-1.2.3-package/dist/
+dist/rn-ui-kit-1.2.3-package/dist/
 ```
 
 主要入口包括：
@@ -199,7 +199,7 @@ patches/
 scripts/
 ```
 
-其中 `scripts/` 来自 `packages/rn_ui_kit/scripts/`，主要用于提供 `rn-ui-sync-patches` 命令。
+其中 `scripts/` 来自 `packages/rn-ui-kit/scripts/`，主要用于提供 `rn-ui-sync-patches` 命令。
 
 ### 3.6 生成 tarball
 
@@ -212,7 +212,7 @@ npm pack --ignore-scripts
 最终生成：
 
 ```text
-dist/rn_ui_kit-1.2.3.tgz
+dist/rn-ui-kit-1.2.3.tgz
 ```
 
 `--pack-only` 到这里结束，不会：
@@ -239,7 +239,7 @@ bun run package-release
 临时仓库位于：
 
 ```text
-dist/rn_ui_kit-1.2.3/
+dist/rn-ui-kit-1.2.3/
 ```
 
 临时仓库用于生成 release commit，不会切换当前源码仓库的分支。
@@ -249,7 +249,7 @@ dist/rn_ui_kit-1.2.3/
 脚本检查本地及远端是否已经存在：
 
 ```text
-rn_ui_kit-1.2.3
+rn-ui-kit-1.2.3
 ```
 
 首次发布该版本时，会创建 orphan 分支。
@@ -261,7 +261,7 @@ rn_ui_kit-1.2.3
 脚本清空临时发布分支的工作区，解压：
 
 ```text
-dist/rn_ui_kit-1.2.3.tgz
+dist/rn-ui-kit-1.2.3.tgz
 ```
 
 然后把 tarball 中 `package/` 目录的内容复制到发布分支根目录。
@@ -292,7 +292,7 @@ TypeScript 源码
 存在产物变化时，提交信息为：
 
 ```text
-chore(release): rn_ui_kit-1.2.3
+release: rn-ui-kit-1.2.3
 ```
 
 ### 4.5 更新当前仓库的本地发布分支
@@ -300,7 +300,7 @@ chore(release): rn_ui_kit-1.2.3
 临时仓库提交完成后，脚本将其写回当前仓库的本地分支：
 
 ```text
-rn_ui_kit-1.2.3
+rn-ui-kit-1.2.3
 ```
 
 当前源码分支保持不变，不会自动 checkout 发布分支。
@@ -310,7 +310,7 @@ rn_ui_kit-1.2.3
 `package-release` 不会自动 push，只会输出提示命令：
 
 ```bash
-git push -u origin rn_ui_kit-1.2.3
+git push -u origin rn-ui-kit-1.2.3
 ```
 
 确认产物后手动执行该命令。
@@ -325,20 +325,20 @@ git push origin v1.2.3
 ```
 
 - `v1.2.3` tag 指向源码版本
-- `rn_ui_kit-1.2.3` 分支保存编译后的可安装产物
+- `rn-ui-kit-1.2.3` 分支保存编译后的可安装产物
 
 ## 6. 外部 App 安装
 
 发布分支推送后，可以使用：
 
 ```bash
-bun add github:luoluoqixi/rn_ui_kit#rn_ui_kit-1.2.3
+bun add github:luoluoqixi/rn-ui-kit#rn-ui-kit-1.2.3
 ```
 
 私有仓库可以使用 SSH：
 
 ```bash
-bun add "git+ssh://git@github.com/luoluoqixi/rn_ui_kit.git#rn_ui_kit-1.2.3"
+bun add "git+ssh://git@github.com/luoluoqixi/rn-ui-kit.git#rn-ui-kit-1.2.3"
 ```
 
 外部 App 下载的是发布分支根目录，不需要：
@@ -362,7 +362,7 @@ git commit -m "chore(release): v1.2.3"
 
 bun run package-release --pack-only
 bun run package-release
-git push -u origin rn_ui_kit-1.2.3
+git push -u origin rn-ui-kit-1.2.3
 
 git tag -a v1.2.3 -m "v1.2.3"
 git push origin v1.2.3
@@ -372,7 +372,7 @@ git push origin v1.2.3
 
 ```bash
 bun run package-release
-git push -u origin rn_ui_kit-1.2.3
+git push -u origin rn-ui-kit-1.2.3
 ```
 
 ## 8. 命令职责对照
@@ -384,6 +384,6 @@ git push -u origin rn_ui_kit-1.2.3
 | `bun run set-version 1.2.3` | 修改工程版本并同步 `bun.lock` |
 | `bun run package-release --pack-only` | 生成发布目录和 tgz，不操作 Git 分支 |
 | `bun run package-release` | 生成发布目录、tgz 和本地发布分支 |
-| `git push -u origin rn_ui_kit-1.2.3` | 将发布分支推送到 GitHub |
+| `git push -u origin rn-ui-kit-1.2.3` | 将发布分支推送到 GitHub |
 | `git tag -a v1.2.3 -m "v1.2.3"` | 为源码 commit 创建版本 tag |
 | `git push origin v1.2.3` | 将源码 tag 推送到 GitHub |

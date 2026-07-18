@@ -1,16 +1,16 @@
-import "rn_ui_kit/initialize";
+import "rn-ui-kit/initialize";
 
 import "./tamagui.generated.css";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AppStatusBar, RootProvider, type UiPreferences, useColorSchemeSettings } from "rn_ui_kit";
-import { RnUiKitDebugPanel } from "rn_ui_kit/debug";
+import { AppStatusBar, RootProvider, type UiPreferences, useColorSchemeSettings } from "rn-ui-kit";
+import { RnUiKitDebugPanel } from "rn-ui-kit/debug";
 import { useEffect, useMemo, useState } from "react";
 
 import config from "./tamagui.config";
 import { accentThemeNames } from "./themes";
 import { createAppDebugPages } from "./debug_pages";
 
-const PREFERENCES_STORAGE_KEY = "rn_ui_kit_example.preferences.v1";
+const PREFERENCES_STORAGE_KEY = "rn-ui-kit_example.preferences.v1";
 const defaultPreferences = {
   appearance: {
     accentColor: "ocean",
@@ -83,7 +83,7 @@ export default function App() {
         if (active) setPreferencesLoaded(true);
       });
 
-    console.log("rn_ui_kit inited.");
+    console.log("rn-ui-kit inited.");
 
     return () => {
       active = false;

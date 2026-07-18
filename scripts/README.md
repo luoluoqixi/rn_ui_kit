@@ -11,5 +11,5 @@ git push origin v1.2.3
 
 bun run package-release --pack-only
 bun run package-release
-git push -u origin rn_ui_kit-1.2.3
+git push -u origin rn-ui-kit-1.2.3
 ```

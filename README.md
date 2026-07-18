@@ -1,10 +1,10 @@
-# rn_ui_kit
+# rn-ui-kit
 
 [中文](./README.md) · [English](./README_EN.md)
 
 [在线示例 (web)](https://rn-ui-kit.luoluoqixi.com/)
 
-面向 Expo、React Native 与 React Native Web 的跨平台 UI 封装库。`rn_ui_kit`
+面向 Expo、React Native 与 React Native Web 的跨平台 UI 封装库。`rn-ui-kit`
 以 Tamagui 为基础，在同一套 API 下组合 Web 实现、React Native 实现与平台原生能力，
 并提供主题、弹层、手势、安全区、Toast 和导航辅助能力。
 
@@ -36,9 +36,9 @@
 | TypeScript | 5.9.2 |
 | 包管理器 | Bun |
 
-`rn_ui_kit` 现在是单一 package：默认入口仅导出 core，debug API 需从
-`rn_ui_kit/debug` 显式导入。运行时框架和原生模块统一声明在
-[`packages/rn_ui_kit/package.json`](./packages/rn_ui_kit/package.json) 的
+`rn-ui-kit` 现在是单一 package：默认入口仅导出 core，debug API 需从
+`rn-ui-kit/debug` 显式导入。运行时框架和原生模块统一声明在
+[`packages/rn-ui-kit/package.json`](./packages/rn-ui-kit/package.json) 的
 `peerDependencies` 中。接入已有应用时，请以该文件为准，并确保 Expo、React Native、
 Tamagui 及原生模块版本兼容。
 
@@ -69,35 +69,35 @@ Android 与 iOS 命令需要本机已配置相应的原生开发环境；Web 示
 ```json
 {
   "dependencies": {
-    "rn_ui_kit": "workspace:*"
+    "rn-ui-kit": "workspace:*"
   }
 }
 ```
 
 ### 在外部项目中接入
 
-本仓库使用 `rn_ui_kit-<version>` 分支保存编译后的独立发布包。发布分支不包含
+本仓库使用 `rn-ui-kit-<version>` 分支保存编译后的独立发布包。发布分支不包含
 workspace，也不要求外部 App 编译 TypeScript。推送发布分支后可以直接安装：
 
 ```bash
-bun add github:luoluoqixi/rn_ui_kit#rn_ui_kit-1.0.1
+bun add github:luoluoqixi/rn-ui-kit#rn-ui-kit-<version>
 ```
 
 私有仓库可以使用 SSH：
 
 ```bash
-bun add "git+ssh://git@github.com/luoluoqixi/rn_ui_kit.git#rn_ui_kit-1.0.1"
+bun add "git+ssh://git@github.com/luoluoqixi/rn-ui-kit.git#rn-ui-kit-<version>"
 ```
 
 外部项目仍需满足
-[`peerDependencies`](./packages/rn_ui_kit/package.json) 中声明的 Expo、React Native、
+[`peerDependencies`](./packages/rn-ui-kit/package.json) 中声明的 Expo、React Native、
 Tamagui 和原生模块版本。
 
 ## 屏幕截图
 
 | Android | iOS 18 | iOS 26 |
 | :---: | :---: | :---: |
-| <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/android/001.jpg" alt="rn_ui_kit 在 Android 上的示例首页" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios18/001.jpg" alt="rn_ui_kit 在 iOS 18 上的示例首页" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios26/001.jpg" alt="rn_ui_kit 在 iOS 26 上的示例首页" width="280"></a> |
+| <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/android/001.jpg" alt="rn-ui-kit 在 Android 上的示例首页" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios18/001.jpg" alt="rn-ui-kit 在 iOS 18 上的示例首页" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios26/001.jpg" alt="rn-ui-kit 在 iOS 26 上的示例首页" width="280"></a> |
 
 <p align="center">
   <a href="./docs/SCREENSHOTS.md">查看 Android、iOS 18 与 iOS 26 完整截图对比</a>
@@ -110,7 +110,7 @@ Tamagui 和原生模块版本。
 在应用入口的其他 UI 导入之前加载初始化模块：
 
 ```tsx
-import "rn_ui_kit/initialize";
+import "rn-ui-kit/initialize";
 ```
 
 它会初始化 Tamagui 所需的手势、Zeego 菜单、原生 Toast、渐变、键盘控制、
@@ -150,9 +150,9 @@ declare module "tamagui" {
 ### 3. 添加根 Provider
 
 ```tsx
-import "rn_ui_kit/initialize";
+import "rn-ui-kit/initialize";
 
-import { Button, RootProvider, Text } from "rn_ui_kit";
+import { Button, RootProvider, Text } from "rn-ui-kit";
 import { YStack } from "tamagui";
 
 import config from "./tamagui.config";
@@ -172,7 +172,7 @@ export default function App() {
       }}
     >
       <YStack flex={1} items="center" justify="center" gap="$4">
-        <Text>你好，rn_ui_kit</Text>
+        <Text>你好，rn-ui-kit</Text>
         <Button onPress={() => console.log("pressed")}>开始使用</Button>
       </YStack>
     </RootProvider>
@@ -212,7 +212,7 @@ bun --cwd examples/app generate:tamagui
 ### Toast
 
 ```tsx
-import { Button, useToast } from "rn_ui_kit";
+import { Button, useToast } from "rn-ui-kit";
 
 export function SaveButton() {
   const { toast } = useToast();
@@ -234,7 +234,7 @@ export function SaveButton() {
 ### Dialog
 
 ```tsx
-import { Button, Dialog, Text } from "rn_ui_kit";
+import { Button, Dialog, Text } from "rn-ui-kit";
 
 export function ConfirmDialog() {
   return (
@@ -268,7 +268,7 @@ import {
   NativeListSection,
   NativeListSelectItem,
   NativeListSwitchItem,
-} from "rn_ui_kit";
+} from "rn-ui-kit";
 
 export function SettingsList() {
   const [autoSync, setAutoSync] = useState(true);
@@ -317,7 +317,7 @@ export function SettingsList() {
 - `initialScrollTarget` 与行上的 `nativeScrollId` 可用于 iOS 原生列表的初始滚动定位。
 
 完整交互示例见
-[`collection_examples.tsx`](./packages/rn_ui_kit/src/debug/pages/component_examples/examples/collection_examples.tsx)。
+[`collection_examples.tsx`](./packages/rn-ui-kit/src/debug/pages/component_examples/examples/collection_examples.tsx)。
 
 ## 组件
 
@@ -332,7 +332,7 @@ export function SettingsList() {
 | 基础设施 | `RootProvider`、`UIProvider`、主题工具、导航工具、Portal 与平台工具 |
 
 所有公开导出可在
-[`packages/rn_ui_kit/src/core/components/ui/index.ts`](./packages/rn_ui_kit/src/core/components/ui/index.ts)
+[`packages/rn-ui-kit/src/core/components/ui/index.ts`](./packages/rn-ui-kit/src/core/components/ui/index.ts)
 中查看。各组件目录同时导出 Props 类型。
 
 ## 补丁同步
@@ -370,15 +370,15 @@ bun run sync-patches
 ## 项目结构
 
 ```text
-rn_ui_kit/
+rn-ui-kit/
 ├─ packages/
-│  └─ rn_ui_kit/          # 唯一的对外 package
+│  └─ rn-ui-kit/          # 唯一的对外 package
 │     ├─ src/
 │     │  ├─ core/         # 核心组件、Provider、主题与平台适配
 │     │  ├─ debug/        # 组件目录、调试页面与示例界面
 │     │  ├─ index.ts      # 默认入口，仅导出 core
-│     │  ├─ debug.ts      # rn_ui_kit/debug 子路径
-│     │  └─ initialize.ts # rn_ui_kit/initialize 子路径
+│     │  ├─ debug.ts      # rn-ui-kit/debug 子路径
+│     │  └─ initialize.ts # rn-ui-kit/initialize 子路径
 │     ├─ patches/         # 需要同步到 App 的上游补丁
 │     └─ scripts/         # rn-ui-sync-patches
 ├─ examples/
@@ -394,20 +394,20 @@ rn_ui_kit/
 ## 开发
 
 ```bash
-# 编译 rn_ui_kit 到 packages/rn_ui_kit/dist
+# 编译 rn-ui-kit 到 packages/rn-ui-kit/dist
 bun run build
 
 # 检查 package 和示例 App
 bun run typecheck
 
-# 仅检查 rn_ui_kit
-bun --cwd packages/rn_ui_kit typecheck
+# 仅检查 rn-ui-kit
+bun --cwd packages/rn-ui-kit typecheck
 
 # 仅检查示例应用
 bun --cwd examples/app typecheck
 ```
 
-新增或修改组件时，建议同时在 `packages/rn_ui_kit/src/debug` 的组件目录中添加示例，
+新增或修改组件时，建议同时在 `packages/rn-ui-kit/src/debug` 的组件目录中添加示例，
 以便在 iOS、Android 和 Web 上核对交互与视觉表现。
 
 ## 构建与发布
@@ -419,17 +419,17 @@ bun run set-version 1.0.1
 # 只生成发布目录和 tarball
 bun run package-release --pack-only
 
-# 生成发布目录、tarball 和本地 rn_ui_kit-1.0.1 分支
+# 生成发布目录、tarball 和本地 rn-ui-kit-1.0.1 分支
 bun run package-release
 
 # 确认后推送发布分支
-git push -u origin rn_ui_kit-1.0.1
+git push -u origin rn-ui-kit-1.0.1
 ```
 
-发布阶段直接编译单一的 `packages/rn_ui_kit`，不会动态合并 package。发布分支根目录只包含
+发布阶段直接编译单一的 `packages/rn-ui-kit`，不会动态合并 package。发布分支根目录只包含
 编译后的 `dist`、package.json、README、LICENSE、patches 和运行时脚本。完整说明见
 [`scripts/package-release.md`](./scripts/package-release.md)。
 
 ## License
 
-[MIT](./packages/rn_ui_kit/LICENSE) © 2026 luoluoqixi
+[MIT](./packages/rn-ui-kit/LICENSE) © 2026 luoluoqixi

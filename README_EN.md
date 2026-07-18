@@ -1,11 +1,11 @@
-# rn_ui_kit
+# rn-ui-kit
 
 [中文](./README.md) · [English](./README_EN.md)
 
 [Live demo (web)](https://rn-ui-kit.luoluoqixi.com/)
 
 A cross-platform UI wrapper kit for Expo, React Native, and React Native Web.
-Built on Tamagui, `rn_ui_kit` exposes a shared API over web implementations,
+Built on Tamagui, `rn-ui-kit` exposes a shared API over web implementations,
 React Native implementations, and native platform capabilities. It also provides
 theming, overlays, gestures, safe-area handling, toasts, and navigation helpers.
 
@@ -41,10 +41,10 @@ The repository currently targets these major versions:
 | TypeScript | 5.9.2 |
 | Package manager | Bun |
 
-`rn_ui_kit` is now a single package. Its default entry exports only core APIs,
-while debug APIs are opt-in through `rn_ui_kit/debug`. Runtime frameworks and
+`rn-ui-kit` is now a single package. Its default entry exports only core APIs,
+while debug APIs are opt-in through `rn-ui-kit/debug`. Runtime frameworks and
 native modules are declared in
-[`packages/rn_ui_kit/package.json`](./packages/rn_ui_kit/package.json) under
+[`packages/rn-ui-kit/package.json`](./packages/rn-ui-kit/package.json) under
 `peerDependencies`. Use that file as the source of truth and keep Expo, React
 Native, Tamagui, and native module versions compatible.
 
@@ -76,36 +76,36 @@ aggregate package through `workspace:*`:
 ```json
 {
   "dependencies": {
-    "rn_ui_kit": "workspace:*"
+    "rn-ui-kit": "workspace:*"
   }
 }
 ```
 
 ### Add the package to an external app
 
-Compiled standalone packages are stored in `rn_ui_kit-<version>` release
+Compiled standalone packages are stored in `rn-ui-kit-<version>` release
 branches. These branches contain no workspace and do not require the consuming
 app to compile TypeScript:
 
 ```bash
-bun add github:luoluoqixi/rn_ui_kit#rn_ui_kit-1.0.1
+bun add github:luoluoqixi/rn-ui-kit#rn-ui-kit-<version>
 ```
 
 For a private repository, use SSH:
 
 ```bash
-bun add "git+ssh://git@github.com/luoluoqixi/rn_ui_kit.git#rn_ui_kit-1.0.1"
+bun add "git+ssh://git@github.com/luoluoqixi/rn-ui-kit.git#rn-ui-kit-<version>"
 ```
 
 The consuming app must still satisfy the
-[`peerDependencies`](./packages/rn_ui_kit/package.json) for Expo, React Native,
+[`peerDependencies`](./packages/rn-ui-kit/package.json) for Expo, React Native,
 Tamagui, and the required native modules.
 
 ## Screenshots
 
 | Android | iOS 18 | iOS 26 |
 | :---: | :---: | :---: |
-| <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/android/001.jpg" alt="rn_ui_kit example home screen on Android" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios18/001.jpg" alt="rn_ui_kit example home screen on iOS 18" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios26/001.jpg" alt="rn_ui_kit example home screen on iOS 26" width="280"></a> |
+| <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/android/001.jpg" alt="rn-ui-kit example home screen on Android" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios18/001.jpg" alt="rn-ui-kit example home screen on iOS 18" width="280"></a> | <a href="./docs/SCREENSHOTS.md"><img src="./docs/screenshots/ios26/001.jpg" alt="rn-ui-kit example home screen on iOS 26" width="280"></a> |
 
 <p align="center">
   <a href="./docs/SCREENSHOTS.md">View the complete Android, iOS 18, and iOS 26 screenshot comparison</a>
@@ -118,7 +118,7 @@ Tamagui, and the required native modules.
 Load the initialization module before other UI imports in the app entry point:
 
 ```tsx
-import "rn_ui_kit/initialize";
+import "rn-ui-kit/initialize";
 ```
 
 This initializes the Tamagui integrations for gestures, Zeego menus, native
@@ -158,9 +158,9 @@ See the example
 ### 3. Add the root provider
 
 ```tsx
-import "rn_ui_kit/initialize";
+import "rn-ui-kit/initialize";
 
-import { Button, RootProvider, Text } from "rn_ui_kit";
+import { Button, RootProvider, Text } from "rn-ui-kit";
 import { YStack } from "tamagui";
 
 import config from "./tamagui.config";
@@ -180,7 +180,7 @@ export default function App() {
       }}
     >
       <YStack flex={1} items="center" justify="center" gap="$4">
-        <Text>Hello, rn_ui_kit</Text>
+        <Text>Hello, rn-ui-kit</Text>
         <Button onPress={() => console.log("pressed")}>Get started</Button>
       </YStack>
     </RootProvider>
@@ -221,7 +221,7 @@ bun --cwd examples/app generate:tamagui
 ### Toast
 
 ```tsx
-import { Button, useToast } from "rn_ui_kit";
+import { Button, useToast } from "rn-ui-kit";
 
 export function SaveButton() {
   const { toast } = useToast();
@@ -243,7 +243,7 @@ export function SaveButton() {
 ### Dialog
 
 ```tsx
-import { Button, Dialog, Text } from "rn_ui_kit";
+import { Button, Dialog, Text } from "rn-ui-kit";
 
 export function ConfirmDialog() {
   return (
@@ -279,7 +279,7 @@ import {
   NativeListSection,
   NativeListSelectItem,
   NativeListSwitchItem,
-} from "rn_ui_kit";
+} from "rn-ui-kit";
 
 export function SettingsList() {
   const [autoSync, setAutoSync] = useState(true);
@@ -333,7 +333,7 @@ Notes:
   positioning in the native iOS list.
 
 See
-[`collection_examples.tsx`](./packages/rn_ui_kit/src/debug/pages/component_examples/examples/collection_examples.tsx)
+[`collection_examples.tsx`](./packages/rn-ui-kit/src/debug/pages/component_examples/examples/collection_examples.tsx)
 for a complete interactive example.
 
 ## Components
@@ -349,7 +349,7 @@ for a complete interactive example.
 | Infrastructure | `RootProvider`, `UIProvider`, theme helpers, navigation helpers, portals, and platform utilities |
 
 All public exports are listed in
-[`packages/rn_ui_kit/src/core/components/ui/index.ts`](./packages/rn_ui_kit/src/core/components/ui/index.ts).
+[`packages/rn-ui-kit/src/core/components/ui/index.ts`](./packages/rn-ui-kit/src/core/components/ui/index.ts).
 Each component directory also exports its prop types.
 
 ## Patch synchronization
@@ -388,15 +388,15 @@ Excluded dependencies are neither copied nor registered.
 ## Repository structure
 
 ```text
-rn_ui_kit/
+rn-ui-kit/
 ├─ packages/
-│  └─ rn_ui_kit/          # The single public package
+│  └─ rn-ui-kit/          # The single public package
 │     ├─ src/
 │     │  ├─ core/         # Components, providers, themes, and platform adapters
 │     │  ├─ debug/        # Component catalog, debug pages, and examples
 │     │  ├─ index.ts      # Default entry; exports core only
-│     │  ├─ debug.ts      # rn_ui_kit/debug subpath
-│     │  └─ initialize.ts # rn_ui_kit/initialize subpath
+│     │  ├─ debug.ts      # rn-ui-kit/debug subpath
+│     │  └─ initialize.ts # rn-ui-kit/initialize subpath
 │     ├─ patches/         # Upstream patches synchronized into consuming apps
 │     └─ scripts/         # rn-ui-sync-patches
 ├─ examples/
@@ -412,21 +412,21 @@ rn_ui_kit/
 ## Development
 
 ```bash
-# Compile rn_ui_kit into packages/rn_ui_kit/dist
+# Compile rn-ui-kit into packages/rn-ui-kit/dist
 bun run build
 
 # Type-check the package and example app
 bun run typecheck
 
-# Type-check rn_ui_kit only
-bun --cwd packages/rn_ui_kit typecheck
+# Type-check rn-ui-kit only
+bun --cwd packages/rn-ui-kit typecheck
 
 # Type-check the example app
 bun --cwd examples/app typecheck
 ```
 
 When adding or changing a component, consider adding a matching entry to the
-`packages/rn_ui_kit/src/debug` component catalog so its behavior and visuals
+`packages/rn-ui-kit/src/debug` component catalog so its behavior and visuals
 can be checked on iOS, Android, and Web.
 
 ## Build and release
@@ -438,14 +438,14 @@ bun run set-version 1.0.1
 # Generate only the release directory and tarball
 bun run package-release --pack-only
 
-# Generate the release directory, tarball, and local rn_ui_kit-1.0.1 branch
+# Generate the release directory, tarball, and local rn-ui-kit-1.0.1 branch
 bun run package-release
 
 # Push the release branch after verifying it
-git push -u origin rn_ui_kit-1.0.1
+git push -u origin rn-ui-kit-1.0.1
 ```
 
-The release build compiles the single `packages/rn_ui_kit` package directly; it
+The release build compiles the single `packages/rn-ui-kit` package directly; it
 does not merge packages dynamically. A release branch contains only compiled
 `dist` output, package.json, README, LICENSE, patches, and runtime scripts. See
 [`scripts/package-release.md`](./scripts/package-release.md) for the complete
@@ -453,4 +453,4 @@ release process.
 
 ## License
 
-[MIT](./packages/rn_ui_kit/LICENSE) © 2026 luoluoqixi
+[MIT](./packages/rn-ui-kit/LICENSE) © 2026 luoluoqixi

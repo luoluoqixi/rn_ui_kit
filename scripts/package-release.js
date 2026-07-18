@@ -5,7 +5,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 
 const repoRoot = path.resolve(__dirname, "..");
-const packageJsonPath = path.join(repoRoot, "packages", "rn_ui_kit", "package.json");
+const packageJsonPath = path.join(repoRoot, "packages", "rn-ui-kit", "package.json");
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 const packageName = packageJson.name;
 const version = packageJson.version;

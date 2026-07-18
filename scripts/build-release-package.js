@@ -5,7 +5,7 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 
 const repoRoot = path.resolve(__dirname, "..");
-const sourcePackageDir = path.join(repoRoot, "packages", "rn_ui_kit");
+const sourcePackageDir = path.join(repoRoot, "packages", "rn-ui-kit");
 const rootPackage = readJson(path.join(repoRoot, "package.json"));
 const sourcePackage = readJson(path.join(sourcePackageDir, "package.json"));
 const releaseName = `${sourcePackage.name}-${sourcePackage.version}`;
@@ -33,16 +33,9 @@ function run(command, args, cwd = repoRoot) {
 }
 
 function assertInDist(targetPath) {
-  const relativePath = path.relative(
-    path.resolve(distDir),
-    path.resolve(targetPath),
-  );
+  const relativePath = path.relative(path.resolve(distDir), path.resolve(targetPath));
 
-  if (
-    !relativePath ||
-    relativePath.startsWith("..") ||
-    path.isAbsolute(relativePath)
-  ) {
+  if (!relativePath || relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
     throw new Error(`Refusing to modify a path outside dist: ${targetPath}`);
   }
 }
@@ -65,9 +58,9 @@ function validateVersion() {
 
 function compiledEntry(baseName) {
   return {
-    types: `./dist/${baseName}.d.ts`,
+    "types": `./dist/${baseName}.d.ts`,
     "react-native": `./dist/${baseName}.js`,
-    default: `./dist/${baseName}.js`,
+    "default": `./dist/${baseName}.js`,
   };
 }
 
@@ -86,8 +79,7 @@ function createReleaseManifest() {
   };
   manifest.files = ["dist", "patches", "scripts", "README.md", "LICENSE"];
   manifest.scripts = {
-    "sync-patches": sourcePackage.scripts?.["sync-patches"] ??
-      "bun scripts/sync-patches.mjs",
+    "sync-patches": sourcePackage.scripts?.["sync-patches"] ?? "bun scripts/sync-patches.mjs",
   };
   delete manifest.devDependencies;
 
@@ -96,10 +88,7 @@ function createReleaseManifest() {
 
 function copyReleaseFiles() {
   for (const fileName of ["README.md", "LICENSE"]) {
-    fs.copyFileSync(
-      path.join(sourcePackageDir, fileName),
-      path.join(packageDir, fileName),
-    );
+    fs.copyFileSync(path.join(sourcePackageDir, fileName), path.join(packageDir, fileName));
   }
 
   for (const directoryName of ["patches", "scripts"]) {
@@ -146,14 +135,11 @@ function pack() {
   const npmPs1Path = path.join(path.dirname(process.execPath), "npm.ps1");
 
   if (process.platform === "win32" && fs.existsSync(npmPs1Path)) {
-    run("powershell.exe", [
-      "-NoProfile",
-      "-ExecutionPolicy",
-      "Bypass",
-      "-File",
-      npmPs1Path,
-      ...npmArgs,
-    ], packageDir);
+    run(
+      "powershell.exe",
+      ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", npmPs1Path, ...npmArgs],
+      packageDir,
+    );
   } else {
     run("npm", npmArgs, packageDir);
   }
