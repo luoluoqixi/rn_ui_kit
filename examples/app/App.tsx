@@ -2,12 +2,7 @@ import "rn_ui_kit/initialize";
 
 import "./tamagui.generated.css";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  AppStatusBar,
-  RootProvider,
-  type UiPreferences,
-  useColorSchemeSettings,
-} from "rn_ui_kit";
+import { AppStatusBar, RootProvider, type UiPreferences, useColorSchemeSettings } from "rn_ui_kit";
 import { RnUiKitDebugPanel } from "rn_ui_kit/debug";
 import { useEffect, useMemo, useState } from "react";
 
@@ -71,8 +66,7 @@ function DemoStatusBar() {
 }
 
 export default function App() {
-  const [currentPreferences, setCurrentPreferences] =
-    useState<UiPreferences>(defaultPreferences);
+  const [currentPreferences, setCurrentPreferences] = useState<UiPreferences>(defaultPreferences);
   const [preferencesLoaded, setPreferencesLoaded] = useState(false);
 
   useEffect(() => {

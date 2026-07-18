@@ -1,5 +1,6 @@
 import { RnUiKitUiComponentsDebugPage } from "./pages/sections/ui_components_debug_page";
 import { RnUiKitComponentExamplesDebugPage } from "./pages/component_examples/component_examples_page";
+import { RnUiKitAboutDebugPage } from "./pages/sections/about_debug_page";
 
 import type { RnUiKitDebugRouteDefinition, RnUiKitDebugRouteKey } from "./types";
 
@@ -19,6 +20,14 @@ export const rnUiKitDebugRouteDefinitions = [
     label: "组件总览",
     order: 20,
     presentation: "static",
+  },
+  {
+    Page: RnUiKitAboutDebugPage,
+    description: "查看 rn_ui_kit 版本及当前运行环境。",
+    key: "app-about",
+    label: "关于",
+    order: 100,
+    presentation: "scroll",
   },
 ] satisfies RnUiKitDebugRouteDefinition[];
 

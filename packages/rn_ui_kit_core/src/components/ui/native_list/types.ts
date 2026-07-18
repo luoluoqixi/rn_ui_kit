@@ -34,7 +34,7 @@ export type NativeListSelectItemProps = NativeListItemBaseProps & {
 };
 
 export type NativeListItemProps = NativeListItemBaseProps & {
-  title: string;
+  title: string | ReactNode;
   onPress?: () => void;
   disabled?: boolean;
   titleAlign?: "center" | "right" | "left";
