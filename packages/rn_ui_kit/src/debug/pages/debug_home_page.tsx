@@ -9,7 +9,7 @@ import {
   NativeListSwitchItem,
   Slider,
   isIos26Plus,
-} from "rn_ui_kit_core";
+} from "rn_ui_kit/core";
 
 import type { RnUiKitDebugRouteDefinition, RnUiKitDebugRouteKey } from "../types";
 

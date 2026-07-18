@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { Avatar, Card, H1, H3, Image, Link, Paragraph, Separator, Text } from "rn_ui_kit_core";
+import { Avatar, Card, H1, H3, Image, Link, Paragraph, Separator, Text } from "rn_ui_kit/core";
 
 import { ExampleBlock, ExampleRow, ExampleStack } from "../shared";
 import type { ComponentExampleDefinition } from "../types";

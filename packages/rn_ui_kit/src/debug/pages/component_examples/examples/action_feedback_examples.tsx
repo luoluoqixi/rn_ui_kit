@@ -10,7 +10,7 @@ import {
   ToggleGroup,
   confirmNative,
   useToast,
-} from "rn_ui_kit_core";
+} from "rn_ui_kit/core";
 
 import { ExampleBlock, ExampleRow, ExampleStack } from "../shared";
 import type { ComponentExampleDefinition } from "../types";

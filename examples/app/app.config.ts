@@ -2,10 +2,10 @@ import { type ConfigContext, type ExpoConfig } from "expo/config";
 
 import pkg from "./package.json";
 
-const bundleIdentifier = "com.luoluoqixi.rnuikitexample";
-const name = "rnuikit-dev";
-// const bundleIdentifier = "com.luoluoqixi.rnuikitexample.release";
-// const name = "rnuikit-release";
+// const bundleIdentifier = "com.luoluoqixi.rnuikitexample";
+// const name = "rnuikit-dev";
+const bundleIdentifier = "com.luoluoqixi.rnuikitexample.release";
+const name = "rnuikit-release";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,

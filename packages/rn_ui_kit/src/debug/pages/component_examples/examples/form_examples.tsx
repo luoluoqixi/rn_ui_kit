@@ -11,7 +11,7 @@ import {
   Text,
   TextArea,
   Separator,
-} from "rn_ui_kit_core";
+} from "rn_ui_kit/core";
 
 import { ExampleBlock, ExampleStack } from "../shared";
 import type { ComponentExampleDefinition } from "../types";

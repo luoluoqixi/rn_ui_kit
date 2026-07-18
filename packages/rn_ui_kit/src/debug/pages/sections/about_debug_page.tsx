@@ -1,11 +1,5 @@
 import { Linking, Platform, StyleSheet, View } from "react-native";
-import {
-  NativeList,
-  NativeListItem,
-  NativeListSection,
-  isIos26Plus,
-  NativeListButtonItem,
-} from "rn_ui_kit_core";
+import { NativeList, NativeListItem, NativeListSection, isIos26Plus } from "rn_ui_kit/core";
 
 import debugPackage from "../../../../package.json";
 
@@ -27,9 +21,9 @@ export function RnUiKitAboutDebugPage() {
         contentInsetAdjustmentBehavior={usesPreIos26ScrollEdgeHeader ? "automatic" : undefined}
         tracksNavigationBarScrollEdge={usesPreIos26ScrollEdgeHeader}
       >
-        <NativeListSection title="应用信息">
-          <NativeListItem title="应用名称" value="rn_ui_kit" />
-          <NativeListItem title="版本号" value={debugPackage.version} />
+        <NativeListSection title="关于">
+          <NativeListItem title="UI" value="rn_ui_kit" />
+          <NativeListItem title="版本" value={debugPackage.version} />
           <NativeListItem
             onPress={() => void Linking.openURL(GITHUB_URL)}
             title="Github"

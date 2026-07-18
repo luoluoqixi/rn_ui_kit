@@ -83,6 +83,8 @@ export default function App() {
         if (active) setPreferencesLoaded(true);
       });
 
+    console.log("rn_ui_kit inited.");
+
     return () => {
       active = false;
     };

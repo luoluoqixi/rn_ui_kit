@@ -1,1 +1,1 @@
-export * from "rn_ui_kit_core";
+export * from "./core/index";

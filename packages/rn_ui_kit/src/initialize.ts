@@ -1,3 +1,3 @@
-import "rn_ui_kit_core/initialize";
+import "./core/initialize/index";
 
 export {};
