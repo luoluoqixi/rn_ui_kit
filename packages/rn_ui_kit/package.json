@@ -1,6 +1,6 @@
 {
   "name": "rn_ui_kit",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": false,
   "type": "module",
   "description": "React Native UI wrapper kit for Expo, React Native Web, and native apps.",
@@ -40,7 +40,6 @@
   },
   "peerDependencies": {
     "@expo/ui": "=55.0.17",
-    "@gorhom/bottom-sheet": "^5.2.14",
     "@lodev09/react-native-true-sheet": "=3.11.6",
     "@react-native-picker/picker": "^2.11.4",
     "@react-navigation/elements": "^2.9.26",
@@ -98,7 +97,6 @@
   },
   "devDependencies": {
     "@expo/ui": "=55.0.17",
-    "@gorhom/bottom-sheet": "^5.2.14",
     "@lodev09/react-native-true-sheet": "=3.11.6",
     "@react-native-picker/picker": "^2.11.4",
     "@react-navigation/elements": "^2.9.26",

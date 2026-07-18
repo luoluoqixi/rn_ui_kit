@@ -1,6 +1,6 @@
 {
   "name": "rn_ui_kit_debug",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": false,
   "type": "module",
   "description": "Debug pages and examples for rn_ui_kit.",
