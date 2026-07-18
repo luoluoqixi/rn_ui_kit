@@ -3,4 +3,5 @@
 import type {} from "expo-modules-core";
 import type {} from "./types/tamagui";
 
+export * from "./consts";
 export * from "./components/ui";

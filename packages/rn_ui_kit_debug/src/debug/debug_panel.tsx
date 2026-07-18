@@ -22,6 +22,8 @@ import {
   useColorSchemeSettings,
   withNativeBackButton,
   withNativeStackGestureOptions,
+  RN_UI_KIT_PACKAGE_NAME,
+  RN_UI_KIT_PACKAGE_VERSION,
 } from "rn_ui_kit";
 
 import { RnUiKitDebugHomePage } from "./pages/debug_home_page";
@@ -116,9 +118,7 @@ function useDebugSheetStackScreenOptions() {
   };
 }
 
-function FocusedNativeSheetDebugSectionPage(
-  props: ComponentProps<typeof RnUiKitDebugSectionPage>,
-) {
+function FocusedNativeSheetDebugSectionPage(props: ComponentProps<typeof RnUiKitDebugSectionPage>) {
   const isFocused = useIsFocused();
   return <RnUiKitDebugSectionPage {...props} bindToNativeSheet={isFocused} />;
 }
@@ -209,7 +209,10 @@ function RnUiKitDebugPanelSheet({
         screenOptions={debugSheetStackScreenOptions}
         sheetProps={{ snapPoints: [88], snapPointsMode: "percent" }}
       >
-        <NativeSheetStack.Screen name="index" options={{ title: "rn_ui_kit" }}>
+        <NativeSheetStack.Screen
+          name="index"
+          options={{ title: `${RN_UI_KIT_PACKAGE_NAME} - ${RN_UI_KIT_PACKAGE_VERSION}` }}
+        >
           {() => <HomeRoute />}
         </NativeSheetStack.Screen>
         {pages.map((definition) => (
@@ -292,7 +295,10 @@ function RnUiKitDebugPanelContent({
             })
           }
         >
-          <Stack.Screen name="index" options={{ title: "rn_ui_kit" }}>
+          <Stack.Screen
+            name="index"
+            options={{ title: `${RN_UI_KIT_PACKAGE_NAME} - ${RN_UI_KIT_PACKAGE_VERSION}` }}
+          >
             {() => (
               <RnUiKitDebugHomeRoute
                 onOpenInSheet={(key) =>
