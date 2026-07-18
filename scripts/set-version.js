@@ -14,12 +14,12 @@ const semverPattern =
   /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
 
 function printUsage() {
-  console.log("鐢ㄦ硶: bun run set-version <version>");
-  console.log("绀轰緥: bun run set-version 1.2.3");
+  console.log("用法: bun run set-version <version>");
+  console.log("示例: bun run set-version 1.2.3");
 }
 
 function fail(message) {
-  console.error(`閿欒: ${message}`);
+  console.error(`错误: ${message}`);
   printUsage();
   process.exit(1);
 }
@@ -32,13 +32,13 @@ if (args.includes("--help") || args.includes("-h")) {
 }
 
 if (args.length !== 1) {
-  fail("璇蜂紶鍏ヤ笖浠呬紶鍏ヤ竴涓増鏈彿銆?);
+  fail("请传入且仅传入一个版本号。");
 }
 
 const version = args[0].startsWith("v") ? args[0].slice(1) : args[0];
 
 if (!semverPattern.test(version)) {
-  fail(`鐗堟湰鍙?"${args[0]}" 涓嶆槸鏈夋晥鐨?SemVer銆俙);
+  fail(`版本号 "${args[0]}" 不是有效的 SemVer。`);
 }
 
 const originalFiles = new Map();
@@ -48,7 +48,7 @@ for (const relativePath of packageJsonPaths) {
   const absolutePath = resolve(projectRoot, relativePath);
 
   if (!existsSync(absolutePath)) {
-    fail(`鎵句笉鍒?${relativePath}銆俙);
+    fail(`找不到 ${relativePath}。`);
   }
 
   const originalContent = readFileSync(absolutePath, "utf8");
@@ -71,12 +71,12 @@ if (changedPackageJsonPaths.length > 0) {
     originalFiles.set(lockfilePath, readFileSync(lockfilePath, "utf8"));
   }
 
-  console.log(`宸插皢宸ョ▼鐗堟湰鏇存柊涓?${version}锛歚);
+  console.log(`已将工程版本更新为 ${version}：`);
   for (const relativePath of changedPackageJsonPaths) {
     console.log(`  - ${relativePath}`);
   }
 
-  console.log("\n姝ｅ湪鍚屾 bun.lock...");
+  console.log("\n正在同步 bun.lock...");
   const bunCommand = process.platform === "win32" ? "bun.exe" : "bun";
   const lockfileResult = spawnSync(bunCommand, ["install", "--lockfile-only"], {
     cwd: projectRoot,
@@ -88,14 +88,14 @@ if (changedPackageJsonPaths.length > 0) {
       writeFileSync(absolutePath, originalContent, "utf8");
     }
 
-    fail("bun.lock 鍚屾澶辫触锛屽凡鎭㈠鐗堟湰鏂囦欢銆?);
+    fail("bun.lock 同步失败，已恢复版本文件。");
   }
 } else {
-  console.log(`宸ョ▼褰撳墠宸茬粡鏄?${version}锛屾棤闇€淇敼鐗堟湰鏂囦欢銆俙);
+  console.log(`工程当前已经是 ${version}，无需修改版本文件。`);
 }
 
 const tag = `v${version}`;
 
-console.log("\n璇峰厛鎻愪氦鐗堟湰淇敼锛屽啀鎵ц浠ヤ笅鍛戒护锛?);
+console.log("\n请先提交版本修改，再执行以下命令：");
 console.log(`git tag -a ${tag} -m "${tag}"`);
 console.log(`git push origin ${tag}`);
