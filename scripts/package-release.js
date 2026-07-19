@@ -130,6 +130,36 @@ function copyDirectoryContents(sourceDir, targetDir) {
   }
 }
 
+function validateExtractedPackage(packageDir) {
+  const manifestPath = path.join(packageDir, "package.json");
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  const requiredDirectories = ["src", "dist"];
+
+  for (const directoryName of requiredDirectories) {
+    if (!fs.existsSync(path.join(packageDir, directoryName))) {
+      throw new Error(`Release package is missing required directory: ${directoryName}`);
+    }
+  }
+
+  const expectedReactNativeEntries = {
+    ".": "./src/index.ts",
+    "./core": "./src/core.ts",
+    "./debug": "./src/debug.ts",
+    "./initialize": "./src/initialize.ts",
+  };
+
+  if (manifest["react-native"] !== expectedReactNativeEntries["."]) {
+    throw new Error(`Unexpected top-level react-native entry: ${manifest["react-native"] || "(missing)"}`);
+  }
+
+  for (const [exportName, expectedEntry] of Object.entries(expectedReactNativeEntries)) {
+    const actualEntry = manifest.exports?.[exportName]?.["react-native"];
+    if (actualEntry !== expectedEntry) {
+      throw new Error(`Unexpected react-native entry for ${exportName}: ${actualEntry || "(missing)"}`);
+    }
+  }
+}
+
 function ensureGitIdentity(cwd) {
   const userName = tryRunCapture("git", ["config", "user.name"], { cwd });
   const userEmail = tryRunCapture("git", ["config", "user.email"], { cwd });
@@ -321,6 +351,7 @@ function createReleaseBranchInDistRepo(pushRemoteName, pushRemoteUrl) {
     throw new Error(`Extracted package directory not found: ${extractedPackageDir}`);
   }
 
+  validateExtractedPackage(extractedPackageDir);
   copyDirectoryContents(extractedPackageDir, releaseRepoDir);
   run("git", ["add", "-A"], { cwd: releaseRepoDir });
 

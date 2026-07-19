@@ -56,10 +56,10 @@ function validateVersion() {
   }
 }
 
-function compiledEntry(baseName) {
+function releaseEntry(baseName) {
   return {
     "types": `./dist/${baseName}.d.ts`,
-    "react-native": `./dist/${baseName}.js`,
+    "react-native": `./src/${baseName}.ts`,
     "default": `./dist/${baseName}.js`,
   };
 }
@@ -68,16 +68,16 @@ function createReleaseManifest() {
   const manifest = { ...sourcePackage };
 
   manifest.main = "./dist/index.js";
-  manifest["react-native"] = "./dist/index.js";
+  manifest["react-native"] = "./src/index.ts";
   manifest.types = "./dist/index.d.ts";
   manifest.exports = {
-    ".": compiledEntry("index"),
-    "./core": compiledEntry("core"),
-    "./debug": compiledEntry("debug"),
-    "./initialize": compiledEntry("initialize"),
+    ".": releaseEntry("index"),
+    "./core": releaseEntry("core"),
+    "./debug": releaseEntry("debug"),
+    "./initialize": releaseEntry("initialize"),
     "./package.json": "./package.json",
   };
-  manifest.files = ["dist", "patches", "scripts", "README.md", "LICENSE"];
+  manifest.files = ["dist", "src", "patches", "scripts", "README.md", "LICENSE"];
   manifest.scripts = {
     "sync-patches": sourcePackage.scripts?.["sync-patches"] ?? "bun scripts/sync-patches.mjs",
   };
@@ -91,7 +91,7 @@ function copyReleaseFiles() {
     fs.copyFileSync(path.join(sourcePackageDir, fileName), path.join(packageDir, fileName));
   }
 
-  for (const directoryName of ["patches", "scripts"]) {
+  for (const directoryName of ["src", "patches", "scripts"]) {
     const sourcePath = path.join(sourcePackageDir, directoryName);
     if (fs.existsSync(sourcePath)) {
       fs.cpSync(sourcePath, path.join(packageDir, directoryName), {
