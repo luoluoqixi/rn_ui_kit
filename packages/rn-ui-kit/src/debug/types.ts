@@ -24,7 +24,10 @@ export type RnUiKitDebugRouteDefinition = {
 };
 
 export type RnUiKitDebugPanelProps = ComponentProps<typeof YStack> & {
-  /** 宿主原生栈返回按钮的自定义文案，仅在 navigationMode="host" 的首页生效。 */
+  /**
+   * 宿主原生栈返回按钮的自定义文案，仅在 navigationMode="host" 的首页生效。
+   * iOS 26 默认只显示箭头；显式传入非空文案后，调试首页会显示该文案。
+   */
   backButtonLabel?: string;
   defaultOpen?: boolean;
   initialRouteKey?: RnUiKitDebugRouteKey;

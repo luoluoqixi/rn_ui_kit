@@ -99,6 +99,7 @@ function useDebugStackScreenOptions() {
         // iOS 15–25 需要让原生导航栏保持 translucent，UIKit 才会让滚动内容
         // 延伸到 bar 下方并在 scrollEdgeAppearance / standardAppearance 间切换。
         // standardAppearance 仍使用上面的实体 header 色，并非始终透明。
+        headerBackButtonDisplayMode: transparentHeader ? "minimal" : "default",
         headerTransparent: transparentHeader || nativeScrollEdgeHeader,
         headerTintColor: theme.color10.val,
         headerTitleStyle: { color: theme.gray12.val },
@@ -141,6 +142,7 @@ function useDebugSheetStackScreenOptions() {
         transparentHeader || nativeScrollEdgeHeader ? "transparent" : appBackgroundColors.header,
       height: 56,
     },
+    headerBackButtonDisplayMode: transparentHeader ? ("minimal" as const) : ("default" as const),
     // iOS 15–25 必须保持 translucent，内容才能延伸到导航栏下方并触发
     // scrollEdgeAppearance / standardAppearance 原生切换。
     headerTransparent: transparentHeader || nativeScrollEdgeHeader,
@@ -227,6 +229,8 @@ function RnUiKitDebugHostPanel({
       ? routeParams[DEBUG_HOST_EXAMPLE_PARAM]
       : undefined;
   const isRootRoute = sectionKey == null && exampleKey == null;
+  const showsExplicitRootBackLabel =
+    isRootRoute && backButtonLabel != null && backButtonLabel.trim().length > 0;
   const title =
     exampleKey != null
       ? getRnUiKitComponentExampleTitle(exampleKey)
@@ -237,13 +241,20 @@ function RnUiKitDebugHostPanel({
   useLayoutEffect(() => {
     navigation.setOptions({
       ...debugStackScreenOptions,
-      headerBackButtonDisplayMode: "default",
+      headerBackButtonDisplayMode:
+        isIos26Plus() && !showsExplicitRootBackLabel ? "minimal" : "default",
       headerBackButtonMenuEnabled: true,
-      headerBackTitle: isRootRoute ? backButtonLabel : undefined,
+      headerBackTitle: showsExplicitRootBackLabel ? backButtonLabel : undefined,
       headerShown: true,
       title,
     });
-  }, [backButtonLabel, debugStackScreenOptions, isRootRoute, navigation, title]);
+  }, [
+    backButtonLabel,
+    debugStackScreenOptions,
+    navigation,
+    showsExplicitRootBackLabel,
+    title,
+  ]);
 
   const pushDebugRoute = ({
     example,
