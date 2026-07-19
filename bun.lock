@@ -7,7 +7,7 @@
     },
     "examples/app": {
       "name": "rn-ui-kit-example",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "dependencies": {
         "@expo/metro-runtime": "=6.1.2",
         "@expo/ui": "=55.0.17",
@@ -59,7 +59,7 @@
     },
     "packages/rn-ui-kit": {
       "name": "rn-ui-kit",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "bin": {
         "rn-ui-sync-patches": "./scripts/sync-patches.mjs",
       },
@@ -171,6 +171,7 @@
     "@expo/ui@55.0.17": "examples/app/patches/@expo+ui@55.0.17.patch",
     "@tamagui/toast@2.4.0": "examples/app/patches/@tamagui+toast@2.4.0.patch",
     "react-native-reanimated@4.3.0": "examples/app/patches/react-native-reanimated@4.3.0.patch",
+    "react-native@0.83.9": "examples/app/patches/react-native@0.83.9.patch",
     "@tamagui/dialog@2.4.0": "examples/app/patches/@tamagui+dialog@2.4.0.patch",
   },
   "overrides": {

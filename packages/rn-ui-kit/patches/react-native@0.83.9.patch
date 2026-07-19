@@ -1,3 +1,17 @@
+# rn-ui-kit：iOS ScrollView 空白视口触摸命中的显式开关
+#
+# 本补丁为 React Native ScrollView 增加仅限 iOS 的布尔属性
+# `iosEmptyViewportScrollEnabled`。该属性默认为 false；调用方没有显式开启时，
+# 完全保留 React Native 原本的行为。
+#
+# 在 Fabric 下开启后，ScrollView 可见范围内未命中内容子视图的触摸，会交给内部
+# UIScrollView，而不是外层组件视图。这样，短内容页面可以从原本的空白区域开始
+# 原生滚动或回弹手势，同时不会改变内容尺寸或制造真实滚动范围。
+#
+# 旧架构会安全接收该属性但不改变行为；Android 和 Web 不受影响。升级 React
+# Native 时必须重新检查或移除此补丁，因为上游的 ScrollView 命中测试和属性
+# 传递实现可能已经发生变化。
+
 diff --git a/Libraries/Components/ScrollView/ScrollView.d.ts b/Libraries/Components/ScrollView/ScrollView.d.ts
 index b6e538ddc5a1be58b6227f461546fa6d84ca8871..b3db7cbf65e58731c196a37f4ac079c8ef4d34c4 100644
 --- a/Libraries/Components/ScrollView/ScrollView.d.ts
