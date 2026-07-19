@@ -20,7 +20,7 @@ one prop connects all debug pages to that stack:
 
 ```tsx
 <RnUiKitDebugPanel
-  backButtonLabel="露娜笔记"
+  backButtonLabel="返回"
   navigationMode="host"
 />
 ```
