@@ -120,6 +120,7 @@ export function RnUiKitComponentExampleDetailPage({
     return (
       <NativeSheetScrollContent
         bindToNativeSheet={isFocused}
+        iosEmptyViewportScrollEnabled={Platform.OS === "ios" ? true : undefined}
         nestedScrollEnabled
         showsVerticalScrollIndicator
         style={scrollStyle}
@@ -133,6 +134,7 @@ export function RnUiKitComponentExampleDetailPage({
     <ScrollView
       automaticallyAdjustsScrollIndicatorInsets={adjustsForNativeIosHeader ? true : undefined}
       contentInsetAdjustmentBehavior={adjustsForNativeIosHeader ? "automatic" : undefined}
+      iosEmptyViewportScrollEnabled={Platform.OS === "ios" ? true : undefined}
       nestedScrollEnabled
       showsVerticalScrollIndicator
       style={scrollStyle}
