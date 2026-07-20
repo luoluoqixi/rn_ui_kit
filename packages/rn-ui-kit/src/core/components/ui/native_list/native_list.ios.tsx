@@ -412,6 +412,7 @@ function NativeListRoot({
       <NativeListContext.Provider value={{ native: false }}>
         <FallbackRoot
           {...fallbackProps}
+          fixesIOS26NestedScrollIndicatorSafeArea={fixesIOS26NestedScrollIndicatorSafeArea}
           automaticallyAdjustsScrollIndicatorInsets={automaticallyAdjustsScrollIndicatorInsets}
           backgroundColor={backgroundColor}
           contentInsetAdjustmentBehavior={contentInsetAdjustmentBehavior}
@@ -437,8 +438,7 @@ function NativeListRoot({
   // 默认只关闭普通 native-stack 页面的重复自动调整，不注入窗口底部安全区。
   // 定高内嵌列表的安全区由外层滚动视图处理，不能再按页面级根列表自动调整。
   const manuallyAdjustNormalPageIndicator =
-    (!insideTrueSheet || isNestedNativeList) &&
-    automaticallyAdjustsScrollIndicatorInsets == null;
+    (!insideTrueSheet || isNestedNativeList) && automaticallyAdjustsScrollIndicatorInsets == null;
   const compensatesForTrueSheetViewportClipping =
     insideTrueSheet &&
     scrollable &&
@@ -552,11 +552,7 @@ function NativeListSection({ children, footer, title }: NativeListSectionProps) 
     ) : undefined;
 
   return (
-    <SwiftUISection
-      footer={footerView}
-      header={header}
-      title={stringTitle ?? undefined}
-    >
+    <SwiftUISection footer={footerView} header={header} title={stringTitle ?? undefined}>
       {children}
     </SwiftUISection>
   );

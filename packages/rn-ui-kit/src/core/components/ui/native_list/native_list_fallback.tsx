@@ -788,23 +788,22 @@ export function NativeListRoot({
   const rootBackground = { backgroundColor: backgroundColor ?? appBackgroundColors.screen };
   const isNestedFallbackList = nestedScrollEnabled === true;
 
-  const bottomPadding = insideTrueSheet && !isNestedFallbackList
-    ? getTrueSheetScrollBottomPadding({
-        insetAdjustment,
-        nativeScrollInsetsApplied,
-        safeAreaBottom: insets.bottom,
-      })
-    : undefined;
+  const bottomPadding =
+    insideTrueSheet && !isNestedFallbackList
+      ? getTrueSheetScrollBottomPadding({
+          insetAdjustment,
+          nativeScrollInsetsApplied,
+          safeAreaBottom: insets.bottom,
+        })
+      : undefined;
   const indicatorBottomInset =
-    insideTrueSheet &&
-    !isNestedFallbackList &&
-    automaticallyAdjustsScrollIndicatorInsets !== false
-    ? getTrueSheetScrollIndicatorBottomInset({
-        automaticContentInsetAdjustment,
-        nativeScrollInsetsApplied,
-        safeAreaBottom: insets.bottom,
-      })
-    : undefined;
+    insideTrueSheet && !isNestedFallbackList && automaticallyAdjustsScrollIndicatorInsets !== false
+      ? getTrueSheetScrollIndicatorBottomInset({
+          automaticContentInsetAdjustment,
+          nativeScrollInsetsApplied,
+          safeAreaBottom: insets.bottom,
+        })
+      : undefined;
   const shouldUseManualHeaderSpacing =
     !insideTrueSheet &&
     !isNestedFallbackList &&
@@ -817,17 +816,15 @@ export function NativeListRoot({
     os() === "ios" &&
     (!insideTrueSheet || isNestedFallbackList) &&
     automaticallyAdjustsScrollIndicatorInsets == null;
-  const resolvedContentInsetAdjustmentBehavior =
-    contentInsetAdjustmentBehavior ??
-    (isNestedFallbackList
-      ? "never"
-      : insideTrueSheet && os() === "ios"
-        ? automaticContentInsetAdjustment
-          ? "automatic"
-          : "never"
-        : shouldUseManualHeaderSpacing
-          ? "never"
-          : undefined);
+  const resolvedContentInsetAdjustmentBehavior = isNestedFallbackList
+    ? (contentInsetAdjustmentBehavior ?? "never")
+    : insideTrueSheet && os() === "ios"
+      ? automaticContentInsetAdjustment
+        ? "automatic"
+        : "never"
+      : shouldUseManualHeaderSpacing
+        ? "never"
+        : contentInsetAdjustmentBehavior;
   const contentTopPadding =
     contentMarginTop ?? (shouldUseManualHeaderSpacing ? headerHeight + 8 : undefined);
   const contentBottomPadding =
