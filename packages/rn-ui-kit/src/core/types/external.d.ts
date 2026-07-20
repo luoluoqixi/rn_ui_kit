@@ -15,6 +15,7 @@ declare module "@expo/ui/swift-ui" {
   export interface ListProps {
     automaticallyAdjustsScrollIndicatorInsets?: boolean;
     compensatesForViewportClipping?: boolean;
+    correctsNestedScrollIndicatorFrame?: boolean;
     initialScrollAnchor?: string;
     initialScrollTarget?: string | number;
   }

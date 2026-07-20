@@ -1,6 +1,5 @@
 import { forwardRef } from "react";
 import { ScrollView as ReactNativeScrollView } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScrollView as TamaguiScrollView } from "tamagui";
 
 import { useTrueSheetScrollLayout } from "../sheet/native_sheet/true_sheet/true_sheet_scroll_context";
@@ -10,7 +9,6 @@ import type { ScrollViewProps } from "./types";
 
 export const ScrollView = forwardRef<any, ScrollViewProps>((props, ref) => {
   const { active: insideTrueSheet } = useTrueSheetScrollLayout();
-  const insets = useSafeAreaInsets();
 
   if (isWeb()) {
     const { bottomSheetScrollable: _bottomSheetScrollable, ...webProps } = props;
@@ -28,6 +26,9 @@ export const ScrollView = forwardRef<any, ScrollViewProps>((props, ref) => {
     nestedScrollEnabled?: boolean;
   };
   void bottomSheetScrollable;
+  // 普通 native-stack 页面已位于 header 下方，默认关闭系统的重复 indicator 调整。
+  // 不能在这里补窗口 safe-area bottom：该 ScrollView 也可能只是页面中的局部滚动区域。
+  // 页面级透明 header / safe-area 避让应显式开启 automaticallyAdjustsScrollIndicatorInsets。
   const manuallyAdjustNormalPageIndicator =
     os() === "ios" && !insideTrueSheet && automaticallyAdjustsScrollIndicatorInsets == null;
 
@@ -38,15 +39,7 @@ export const ScrollView = forwardRef<any, ScrollViewProps>((props, ref) => {
         manuallyAdjustNormalPageIndicator ? false : automaticallyAdjustsScrollIndicatorInsets
       }
       nestedScrollEnabled={nestedScrollEnabled ?? true}
-      scrollIndicatorInsets={
-        manuallyAdjustNormalPageIndicator
-          ? {
-              ...scrollIndicatorInsets,
-              // 只取消普通页面重复的顶部自动 inset，底部继续避让实际安全区。
-              bottom: scrollIndicatorInsets?.bottom ?? insets.bottom,
-            }
-          : scrollIndicatorInsets
-      }
+      scrollIndicatorInsets={scrollIndicatorInsets}
       {...(restProps as any)}
     />
   );

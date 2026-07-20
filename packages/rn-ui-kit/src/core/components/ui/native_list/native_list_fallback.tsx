@@ -746,6 +746,7 @@ export function NativeListRoot({
   contentContainerStyle,
   contentMarginBottom,
   contentMarginTop,
+  fixesIOS26NestedScrollIndicatorSafeArea: _fixesIOS26NestedScrollIndicatorSafeArea,
   initialScrollTarget,
   native: _native,
   scrollable = true,
@@ -754,6 +755,7 @@ export function NativeListRoot({
   ...rest
 }: NativeListRootProps) {
   void _native;
+  void _fixesIOS26NestedScrollIndicatorSafeArea;
   void _tracksNavigationBarScrollEdge;
   const {
     alwaysBounceVertical,
@@ -883,13 +885,7 @@ export function NativeListRoot({
               ...scrollIndicatorInsets,
               bottom: indicatorBottomInset,
             }
-          : manuallyAdjustNormalPageIndicator
-            ? {
-                ...scrollIndicatorInsets,
-                // 自动 inset 关闭后显式保留底部安全区，顶部维持 0。
-                bottom: scrollIndicatorInsets?.bottom ?? insets.bottom,
-              }
-            : scrollIndicatorInsets
+          : scrollIndicatorInsets
       }
       style={[styles.root, rootBackground, style]}
       {...scrollViewProps}

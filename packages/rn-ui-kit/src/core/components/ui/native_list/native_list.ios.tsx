@@ -385,6 +385,7 @@ function NativeListRoot({
   contentInsetAdjustmentBehavior,
   contentMarginBottom,
   contentMarginTop,
+  fixesIOS26NestedScrollIndicatorSafeArea,
   initialScrollTarget,
   native = true,
   scrollIndicatorInsets,
@@ -430,9 +431,10 @@ function NativeListRoot({
           safeAreaBottom: insets.bottom,
         })
       : 0;
+  // 默认只关闭普通 native-stack 页面的重复自动调整，不注入窗口底部安全区。
+  // NativeList 可能是页面内的定高区域；页面级列表需要避让时应显式开启自动调整。
   const manuallyAdjustNormalPageIndicator =
     !insideTrueSheet && automaticallyAdjustsScrollIndicatorInsets == null;
-  const normalPageIndicatorBottomInset = scrollIndicatorInsets?.bottom ?? insets.bottom;
   const compensatesForTrueSheetViewportClipping =
     insideTrueSheet && scrollable && automaticallyAdjustsScrollIndicatorInsets !== false;
   const resolvedContentInsetAdjustmentBehavior =
@@ -457,6 +459,9 @@ function NativeListRoot({
           // 固定高度的内嵌列表可以显式关闭 indicator 自动调整；这时也必须关闭
           // TrueSheet viewport clipping 补偿，否则初次布局在屏幕外时会留下过期的底部 inset。
           compensatesForViewportClipping={compensatesForTrueSheetViewportClipping}
+          correctsNestedScrollIndicatorFrame={
+            isIos26Plus() && fixesIOS26NestedScrollIndicatorSafeArea === true
+          }
           initialScrollAnchor="center"
           initialScrollTarget={initialScrollTarget}
           modifiers={[
@@ -503,15 +508,6 @@ function NativeListRoot({
                     }),
                   ]
                 : []),
-            ...(manuallyAdjustNormalPageIndicator && normalPageIndicatorBottomInset > 0
-              ? [
-                  contentMargins({
-                    edges: "bottom",
-                    length: normalPageIndicatorBottomInset,
-                    placement: "scrollIndicators",
-                  }),
-                ]
-              : []),
             scrollDisabled(!scrollable),
           ]}
         >

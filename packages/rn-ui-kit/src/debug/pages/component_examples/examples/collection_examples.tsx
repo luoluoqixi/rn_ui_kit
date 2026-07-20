@@ -40,7 +40,7 @@ function NativeListExample() {
           onCheckedChange={setNative}
         />
         <View style={styles.nativeListFrame}>
-          <NativeList native={native} nestedScrollEnabled>
+          <NativeList fixesIOS26NestedScrollIndicatorSafeArea native={native} nestedScrollEnabled>
             <NativeListSection footer="导航行适合跳转到更深层的设置页。" title="工作区">
               <NativeListNavigationItem
                 onPress={() => setLastAction("打开详情")}

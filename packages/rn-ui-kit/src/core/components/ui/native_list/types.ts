@@ -65,6 +65,11 @@ export type NativeListRootProps = Omit<ScrollViewProps, "children"> & {
   contentMarginTop?: number;
   /** 原生 List 内容底部内边距。 */
   contentMarginBottom?: number;
+  /**
+   * 修正 iOS 26+ 在外层 ScrollView 中嵌套原生 List 时错误缓存窗口底部安全区，
+   * 导致内部滚动条提前结束的问题。默认关闭；非 iOS 26+ 平台会被忽略。
+   */
+  fixesIOS26NestedScrollIndicatorSafeArea?: boolean;
   /** iOS 原生 List 初次挂载后滚动到的目标 id。 */
   initialScrollTarget?: string | number;
   /** 设为 false 时使用 list_group 回退模式（所有平台一致） */
