@@ -20,6 +20,8 @@ function TamaguiSliderRoot(props: SliderProps) {
     nativeHaptics,
     nativeHapticsInterval,
     onValueChange,
+    onValueChangeFinished,
+    onSlideEnd,
     thumbCount,
     thumbProps,
     trackActiveProps,
@@ -78,6 +80,10 @@ function TamaguiSliderRoot(props: SliderProps) {
   return (
     <TamaguiSliderPrimitive
       {...rootProps}
+      onSlideEnd={(event, value) => {
+        onSlideEnd?.(event, value);
+        onValueChangeFinished?.([value]);
+      }}
       onValueChange={handleValueChange}
       orientation={orientation}
       size={size}

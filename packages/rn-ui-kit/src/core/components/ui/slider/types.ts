@@ -25,6 +25,8 @@ export interface SliderProps extends ReplicaSliderProps {
   colors?: SliderColors;
   nativeHaptics?: NativeHapticsSetting;
   nativeHapticsInterval?: number;
+  /** Called after the user finishes a drag. */
+  onValueChangeFinished?(value: number[]): void;
   thumbCount?: number;
   thumbProps?: Partial<SliderThumbProps>;
   trackProps?: Partial<SliderTrackProps>;

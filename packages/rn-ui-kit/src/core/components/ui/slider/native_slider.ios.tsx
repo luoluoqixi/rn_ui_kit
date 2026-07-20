@@ -15,7 +15,15 @@ import {
 import type { SliderProps } from "./types";
 
 export function NativeSlider(props: SliderProps) {
-  const { value, onValueChange, min, max, step: stepProp, nativeHaptics } = props;
+  const {
+    value,
+    onValueChange,
+    onValueChangeFinished,
+    min,
+    max,
+    step: stepProp,
+    nativeHaptics,
+  } = props;
   const theme = useTheme();
 
   const safeMin = min ?? 0;
@@ -29,9 +37,11 @@ export function NativeSlider(props: SliderProps) {
   const resolvedNativeHaptics = useResolvedNativeHaptics(nativeHaptics);
   const hasNativeSystemEdgeHaptics = supportsImpactHaptics();
   const lastHapticsValueRef = React.useRef(currentValue);
+  const latestValueRef = React.useRef(currentValue);
 
   React.useEffect(() => {
     lastHapticsValueRef.current = currentValue;
+    latestValueRef.current = currentValue;
   }, [currentValue]);
 
   const handleValueChange = (nextValue: number) => {
@@ -40,6 +50,7 @@ export function NativeSlider(props: SliderProps) {
       safeMax,
       Math.max(safeMin, Math.round((nextValue - safeMin) / safeStep) * safeStep + safeMin),
     );
+    latestValueRef.current = stepped;
     onValueChange?.([stepped]);
 
     if (stepped === lastHapticsValueRef.current) {
@@ -70,6 +81,11 @@ export function NativeSlider(props: SliderProps) {
       >
         <ExpoSlider
           value={currentValue}
+          onEditingChanged={(isEditing) => {
+            if (!isEditing) {
+              onValueChangeFinished?.([latestValueRef.current]);
+            }
+          }}
           onValueChange={handleValueChange}
           min={safeMin}
           max={safeMax}

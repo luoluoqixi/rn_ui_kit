@@ -1,4 +1,5 @@
 import { Maximize2, Minimize2 } from "@tamagui/lucide-icons-2";
+import { useEffect, useRef, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import {
   NativeList,
@@ -77,19 +78,10 @@ export function RnUiKitDebugHomePage({
         />
         {openSectionsInSheet ? (
           <NativeListCustomItem>
-            <View style={styles.detentSliderRow}>
-              <Minimize2 color="$color10" size={18} />
-              <View style={styles.detentSliderControl}>
-                <Slider
-                  max={2}
-                  min={0}
-                  onValueChange={(value) => onSectionSheetPositionChange?.(value[0] ?? 0)}
-                  step={1}
-                  value={[sectionSheetPosition]}
-                />
-              </View>
-              <Maximize2 color="$color10" size={18} />
-            </View>
+            <SectionSheetPositionSlider
+              onPositionChange={onSectionSheetPositionChange}
+              position={sectionSheetPosition}
+            />
           </NativeListCustomItem>
         ) : null}
       </NativeListSection>
@@ -100,6 +92,45 @@ export function RnUiKitDebugHomePage({
         </NativeListSection>
       ) : null}
     </NativeList>
+  );
+}
+
+function SectionSheetPositionSlider({
+  onPositionChange,
+  position,
+}: {
+  onPositionChange?: (position: number) => void;
+  position: number;
+}) {
+  // Changing a nested TrueSheet detent during the native control's drag makes
+  // the sheet transition cancel that active touch stream on iOS and Android.
+  const [draftPosition, setDraftPosition] = useState(position);
+  const draftPositionRef = useRef(position);
+
+  useEffect(() => {
+    draftPositionRef.current = position;
+    setDraftPosition(position);
+  }, [position]);
+
+  return (
+    <View style={styles.detentSliderRow}>
+      <Minimize2 color="$color10" size={18} />
+      <View style={styles.detentSliderControl}>
+        <Slider
+          max={2}
+          min={0}
+          onValueChange={(value) => {
+            const nextPosition = value[0] ?? draftPositionRef.current;
+            draftPositionRef.current = nextPosition;
+            setDraftPosition(nextPosition);
+          }}
+          onValueChangeFinished={() => onPositionChange?.(draftPositionRef.current)}
+          step={1}
+          value={[draftPosition]}
+        />
+      </View>
+      <Maximize2 color="$color10" size={18} />
+    </View>
   );
 }
 

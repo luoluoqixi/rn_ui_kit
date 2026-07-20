@@ -16,6 +16,7 @@ export function NativeSlider(props: SliderProps) {
   const {
     value,
     onValueChange,
+    onValueChangeFinished,
     min,
     max,
     step: stepProp,
@@ -58,10 +59,12 @@ export function NativeSlider(props: SliderProps) {
       step: safeStep,
     }),
   );
+  const latestValueRef = React.useRef(currentValue);
 
   React.useEffect(() => {
     if (value == null) return;
     const v = value[0] ?? safeMin;
+    latestValueRef.current = v;
     lastHapticsBucketsRef.current = getSliderHapticsBuckets([v], {
       interval: nativeHapticsInterval,
       max: safeMax,
@@ -75,6 +78,7 @@ export function NativeSlider(props: SliderProps) {
 
   const handleValueChange = (nextValue: number) => {
     const stepped = Math.round((nextValue - safeMin) / safeStep) * safeStep + safeMin;
+    latestValueRef.current = stepped;
     onValueChange?.([stepped]);
 
     // 触感反馈：Bucket 变化时才触发
@@ -100,6 +104,7 @@ export function NativeSlider(props: SliderProps) {
       <ExpoSlider
         value={currentValue}
         onValueChange={handleValueChange}
+        onValueChangeFinished={() => onValueChangeFinished?.([latestValueRef.current])}
         min={safeMin}
         max={safeMax}
         steps={resolvedSteps}

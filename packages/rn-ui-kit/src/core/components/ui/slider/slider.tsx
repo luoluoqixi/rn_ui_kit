@@ -26,6 +26,8 @@ function SliderRoot(props: SliderProps) {
     nativeHaptics,
     nativeHapticsInterval,
     onValueChange,
+    onValueChangeFinished,
+    onSlideEnd,
     thumbCount,
     thumbProps,
     trackActiveProps,
@@ -88,6 +90,10 @@ function SliderRoot(props: SliderProps) {
   return (
     <ReplicaSlider
       {...rootProps}
+      onSlideEnd={(event, value) => {
+        onSlideEnd?.(event, value);
+        onValueChangeFinished?.([value]);
+      }}
       onValueChange={handleValueChange}
       orientation={orientation}
       size={size}
