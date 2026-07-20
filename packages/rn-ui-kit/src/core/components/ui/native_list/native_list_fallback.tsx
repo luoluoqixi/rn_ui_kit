@@ -786,8 +786,9 @@ export function NativeListRoot({
   } = useTrueSheetScrollLayout();
   const appBackgroundColors = useAppBackgroundColors();
   const rootBackground = { backgroundColor: backgroundColor ?? appBackgroundColors.screen };
+  const isNestedFallbackList = nestedScrollEnabled === true;
 
-  const bottomPadding = insideTrueSheet
+  const bottomPadding = insideTrueSheet && !isNestedFallbackList
     ? getTrueSheetScrollBottomPadding({
         insetAdjustment,
         nativeScrollInsetsApplied,
@@ -795,7 +796,9 @@ export function NativeListRoot({
       })
     : undefined;
   const indicatorBottomInset =
-    insideTrueSheet && automaticallyAdjustsScrollIndicatorInsets !== false
+    insideTrueSheet &&
+    !isNestedFallbackList &&
+    automaticallyAdjustsScrollIndicatorInsets !== false
     ? getTrueSheetScrollIndicatorBottomInset({
         automaticContentInsetAdjustment,
         nativeScrollInsetsApplied,
@@ -804,13 +807,27 @@ export function NativeListRoot({
     : undefined;
   const shouldUseManualHeaderSpacing =
     !insideTrueSheet &&
+    !isNestedFallbackList &&
     os() === "ios" &&
     headerHeight > 0 &&
     contentInset == null &&
     contentInsetAdjustmentBehavior == null &&
     contentOffset == null;
   const manuallyAdjustNormalPageIndicator =
-    os() === "ios" && !insideTrueSheet && automaticallyAdjustsScrollIndicatorInsets == null;
+    os() === "ios" &&
+    (!insideTrueSheet || isNestedFallbackList) &&
+    automaticallyAdjustsScrollIndicatorInsets == null;
+  const resolvedContentInsetAdjustmentBehavior =
+    contentInsetAdjustmentBehavior ??
+    (isNestedFallbackList
+      ? "never"
+      : insideTrueSheet && os() === "ios"
+        ? automaticContentInsetAdjustment
+          ? "automatic"
+          : "never"
+        : shouldUseManualHeaderSpacing
+          ? "never"
+          : undefined);
   const contentTopPadding =
     contentMarginTop ?? (shouldUseManualHeaderSpacing ? headerHeight + 8 : undefined);
   const contentBottomPadding =
@@ -858,15 +875,7 @@ export function NativeListRoot({
         contentSpacingStyle,
         contentContainerStyle,
       ]}
-      contentInsetAdjustmentBehavior={
-        insideTrueSheet && os() === "ios"
-          ? automaticContentInsetAdjustment
-            ? "automatic"
-            : "never"
-          : shouldUseManualHeaderSpacing
-            ? "never"
-            : contentInsetAdjustmentBehavior
-      }
+      contentInsetAdjustmentBehavior={resolvedContentInsetAdjustmentBehavior}
       contentOffset={contentOffset}
       data={entries}
       extraData={entries}
