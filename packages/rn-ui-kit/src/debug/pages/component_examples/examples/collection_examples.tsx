@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   FlashList,
@@ -22,10 +22,23 @@ import type { ComponentExampleDefinition } from "../types";
 function NativeListExample() {
   const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
   const [native, setNative] = useState(true);
+  const [fallbackMounted, setFallbackMounted] = useState(true);
   const [theme, setTheme] = useState<string | null>("system");
   const [syncInterval, setSyncInterval] = useState<string | null>("hourly");
   const [backupInterval, setBackupInterval] = useState("four-hours");
   const [lastAction, setLastAction] = useState("尚未点击");
+
+  useEffect(() => {
+    if (native) {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      setFallbackMounted(true);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [native]);
 
   return (
     <ExampleStack>
@@ -37,10 +50,19 @@ function NativeListExample() {
           checked={native}
           label="使用原生 List 外观"
           labelPosition="end"
-          onCheckedChange={setNative}
+          onCheckedChange={(nextNative) => {
+            setFallbackMounted(false);
+            setNative(nextNative);
+          }}
         />
         <View style={styles.nativeListFrame}>
-          <NativeList fixesIOS26NestedScrollIndicatorSafeArea native={native} nestedScrollEnabled>
+          {native || fallbackMounted ? (
+            <NativeList
+              fixesIOS26NestedScrollIndicatorSafeArea
+              key={native ? "native-list" : "fallback-list"}
+              native={native}
+              nestedScrollEnabled
+            >
             <NativeListSection footer="导航行适合跳转到更深层的设置页。" title="工作区">
               <NativeListNavigationItem
                 onPress={() => setLastAction("打开详情")}
@@ -153,7 +175,8 @@ function NativeListExample() {
                 />
               ) : null}
             </NativeListSection>
-          </NativeList>
+            </NativeList>
+          ) : null}
         </View>
         <Text opacity={0.6}>
           最近动作：{lastAction} · 自动同步：{autoSyncEnabled ? "开启" : "关闭"} · 主题：
