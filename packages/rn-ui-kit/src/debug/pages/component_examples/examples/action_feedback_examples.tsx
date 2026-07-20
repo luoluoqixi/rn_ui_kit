@@ -384,6 +384,6 @@ export const actionFeedbackExamples = [
     Component: NativeDialogExample,
     group: "动作与反馈",
     key: "native-dialog",
-    label: "Native Dialog",
+    label: "NativeDialog",
   },
 ] satisfies ComponentExampleDefinition[];

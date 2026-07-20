@@ -1851,7 +1851,10 @@ export function RnUiKitUiComponentsDebugPage({ header }: RnUiKitUiComponentsDebu
                 title="永不"
               />
             </NativeListSection>
-            <NativeListSection title="Select 示例">
+            <NativeListSection
+              title="Select 示例"
+              footer="底部内容示例 底部内容示例 底部内容示例 底部内容示例"
+            >
               <NativeListSelectItem
                 nativeHaptics={debugNativeHaptics}
                 selectProps={{
