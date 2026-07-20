@@ -388,6 +388,7 @@ function NativeListRoot({
   fixesIOS26NestedScrollIndicatorSafeArea,
   initialScrollTarget,
   native = true,
+  nestedScrollEnabled,
   scrollIndicatorInsets,
   style,
   scrollable = true,
@@ -404,6 +405,7 @@ function NativeListRoot({
   } = useTrueSheetScrollLayout();
   const resolvedBackgroundColor =
     backgroundColor != null ? (toSwiftUIHexColor(backgroundColor) ?? undefined) : undefined;
+  const isNestedNativeList = nestedScrollEnabled === true;
 
   if (!native) {
     return (
@@ -413,6 +415,7 @@ function NativeListRoot({
           automaticallyAdjustsScrollIndicatorInsets={automaticallyAdjustsScrollIndicatorInsets}
           backgroundColor={backgroundColor}
           contentInsetAdjustmentBehavior={contentInsetAdjustmentBehavior}
+          nestedScrollEnabled={nestedScrollEnabled}
           scrollIndicatorInsets={scrollIndicatorInsets}
           style={style}
           scrollable={scrollable}
@@ -424,7 +427,7 @@ function NativeListRoot({
   }
 
   const bottomPadding =
-    insideTrueSheet && scrollable
+    insideTrueSheet && scrollable && !isNestedNativeList
       ? getTrueSheetScrollBottomPadding({
           insetAdjustment,
           nativeScrollInsetsApplied,
@@ -432,14 +435,22 @@ function NativeListRoot({
         })
       : 0;
   // 默认只关闭普通 native-stack 页面的重复自动调整，不注入窗口底部安全区。
-  // NativeList 可能是页面内的定高区域；页面级列表需要避让时应显式开启自动调整。
+  // 定高内嵌列表的安全区由外层滚动视图处理，不能再按页面级根列表自动调整。
   const manuallyAdjustNormalPageIndicator =
-    !insideTrueSheet && automaticallyAdjustsScrollIndicatorInsets == null;
+    (!insideTrueSheet || isNestedNativeList) &&
+    automaticallyAdjustsScrollIndicatorInsets == null;
   const compensatesForTrueSheetViewportClipping =
-    insideTrueSheet && scrollable && automaticallyAdjustsScrollIndicatorInsets !== false;
+    insideTrueSheet &&
+    scrollable &&
+    !isNestedNativeList &&
+    automaticallyAdjustsScrollIndicatorInsets !== false;
   const resolvedContentInsetAdjustmentBehavior =
     contentInsetAdjustmentBehavior ??
-    (insideTrueSheet && automaticContentInsetAdjustment ? "automatic" : undefined);
+    (isNestedNativeList
+      ? "never"
+      : insideTrueSheet && automaticContentInsetAdjustment
+        ? "automatic"
+        : undefined);
   return (
     <NativeListContext.Provider value={{ native: true }}>
       <Host style={[styles.nativeRoot, style]}>
@@ -456,8 +467,8 @@ function NativeListRoot({
             (tracksNavigationBarScrollEdge ??
               (!insideTrueSheet && resolvedContentInsetAdjustmentBehavior === "automatic"))
           }
-          // 固定高度的内嵌列表可以显式关闭 indicator 自动调整；这时也必须关闭
-          // TrueSheet viewport clipping 补偿，否则初次布局在屏幕外时会留下过期的底部 inset。
+          // 只有页面级根列表才需要按 TrueSheet 的可见 viewport 裁剪；
+          // 内嵌列表保留自身完整高度，由外层 ScrollView 决定何时进入可见区域。
           compensatesForViewportClipping={compensatesForTrueSheetViewportClipping}
           correctsNestedScrollIndicatorFrame={
             isIos26Plus() && fixesIOS26NestedScrollIndicatorSafeArea === true
