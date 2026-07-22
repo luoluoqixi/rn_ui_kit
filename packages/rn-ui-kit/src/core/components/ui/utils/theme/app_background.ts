@@ -19,8 +19,21 @@ const STANDARD_IOS_BACKGROUND_COLORS: Record<ResolvedColorScheme, AppBackgroundC
   },
 };
 
+let appBackgroundColors = STANDARD_IOS_BACKGROUND_COLORS;
+
+export { STANDARD_IOS_BACKGROUND_COLORS as defaultAppStandardAppBackgroundColors };
+
+/**
+ * 静态设置应用背景色。应在渲染 UI 之前调用。
+ */
+export function setStandardAppBackgroundColors(
+  colors: Record<ResolvedColorScheme, AppBackgroundColors>,
+): void {
+  appBackgroundColors = colors;
+}
+
 export function getStandardAppBackgroundColors(
   colorScheme: ResolvedColorScheme,
 ): AppBackgroundColors {
-  return STANDARD_IOS_BACKGROUND_COLORS[colorScheme];
+  return appBackgroundColors[colorScheme];
 }
