@@ -93,6 +93,11 @@ git push <remote> v1.2.3
 修改版本文件之前终止。`--push` 同样要求工作区干净；只有显式增加 `--force`
 时，`git add .` 才会将已有的全部未忽略变更纳入 release commit。
 
+自动模式遇到同名本地 tag 时，会通过 `git ls-remote` 检查实际配置的
+`origin`、`nas`。只要任一远端已存在该 tag，脚本就会拒绝继续；如果所有目标
+远端都不存在，则在 release commit 成功后删除旧本地 tag，并重新创建 tag
+使其指向新的 release commit。远端检查失败时不会删除本地 tag。
+
 发布构建读取当前工作区文件，包括尚未提交的修改。正式发布前应先运行 `git status`，确保发布产物与源码 commit、tag 一致。
 
 ## 3. 只构建发布包

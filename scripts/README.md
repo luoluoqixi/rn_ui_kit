@@ -10,6 +10,8 @@ bun run set-version 1.2.3 --push
 发布分支，并将发布分支、`main` 和 tag 推送到实际存在的 `origin`/`nas`。
 使用 `--commit` 或 `--push` 时，工作区必须干净；如果确认要把已有改动全部
 放进 release commit，需要显式增加 `--force`。
+如果同名 tag 仅存在于本地，脚本会在 release commit 成功后重新创建它；如果
+任一已配置的 `origin`/`nas` 已存在同名 tag，则拒绝继续。
 
 发布脚本位于 `scripts/release/`，Android 示例 APK 发布脚本位于
 `scripts/android/release-example-apk.js`。

@@ -169,6 +169,36 @@ function configuredPushRemotes() {
   return pushRemoteCandidates.filter((remote) => configuredRemotes.has(remote));
 }
 
+function remoteTagExists(remote, tag) {
+  const result = spawnSync(
+    "git",
+    ["ls-remote", "--exit-code", "--tags", remote, `refs/tags/${tag}`],
+    {
+      cwd: projectRoot,
+      encoding: "utf8",
+      shell: false,
+    },
+  );
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  if (result.status === 0) {
+    return true;
+  }
+
+  if (result.status === 2) {
+    return false;
+  }
+
+  const stderr = (result.stderr || "").trim();
+  fail(
+    stderr ||
+      `无法检查远端 ${remote} 是否存在 Tag ${tag}（退出码 ${result.status}）。`,
+  );
+}
+
 function readSourcePackage() {
   if (!existsSync(sourcePackageJsonPath)) {
     fail("找不到 packages/rn-ui-kit/package.json。");
@@ -179,7 +209,10 @@ function readSourcePackage() {
 
 function validateAutomation(options) {
   if (!options.commit) {
-    return [];
+    return {
+      remotes: [],
+      recreateLocalTag: false,
+    };
   }
 
   const worktreeStatus = runCapture("git", [
@@ -196,35 +229,52 @@ function validateAutomation(options) {
     );
   }
 
-  if (gitRefExists(`refs/tags/${options.tag}`)) {
-    fail(`Tag ${options.tag} 已存在，无法自动创建 release commit。`);
-  }
-
-  if (!options.push) {
-    return [];
-  }
-
-  const currentBranch = runCapture("git", [
-    "symbolic-ref",
-    "--quiet",
-    "--short",
-    "HEAD",
-  ]);
-  if (currentBranch !== "main") {
-    fail(
-      `--push 必须在 main 分支执行，` +
-        `当前分支是 ${currentBranch || "(detached HEAD)"}。`,
-    );
-  }
-
   const remotes = configuredPushRemotes();
-  if (remotes.length === 0) {
-    fail(
-      `未找到可推送的 remote；只支持已存在的 ${pushRemoteCandidates.join("、")}。`,
+  if (options.push) {
+    const currentBranch = runCapture("git", [
+      "symbolic-ref",
+      "--quiet",
+      "--short",
+      "HEAD",
+    ]);
+    if (currentBranch !== "main") {
+      fail(
+        `--push 必须在 main 分支执行，` +
+          `当前分支是 ${currentBranch || "(detached HEAD)"}。`,
+      );
+    }
+
+    if (remotes.length === 0) {
+      fail(
+        `未找到可推送的 remote；只支持已存在的 ${pushRemoteCandidates.join("、")}。`,
+      );
+    }
+  }
+
+  const recreateLocalTag = gitRefExists(`refs/tags/${options.tag}`);
+  if (recreateLocalTag) {
+    const remotesWithTag = remotes.filter((remote) =>
+      remoteTagExists(remote, options.tag),
+    );
+    if (remotesWithTag.length > 0) {
+      fail(
+        `Tag ${options.tag} 已存在于远端 ${remotesWithTag.join("、")}，` +
+          "已拒绝自动创建 release commit。",
+      );
+    }
+
+    const checkedRemotes =
+      remotes.length > 0 ? remotes.join("、") : "origin/nas（均未配置）";
+    console.log(
+      `本地 Tag ${options.tag} 已存在，但 ${checkedRemotes} 均不存在该 Tag；` +
+        "将在 release commit 成功后删除并重新创建本地 Tag。",
     );
   }
 
-  return remotes;
+  return {
+    remotes,
+    recreateLocalTag,
+  };
 }
 
 function updateVersions(version) {
@@ -301,9 +351,12 @@ function printManualCommands(version, tag) {
   console.log(`bun run set-version ${version} --push`);
 }
 
-function commitRelease(version, tag) {
+function commitRelease(version, tag, recreateLocalTag) {
   run("git", ["add", "."]);
   run("git", ["commit", "-S", "-m", `release: ${version}`]);
+  if (recreateLocalTag) {
+    run("git", ["tag", "-d", tag]);
+  }
   run("git", ["tag", "-a", tag, "-m", tag]);
 }
 
@@ -322,7 +375,7 @@ function main() {
   const options = parseOptions(process.argv.slice(2));
   const sourcePackage = readSourcePackage();
   const branchName = `${sourcePackage.name}-${options.version}`;
-  const remotes = validateAutomation(options);
+  const automation = validateAutomation(options);
 
   updateVersions(options.version);
 
@@ -331,10 +384,10 @@ function main() {
     return;
   }
 
-  commitRelease(options.version, options.tag);
+  commitRelease(options.version, options.tag, automation.recreateLocalTag);
 
   if (options.push) {
-    buildAndPushRelease(branchName, options.tag, remotes);
+    buildAndPushRelease(branchName, options.tag, automation.remotes);
   } else {
     console.log(
       `\n已创建 release commit 和 tag ${options.tag}，尚未执行 package 或 push。`,
