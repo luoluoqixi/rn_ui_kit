@@ -158,6 +158,7 @@
     },
   },
   "patchedDependencies": {
+    "@expo/cli@55.0.32": "examples/app/patches/@expo+cli@55.0.32.patch",
     "@lodev09/react-native-true-sheet@3.11.6": "examples/app/patches/@lodev09+react-native-true-sheet@3.11.6.patch",
     "zeego@3.0.6": "examples/app/patches/zeego@3.0.6.patch",
     "@react-native-picker/picker@2.11.4": "examples/app/patches/@react-native-picker+picker@2.11.4.patch",
@@ -167,7 +168,7 @@
     "@tamagui/portal@2.4.0": "examples/app/patches/@tamagui+portal@2.4.0.patch",
     "@tamagui/native@2.4.0": "examples/app/patches/@tamagui+native@2.4.0.patch",
     "@tamagui/web@2.4.0": "examples/app/patches/@tamagui+web@2.4.0.patch",
-    "@expo/cli@55.0.32": "examples/app/patches/@expo+cli@55.0.32.patch",
+    "react-native-screens@4.24.0": "examples/app/patches/react-native-screens@4.24.0.patch",
     "@expo/ui@55.0.17": "examples/app/patches/@expo+ui@55.0.17.patch",
     "@tamagui/toast@2.4.0": "examples/app/patches/@tamagui+toast@2.4.0.patch",
     "react-native-reanimated@4.3.0": "examples/app/patches/react-native-reanimated@4.3.0.patch",

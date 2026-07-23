@@ -243,21 +243,16 @@ function RnUiKitDebugHostPanel({
 
   useLayoutEffect(() => {
     navigation.setOptions(
-      withNativeBackButton(
-        {
-          ...debugStackScreenOptions,
-          headerBackButtonDisplayMode:
-            isIos26Plus() && !showsExplicitRootBackLabel ? "minimal" : "default",
-          headerBackButtonMenuEnabled: true,
-          headerBackTitle: showsExplicitRootBackLabel ? backButtonLabel : undefined,
-          headerShown: true,
-          title,
-        },
-        {
-          label: showsExplicitRootBackLabel ? backButtonLabel : "返回",
-          onPress: () => navigation.goBack(),
-        },
-      ),
+      withNativeBackButton({
+        ...debugStackScreenOptions,
+        headerBackButtonDisplayMode:
+          isIos26Plus() && !showsExplicitRootBackLabel ? "minimal" : "default",
+        headerBackButtonMenuEnabled: true,
+        // 普通页面必须保持 undefined，让 UIKit 使用上一层真实 title 构建历史菜单。
+        headerBackTitle: showsExplicitRootBackLabel ? backButtonLabel : undefined,
+        headerShown: true,
+        title,
+      }),
     );
   }, [
     backButtonLabel,
@@ -496,12 +491,7 @@ function RnUiKitDebugPanelContent({
         <Stack.Navigator
           id="rn-ui-kit-debug-stack"
           initialRouteName="index"
-          screenOptions={({ navigation }) =>
-            withNativeBackButton(debugStackScreenOptions, {
-              label: "返回",
-              onPress: () => navigation.goBack(),
-            })
-          }
+          screenOptions={withNativeBackButton(debugStackScreenOptions)}
         >
           <Stack.Screen
             name="index"

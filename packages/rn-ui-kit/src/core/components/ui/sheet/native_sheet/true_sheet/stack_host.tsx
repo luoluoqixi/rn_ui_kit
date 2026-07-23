@@ -159,14 +159,7 @@ function TrueSheetStackHostInner<ParamList extends ParamListBase = ParamListBase
 
   const nativeScreenOptions = mergedScreenOptions as NativeStackNavigationOptions;
   const resolvedScreenOptions: TrueSheetInnerStackScreenOptions = trueSheetUsesNativeStackNavigator
-    ? withNativeBackButton(nativeScreenOptions, {
-        fallbackLabel: "返回",
-        onPress: () => {
-          if (navigationRef.isReady() && navigationRef.canGoBack()) {
-            navigationRef.goBack();
-          }
-        },
-      })
+    ? withNativeBackButton(nativeScreenOptions)
     : mergedScreenOptions;
 
   const insetAdjustment = sheetProps?.insetAdjustment ?? defaultSheetProps.insetAdjustment;

@@ -1,26 +1,27 @@
-import type {
-  NativeStackHeaderBackProps,
-  NativeStackHeaderItemProps,
-  NativeStackNavigationOptions,
-} from "@react-navigation/native-stack";
+import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 import { isIos26Plus, os } from "../platform";
 
-type NativeBackButtonOptions = {
-  /** 省略时沿用 React Navigation 推导出的上一页标题。 */
+type LegacyNativeBackButtonOptions = {
+  /** @deprecated 保留仅用于源码兼容；系统按钮会读取上一页的 `title`。 */
   label?: string;
-  /** 上一页没有标题时使用的兜底文案。 */
+  /** @deprecated 保留仅用于源码兼容；无 title 时 UIKit 会显示本地化的“返回”。 */
   fallbackLabel?: string;
-  onPress: () => void;
+  /** @deprecated 保留仅用于源码兼容；系统按钮由 UINavigationController 执行 pop。 */
+  onPress?: () => void;
 };
 
 /**
- * iOS 26 的透明导航栏默认返回按钮在部分场景下不会正确应用 `headerTintColor`。
- * 这里统一降级为原生 header item，并把系统版本判断收口在一个入口里。
+ * iOS 26 保留 UINavigationController 生成的系统返回按钮。
+ *
+ * 不要用 `headerLeft` / `unstable_headerLeftItems` 模拟返回按钮：它们只是普通的
+ * leading bar item，不会获得系统返回按钮的长按历史菜单。透明导航栏不影响这项
+ * 原生能力。菜单优先使用上一页 title；没有 title 时由 UIKit 提供本地化兜底。
+ * 颜色继续交给 `headerTintColor` 和 iOS Liquid Glass 处理。
  */
 export function withNativeBackButton<T extends NativeStackNavigationOptions>(
   screenOptions: T,
-  options: NativeBackButtonOptions,
+  _legacyOptions?: LegacyNativeBackButtonOptions,
 ): T {
   if (
     os() !== "ios" ||
@@ -31,35 +32,9 @@ export function withNativeBackButton<T extends NativeStackNavigationOptions>(
     return screenOptions;
   }
 
-  let inferredLabel: string | undefined;
-
   return {
     ...screenOptions,
-    headerBackVisible: false,
-    // unstable_headerLeftItems 的参数没有上一页标题；headerLeft 会先收到完整的 back props，
-    // 即使最终由原生 item 覆盖，也可用它把系统推导的标题传给 iOS 26 原生按钮。
-    ...(options.label == null
-      ? {
-          headerLeft: ({ label }: NativeStackHeaderBackProps) => {
-            inferredLabel = label;
-            return null;
-          },
-        }
-      : {}),
-    unstable_headerLeftItems: ({ canGoBack, tintColor }: NativeStackHeaderItemProps) => {
-      if (!canGoBack) {
-        return [];
-      }
-
-      return [
-        {
-          type: "button" as const,
-          label: options.label ?? inferredLabel ?? options.fallbackLabel ?? "返回",
-          icon: { type: "sfSymbol" as const, name: "chevron.left" as const },
-          onPress: options.onPress,
-          tintColor,
-        },
-      ];
-    },
+    // React Navigation 默认为 true；显式保留调用方的 false。
+    headerBackButtonMenuEnabled: screenOptions.headerBackButtonMenuEnabled ?? true,
   };
 }

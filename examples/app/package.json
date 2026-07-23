@@ -97,6 +97,7 @@
     "expo-haptics@55.0.14": "examples/app/patches/expo-haptics@55.0.14.patch",
     "react-native-ios-utilities@5.2.0": "examples/app/patches/react-native-ios-utilities@5.2.0.patch",
     "react-native-reanimated@4.3.0": "examples/app/patches/react-native-reanimated@4.3.0.patch",
+    "react-native-screens@4.24.0": "examples/app/patches/react-native-screens@4.24.0.patch",
     "react-native@0.83.9": "examples/app/patches/react-native@0.83.9.patch",
     "zeego@3.0.6": "examples/app/patches/zeego@3.0.6.patch"
   }
