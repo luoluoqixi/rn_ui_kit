@@ -4,6 +4,7 @@ import type { ScrollViewProps, ViewStyle } from "react-native";
 import type { SelectProps } from "../select";
 import type { SwitchProps } from "../switch";
 import type { NativeHapticsSetting } from "../utils";
+import type { NavigationBarScrollEdgeTrackingProps } from "../utils/navigation";
 
 /** 通用 item base props */
 export type NativeListItemBaseProps = {
@@ -57,7 +58,8 @@ export type NativeListSectionProps = {
 };
 
 /** NativeList Root props */
-export type NativeListRootProps = Omit<ScrollViewProps, "children"> & {
+export type NativeListRootProps = Omit<ScrollViewProps, "children"> &
+  NavigationBarScrollEdgeTrackingProps & {
   /** 列表宿主背景色：iOS 原生 List 直接作用于 List，自定义 fallback 作用于根容器。 */
   backgroundColor?: ViewStyle["backgroundColor"];
   children?: ReactNode;
@@ -76,9 +78,4 @@ export type NativeListRootProps = Omit<ScrollViewProps, "children"> & {
   native?: boolean;
   /** 设为 false 时不创建内部 ScrollView，由外层宿主负责滚动。 */
   scrollable?: boolean;
-  /**
-   * 将 iOS 原生 List 注册为当前 native-stack 页面的顶部内容滚动视图。
-   * 只应由页面级列表启用；嵌套列表必须保持关闭，避免抢占外层 ScrollView。
-   */
-  tracksNavigationBarScrollEdge?: boolean;
 };

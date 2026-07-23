@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import type { NavigationBarScrollEdgeTrackingProps } from "../../../utils/navigation";
 import { os } from "../../../utils/platform";
 
 import { AndroidClippedScrollView } from "./android_clipped_scroll_view";
@@ -17,7 +18,8 @@ import {
 } from "./sheet_scroll_layout";
 import { useTrueSheetScrollLayout } from "./true_sheet_scroll_context";
 
-export type TrueSheetScrollContentProps = Omit<ScrollViewProps, "children"> & {
+export type TrueSheetScrollContentProps = Omit<ScrollViewProps, "children"> &
+  NavigationBarScrollEdgeTrackingProps & {
   children: ReactNode;
   /** 追加在底部安全区与默认留白之后 */
   extraBottomPadding?: number;
@@ -29,7 +31,18 @@ export type TrueSheetScrollContentProps = Omit<ScrollViewProps, "children"> & {
  * 须置于 `TrueSheetScrollLayoutProvider` 子树内（由 `TrueSheetPanel` / `TrueSheetStackHost` 提供）。
  */
 export const TrueSheetScrollContent = forwardRef<ScrollView, TrueSheetScrollContentProps>(
-  ({ children, contentContainerStyle, extraBottomPadding, style, ...rest }, ref) => {
+  (
+    {
+      children,
+      contentContainerStyle,
+      extraBottomPadding,
+      navigationBarScrollEdgeOptions,
+      style,
+      tracksNavigationBarScrollEdge,
+      ...rest
+    },
+    ref,
+  ) => {
     const insets = useSafeAreaInsets();
     const { automaticContentInsetAdjustment, insetAdjustment, nativeScrollInsetsApplied } =
       useTrueSheetScrollLayout();
@@ -41,9 +54,11 @@ export const TrueSheetScrollContent = forwardRef<ScrollView, TrueSheetScrollCont
           ref={ref}
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
+          navigationBarScrollEdgeOptions={navigationBarScrollEdgeOptions}
           showsVerticalScrollIndicator
           style={[styles.androidScroll, style]}
           contentContainerStyle={[styles.androidContent, contentContainerStyle]}
+          tracksNavigationBarScrollEdge={tracksNavigationBarScrollEdge}
           {...rest}
         >
           {children}

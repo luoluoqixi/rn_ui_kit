@@ -17,6 +17,8 @@ type UpdatePreferences = (updater: (current: UiPreferences) => UiPreferences) =>
 function createThemeDebugPage(preferences: UiPreferences, updatePreferences: UpdatePreferences) {
   return function AppThemeDebugPage() {
     const usesPreIos26ScrollEdgeHeader = Platform.OS === "ios" && !isIos26Plus();
+    const tracksScrollEdgeHeader =
+      Platform.OS === "android" || usesPreIos26ScrollEdgeHeader;
     const accentOptions = useMemo(
       () => accentThemeNames.map((value) => ({ label: value, value })),
       [],
@@ -29,7 +31,7 @@ function createThemeDebugPage(preferences: UiPreferences, updatePreferences: Upd
             usesPreIos26ScrollEdgeHeader ? true : undefined
           }
           contentInsetAdjustmentBehavior={usesPreIos26ScrollEdgeHeader ? "automatic" : undefined}
-          tracksNavigationBarScrollEdge={usesPreIos26ScrollEdgeHeader}
+          tracksNavigationBarScrollEdge={tracksScrollEdgeHeader}
         >
           <NativeListSection title="主题">
             <NativeListSelectItem

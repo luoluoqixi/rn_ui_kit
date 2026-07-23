@@ -389,6 +389,7 @@ function NativeListRoot({
   initialScrollTarget,
   native = true,
   nestedScrollEnabled,
+  navigationBarScrollEdgeOptions,
   scrollIndicatorInsets,
   style,
   scrollable = true,
@@ -417,9 +418,11 @@ function NativeListRoot({
           backgroundColor={backgroundColor}
           contentInsetAdjustmentBehavior={contentInsetAdjustmentBehavior}
           nestedScrollEnabled={nestedScrollEnabled}
+          navigationBarScrollEdgeOptions={navigationBarScrollEdgeOptions}
           scrollIndicatorInsets={scrollIndicatorInsets}
           style={style}
           scrollable={scrollable}
+          tracksNavigationBarScrollEdge={tracksNavigationBarScrollEdge}
         >
           {children}
         </FallbackRoot>

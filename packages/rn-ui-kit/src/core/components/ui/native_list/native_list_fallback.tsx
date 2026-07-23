@@ -26,7 +26,11 @@ import {
 import { useTrueSheetScrollLayout } from "../sheet/native_sheet/true_sheet/true_sheet_scroll_context";
 import { Switch } from "../switch";
 import { SizableText, Text } from "../text";
-import { triggerNativeHaptics, useResolvedNativeHaptics } from "../utils";
+import {
+  triggerNativeHaptics,
+  useNavigationBarScrollEdge,
+  useResolvedNativeHaptics,
+} from "../utils";
 import type {
   NativeListActionItemProps,
   NativeListButtonItemProps,
@@ -749,14 +753,14 @@ export function NativeListRoot({
   fixesIOS26NestedScrollIndicatorSafeArea: _fixesIOS26NestedScrollIndicatorSafeArea,
   initialScrollTarget,
   native: _native,
+  navigationBarScrollEdgeOptions,
   scrollable = true,
   style,
-  tracksNavigationBarScrollEdge: _tracksNavigationBarScrollEdge,
+  tracksNavigationBarScrollEdge = false,
   ...rest
 }: NativeListRootProps) {
   void _native;
   void _fixesIOS26NestedScrollIndicatorSafeArea;
-  void _tracksNavigationBarScrollEdge;
   const {
     alwaysBounceVertical,
     automaticallyAdjustsScrollIndicatorInsets,
@@ -766,6 +770,8 @@ export function NativeListRoot({
     keyboardShouldPersistTaps,
     maintainVisibleContentPosition: _maintainVisibleContentPosition,
     nestedScrollEnabled,
+    onScroll,
+    scrollEventThrottle,
     scrollIndicatorInsets,
     showsVerticalScrollIndicator,
     ...scrollViewProps
@@ -785,6 +791,11 @@ export function NativeListRoot({
     nativeScrollInsetsApplied,
   } = useTrueSheetScrollLayout();
   const appBackgroundColors = useAppBackgroundColors();
+  const trackedOnScroll = useNavigationBarScrollEdge({
+    navigationBarScrollEdgeOptions,
+    onScroll,
+    tracksNavigationBarScrollEdge,
+  });
   const rootBackground = { backgroundColor: backgroundColor ?? appBackgroundColors.screen };
   const isNestedFallbackList = nestedScrollEnabled === true;
 
@@ -848,7 +859,9 @@ export function NativeListRoot({
         ]}
         keyboardShouldPersistTaps={keyboardShouldPersistTaps ?? "handled"}
         nestedScrollEnabled={nestedScrollEnabled ?? true}
+        onScroll={trackedOnScroll}
         scrollEnabled={scrollable}
+        scrollEventThrottle={scrollEventThrottle ?? (tracksNavigationBarScrollEdge ? 16 : undefined)}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator ?? true}
         style={[styles.root, rootBackground, style]}
         {...scrollViewProps}
@@ -882,8 +895,10 @@ export function NativeListRoot({
       keyboardShouldPersistTaps={keyboardShouldPersistTaps ?? "handled"}
       keyExtractor={getEntryKey}
       nestedScrollEnabled={nestedScrollEnabled ?? true}
+      onScroll={trackedOnScroll}
       renderItem={renderFallbackListEntry}
       scrollEnabled={scrollable}
+      scrollEventThrottle={scrollEventThrottle ?? (tracksNavigationBarScrollEdge ? 16 : undefined)}
       showsVerticalScrollIndicator={showsVerticalScrollIndicator ?? true}
       scrollIndicatorInsets={
         indicatorBottomInset != null

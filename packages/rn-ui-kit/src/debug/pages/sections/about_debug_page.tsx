@@ -13,13 +13,15 @@ const platformNames: Record<string, string> = {
 
 export function RnUiKitAboutDebugPage() {
   const usesPreIos26ScrollEdgeHeader = Platform.OS === "ios" && !isIos26Plus();
+  const tracksScrollEdgeHeader =
+    Platform.OS === "android" || usesPreIos26ScrollEdgeHeader;
 
   return (
     <View style={styles.nativeListHost}>
       <NativeList
         automaticallyAdjustsScrollIndicatorInsets={usesPreIos26ScrollEdgeHeader ? true : undefined}
         contentInsetAdjustmentBehavior={usesPreIos26ScrollEdgeHeader ? "automatic" : undefined}
-        tracksNavigationBarScrollEdge={usesPreIos26ScrollEdgeHeader}
+        tracksNavigationBarScrollEdge={tracksScrollEdgeHeader}
       >
         <NativeListSection title="关于">
           <NativeListItem title="UI" value="rn-ui-kit" />

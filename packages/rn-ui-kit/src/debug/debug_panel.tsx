@@ -19,6 +19,7 @@ import { YStack, useTheme } from "tamagui";
 import {
   NativeSheet,
   NativeSheetStack,
+  getNativeStackScrollEdgeHeaderOptions,
   isIos26Plus,
   nativeStackStatusBarOptions,
   useAppBackgroundColors,
@@ -74,45 +75,25 @@ function useDebugStackScreenOptions() {
   const appBackgroundColors = useAppBackgroundColors();
   const { resolvedColorScheme } = useColorSchemeSettings();
   const theme = useTheme();
-  const transparentHeader = isIos26Plus();
-  const nativeScrollEdgeHeader = Platform.OS === "ios" && !transparentHeader;
 
   return useMemo(
     () =>
       withNativeStackGestureOptions({
         ...nativeStackStatusBarOptions(resolvedColorScheme),
         contentStyle: { backgroundColor: appBackgroundColors.screen },
-        ...(nativeScrollEdgeHeader
-          ? {
-              // iOS 15–25 会在普通小标题导航栏上原生切换
-              // scrollEdgeAppearance 与带系统材质的 standardAppearance。
-              headerBlurEffect: "systemThinMaterial",
-              headerLargeStyle: { backgroundColor: "transparent" },
-              headerShadowVisible: true,
-            }
-          : { headerShadowVisible: false }),
-        headerStyle: {
-          backgroundColor:
-            transparentHeader || nativeScrollEdgeHeader
-              ? "transparent"
-              : appBackgroundColors.header,
-        },
-        // iOS 15–25 需要让原生导航栏保持 translucent，UIKit 才会让滚动内容
-        // 延伸到 bar 下方并在 scrollEdgeAppearance / standardAppearance 间切换。
-        // standardAppearance 仍使用上面的实体 header 色，并非始终透明。
-        headerBackButtonDisplayMode: transparentHeader ? "minimal" : "default",
-        headerTransparent: transparentHeader || nativeScrollEdgeHeader,
+        ...getNativeStackScrollEdgeHeaderOptions({
+          headerBackgroundColor: appBackgroundColors.header,
+          screenBackgroundColor: appBackgroundColors.screen,
+        }),
         headerTintColor: theme.color10.val,
         headerTitleStyle: { color: theme.gray12.val },
       }),
     [
       appBackgroundColors.header,
       appBackgroundColors.screen,
-      nativeScrollEdgeHeader,
       resolvedColorScheme,
       theme.color10.val,
       theme.gray12.val,
-      transparentHeader,
     ],
   );
 }
@@ -140,7 +121,11 @@ function useDebugSheetStackScreenOptions() {
     headerStatusBarHeight: 0,
     headerStyle: {
       backgroundColor:
-        transparentHeader || nativeScrollEdgeHeader ? "transparent" : appBackgroundColors.header,
+        transparentHeader || nativeScrollEdgeHeader
+          ? "transparent"
+          : Platform.OS === "android"
+            ? appBackgroundColors.sheet
+            : appBackgroundColors.header,
       height: 56,
     },
     // Android TrueSheet 使用 JS Stack；保留箭头即可，避免默认的“返回”文案占用标题空间。

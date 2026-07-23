@@ -51,6 +51,8 @@ export function RnUiKitComponentExamplesDebugPage({
   const navigation = useNavigation<NavigationProp<DebugPanelNavigationParamList>>();
   const isNativeIosPage = Platform.OS === "ios";
   const usesPreIos26ScrollEdgeHeader = isNativeIosPage && !isIos26Plus();
+  const tracksScrollEdgeHeader =
+    Platform.OS === "android" || usesPreIos26ScrollEdgeHeader;
   const pageBackgroundColor =
     layoutHost === "nativeSheet" && isIos26Plus() ? "transparent" : appBackgroundColors.screen;
 
@@ -60,7 +62,7 @@ export function RnUiKitComponentExamplesDebugPage({
       <NativeList
         automaticallyAdjustsScrollIndicatorInsets={isNativeIosPage ? true : undefined}
         contentInsetAdjustmentBehavior={usesPreIos26ScrollEdgeHeader ? "automatic" : undefined}
-        tracksNavigationBarScrollEdge={usesPreIos26ScrollEdgeHeader}
+        tracksNavigationBarScrollEdge={tracksScrollEdgeHeader}
       >
         <NativeListSection>
           {sortedComponentExampleDefinitions.map((definition) => (
@@ -159,6 +161,7 @@ export function RnUiKitComponentExampleDetailPage({
         nestedScrollEnabled
         showsVerticalScrollIndicator
         style={scrollStyle}
+        tracksNavigationBarScrollEdge={Platform.OS === "android"}
       >
         {contents}
       </NativeSheetScrollContent>
@@ -173,6 +176,7 @@ export function RnUiKitComponentExampleDetailPage({
       nestedScrollEnabled
       showsVerticalScrollIndicator
       style={scrollStyle}
+      tracksNavigationBarScrollEdge={Platform.OS === "android"}
     >
       {contents}
     </ScrollView>

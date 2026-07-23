@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import type { NavigationBarScrollEdgeTrackingProps } from "../../utils/navigation";
 import { os } from "../../utils/platform";
 
 import { AndroidClippedScrollView } from "./true_sheet/android_clipped_scroll_view";
@@ -19,7 +20,8 @@ import {
 import { useTrueSheetScrollLayout } from "./true_sheet/true_sheet_scroll_context";
 import { useOptionalTrueSheetScrollableBinding } from "./true_sheet/scrollable_binding_context";
 
-export type NativeSheetScrollContentProps = Omit<ScrollViewProps, "children"> & {
+export type NativeSheetScrollContentProps = Omit<ScrollViewProps, "children"> &
+  NavigationBarScrollEdgeTrackingProps & {
   children: ReactNode;
   /** 追加在底部安全区与默认留白之后 */
   extraBottomPadding?: number;
@@ -45,7 +47,16 @@ type NativeStackTransitionEndNavigation = {
  */
 export const NativeSheetScrollContent = forwardRef<ScrollView, NativeSheetScrollContentProps>(
   (
-    { bindToNativeSheet = false, children, contentContainerStyle, extraBottomPadding, style, ...rest },
+    {
+      bindToNativeSheet = false,
+      children,
+      contentContainerStyle,
+      extraBottomPadding,
+      navigationBarScrollEdgeOptions,
+      style,
+      tracksNavigationBarScrollEdge,
+      ...rest
+    },
     ref,
   ) => {
     const insets = useSafeAreaInsets();
@@ -109,9 +120,11 @@ export const NativeSheetScrollContent = forwardRef<ScrollView, NativeSheetScroll
           ref={ref}
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
+          navigationBarScrollEdgeOptions={navigationBarScrollEdgeOptions}
           showsVerticalScrollIndicator
           style={[styles.androidScroll, style]}
           contentContainerStyle={[styles.androidContent, contentContainerStyle]}
+          tracksNavigationBarScrollEdge={tracksNavigationBarScrollEdge}
           {...rest}
         >
           {children}

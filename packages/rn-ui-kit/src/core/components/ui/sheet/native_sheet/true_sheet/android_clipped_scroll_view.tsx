@@ -10,7 +10,13 @@ import {
   useWindowDimensions,
 } from "react-native";
 
-type AndroidClippedScrollViewProps = Omit<ScrollViewProps, "children"> & {
+import {
+  type NavigationBarScrollEdgeTrackingProps,
+  useNavigationBarScrollEdge,
+} from "../../../utils/navigation";
+
+type AndroidClippedScrollViewProps = Omit<ScrollViewProps, "children"> &
+  NavigationBarScrollEdgeTrackingProps & {
   children: ReactNode;
 };
 
@@ -32,6 +38,7 @@ export const AndroidClippedScrollView = forwardRef<ScrollView, AndroidClippedScr
   (
     {
       children,
+      navigationBarScrollEdgeOptions,
       onContentSizeChange,
       onLayout,
       onMomentumScrollBegin,
@@ -41,6 +48,7 @@ export const AndroidClippedScrollView = forwardRef<ScrollView, AndroidClippedScr
       onScrollEndDrag,
       scrollEventThrottle,
       showsVerticalScrollIndicator = true,
+      tracksNavigationBarScrollEdge = false,
       ...props
     },
     forwardedRef,
@@ -52,6 +60,11 @@ export const AndroidClippedScrollView = forwardRef<ScrollView, AndroidClippedScr
     const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [contentHeight, setContentHeight] = useState(0);
     const [visibleHeight, setVisibleHeight] = useState(0);
+    const trackedOnScroll = useNavigationBarScrollEdge({
+      navigationBarScrollEdgeOptions,
+      onScroll,
+      tracksNavigationBarScrollEdge,
+    });
 
     function clearHideTimer() {
       if (hideTimerRef.current != null) {
@@ -108,7 +121,7 @@ export const AndroidClippedScrollView = forwardRef<ScrollView, AndroidClippedScr
       [{ nativeEvent: { contentOffset: { y: scrollOffsetY } } }],
       {
         listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-          onScroll?.(event);
+          trackedOnScroll?.(event);
         },
         useNativeDriver: true,
       },

@@ -37,6 +37,8 @@ export function RnUiKitDebugHomePage({
 }) {
   const isNativeIosPage = Platform.OS === "ios";
   const usesPreIos26ScrollEdgeHeader = isNativeIosPage && !isIos26Plus();
+  const tracksScrollEdgeHeader =
+    Platform.OS === "android" || usesPreIos26ScrollEdgeHeader;
   const sections = Array.from(
     pages.reduce((groups, page) => {
       const section = page.section ?? "调试分区";
@@ -51,7 +53,7 @@ export function RnUiKitDebugHomePage({
     <NativeList
       automaticallyAdjustsScrollIndicatorInsets={isNativeIosPage ? true : undefined}
       contentInsetAdjustmentBehavior={usesPreIos26ScrollEdgeHeader ? "automatic" : undefined}
-      tracksNavigationBarScrollEdge={usesPreIos26ScrollEdgeHeader}
+      tracksNavigationBarScrollEdge={tracksScrollEdgeHeader}
     >
       {sections.map(([section, sectionPages]) => (
         <NativeListSection key={section} title={section}>
