@@ -46,7 +46,6 @@ import {
   Spinner,
   Switch,
   Tabs,
-  TamaguiSlider,
   Text,
   TextArea,
   ToggleGroup,
@@ -190,7 +189,6 @@ export function RnUiKitUiComponentsDebugPage({ header }: RnUiKitUiComponentsDebu
   const [nestedGlobalSheetOpen, setNestedGlobalSheetOpen] = useState(false);
   const [nestedGlobalSheetPosition, setNestedGlobalSheetPosition] = useState(0);
   const [sliderValue, setSliderValue] = useState(56);
-  const [tamaguiSliderValue, setTamaguiSliderValue] = useState(56);
   const [nativeSliderValue, setNativeSliderValue] = useState(50);
   const [switchValue, setSwitchValue] = useState(true);
   const [toastNativeEnabled, setToastNativeEnabled] = useState(true);
@@ -678,17 +676,6 @@ export function RnUiKitUiComponentsDebugPage({ header }: RnUiKitUiComponentsDebu
             value={[sliderValue]}
           />
           <Text color="$color">当前值：{sliderValue}</Text>
-        </View>
-        <View style={styles.field}>
-          <Label>Slider Tamagui</Label>
-          <TamaguiSlider
-            max={100}
-            min={0}
-            nativeHaptics={debugNativeHaptics}
-            onValueChange={(nextValue: number[]) => setTamaguiSliderValue(nextValue[0] ?? 0)}
-            value={[tamaguiSliderValue]}
-          />
-          <Text color="$color">当前值：{tamaguiSliderValue}</Text>
         </View>
         {!isWeb() && (
           <View style={styles.field}>
