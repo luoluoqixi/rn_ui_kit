@@ -327,6 +327,26 @@ git push origin v1.2.3
 - `v1.2.3` tag 指向源码版本
 - `rn-ui-kit-1.2.3` 分支保存编译后的可安装产物
 
+### 5.1 自动创建 GitHub Release
+
+tag push 会触发 `.github/workflows/release.yml`。Workflow 会完整 checkout
+tag 历史，执行：
+
+```bash
+bun run release:notes v1.2.3
+```
+
+本地预览时，如果 `v1.2.3` 尚未创建，脚本会使用当前 `HEAD` 作为扫描终点。
+GitHub Actions 使用 `--require-tag`，确保正式生成 Release 说明时目标 tag
+已经存在。
+
+脚本扫描上一个版本 tag 到当前 tag 的非 merge commits，按 `feat`、`fix`、
+`perf`、`refactor`、`build`、`revert` 和 breaking changes 分类，并忽略
+`docs`、`ci`、`chore`、`test`、`style`、`release` 及其他未收录类型。
+生成的每一项都包含 commit 链接，末尾包含两个 tag 的完整比较链接。
+
+Release 创建成功后，后续 job 会构建 Android 示例 APK 并上传到该 Release。
+
 ## 6. 外部 App 安装
 
 发布分支推送后，可以使用：
@@ -384,6 +404,7 @@ git push -u origin rn-ui-kit-1.2.3
 | `bun run set-version 1.2.3` | 修改工程版本并同步 `bun.lock` |
 | `bun run package-release --pack-only` | 生成发布目录和 tgz，不操作 Git 分支 |
 | `bun run package-release` | 生成发布目录、tgz 和本地发布分支 |
+| `bun run release:notes v1.2.3` | 预览自动生成的 GitHub Release 说明 |
 | `git push -u origin rn-ui-kit-1.2.3` | 将发布分支推送到 GitHub |
 | `git tag -a v1.2.3 -m "v1.2.3"` | 为源码 commit 创建版本 tag |
 | `git push origin v1.2.3` | 将源码 tag 推送到 GitHub |

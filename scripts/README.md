@@ -18,8 +18,20 @@ git push -u origin rn-ui-kit-1.2.3
 `scripts/android/release-example-apk.js`。
 
 推送 `v<semver>` tag 后，`.github/workflows/release.yml` 会先创建 GitHub
-Release，再构建示例 App 的 release APK，并以
+Release。Release 说明会扫描上一个 tag 到当前 tag 的提交，按
+`feat`、`fix`、`perf`、`refactor`、`build` 和 `revert` 分类，并忽略
+`docs`、`ci`、`chore`、`test`、`style` 等提交。随后 workflow 会构建示例
+App 的 release APK，并以
 `rn-ui-kit-example-release-<tag>.apk` 上传到对应 Release。
+
+本地预览 Release 说明：
+
+```shell
+bun run release:notes v1.2.3
+```
+
+如果目标 tag 尚未创建，脚本会自动预览“最近版本 tag 到当前 `HEAD`”的提交；
+GitHub Actions 则通过 `--require-tag` 保证正式发布时目标 tag 必须存在。
 
 本地只构建 APK：
 
