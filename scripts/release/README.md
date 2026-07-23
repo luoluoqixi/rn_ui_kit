@@ -52,12 +52,46 @@ bun run set-version 1.2.3
 - `examples/app/package.json`
 - `bun.lock`
 
-修改版本后，先提交源码：
+默认不会 commit 或 push。自动创建签名 release commit 和 tag：
+
+```bash
+bun run set-version 1.2.3 --commit
+```
+
+使用 `--commit` 时工作区必须干净。存在已跟踪或未跟踪改动时，脚本会在修改
+版本文件之前终止。如果确认要将这些已有改动全部加入 release commit，必须
+显式执行：
+
+```bash
+bun run set-version 1.2.3 --commit --force
+```
+
+该模式依次执行：
 
 ```bash
 git add .
-git commit -m "chore(release): v1.2.3"
+git commit -S -m "release: 1.2.3"
+git tag -a v1.2.3 -m "v1.2.3"
 ```
+
+完整自动发布：
+
+```bash
+bun run set-version 1.2.3 --push
+```
+
+`--push` 隐含 `--commit`，并继续执行 `bun run package-release`。脚本只检查
+静态 remote 列表 `origin`、`nas`，对实际存在的每一个 remote 依次推送：
+
+```bash
+git push -u <remote> rn-ui-kit-1.2.3
+git push <remote> main
+git push <remote> v1.2.3
+```
+
+`--push` 必须在 `main` 分支执行。如果 `origin`、`nas` 都不存在，脚本会在
+修改版本文件之前终止。`--push` 同样要求工作区干净；只有显式增加 `--force`
+时，`git add .` 才会将已有的全部未忽略变更纳入 release commit。
 
 发布构建读取当前工作区文件，包括尚未提交的修改。正式发布前应先运行 `git status`，确保发布产物与源码 commit、tag 一致。
 
@@ -375,22 +409,14 @@ bun add "git+ssh://git@github.com/luoluoqixi/rn-ui-kit.git#rn-ui-kit-1.2.3"
 
 ```bash
 bun run typecheck
-bun run set-version 1.2.3
-
-git add .
-git commit -m "chore(release): v1.2.3"
-
-bun run package-release --pack-only
-bun run package-release
-git push -u origin rn-ui-kit-1.2.3
-
-git tag -a v1.2.3 -m "v1.2.3"
-git push origin v1.2.3
+bun run set-version 1.2.3 --push
 ```
 
-`--pack-only` 是可选的发布前检查。若不需要单独预检，可以直接：
+如果需要逐步检查，可以使用默认模式后手动执行：
 
 ```bash
+bun run set-version 1.2.3
+bun run package-release --pack-only
 bun run package-release
 git push -u origin rn-ui-kit-1.2.3
 ```
@@ -402,6 +428,9 @@ git push -u origin rn-ui-kit-1.2.3
 | `bun run build` | 在源码包目录生成本地 `dist` |
 | `bun run typecheck` | 检查 package 和 example App |
 | `bun run set-version 1.2.3` | 修改工程版本并同步 `bun.lock` |
+| `bun run set-version 1.2.3 --commit` | 更新版本、签名 commit 并创建 tag |
+| `bun run set-version 1.2.3 --commit --force` | 将已有工作区改动一并提交 |
+| `bun run set-version 1.2.3 --push` | commit、打包并推送发布分支、`main` 和 tag |
 | `bun run package-release --pack-only` | 生成发布目录和 tgz，不操作 Git 分支 |
 | `bun run package-release` | 生成发布目录、tgz 和本地发布分支 |
 | `bun run release:notes v1.2.3` | 预览自动生成的 GitHub Release 说明 |

@@ -415,6 +415,16 @@ bun --cwd examples/app typecheck
 # 修改版本并同步 bun.lock
 bun run set-version 1.0.1
 
+# 更新版本、创建签名 commit 和 tag
+# 要求执行前工作区干净
+bun run set-version 1.0.1 --commit
+
+# 明确允许将已有工作区改动一并提交
+bun run set-version 1.0.1 --commit --force
+
+# 完成上述步骤、生成发布分支并推送到 origin/nas
+bun run set-version 1.0.1 --push
+
 # 只生成发布目录和 tarball
 bun run package-release --pack-only
 

@@ -2,17 +2,14 @@
 
 ```shell
 bun run typecheck
-bun run set-version 1.2.3
-git add .
-git commit -m "release: v1.2.3"
-
-git tag -a v1.2.3 -m "v1.2.3"
-git push origin v1.2.3
-
-bun run package-release --pack-only
-bun run package-release
-git push -u origin rn-ui-kit-1.2.3
+bun run set-version 1.2.3 --push
 ```
+
+`set-version` 默认只更新版本文件和 `bun.lock`。`--commit` 会继续执行
+`git add .`、签名 commit 和创建 tag；`--push` 隐含 `--commit`，还会生成
+发布分支，并将发布分支、`main` 和 tag 推送到实际存在的 `origin`/`nas`。
+使用 `--commit` 或 `--push` 时，工作区必须干净；如果确认要把已有改动全部
+放进 release commit，需要显式增加 `--force`。
 
 发布脚本位于 `scripts/release/`，Android 示例 APK 发布脚本位于
 `scripts/android/release-example-apk.js`。

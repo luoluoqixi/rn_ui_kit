@@ -434,6 +434,16 @@ can be checked on iOS, Android, and Web.
 # Update versions and synchronize bun.lock
 bun run set-version 1.0.1
 
+# Update versions, create a signed commit, and create the tag
+# Requires a clean worktree
+bun run set-version 1.0.1 --commit
+
+# Explicitly include pre-existing worktree changes in the release commit
+bun run set-version 1.0.1 --commit --force
+
+# Also build the release branch and push to existing origin/nas remotes
+bun run set-version 1.0.1 --push
+
 # Generate only the release directory and tarball
 bun run package-release --pack-only
 
