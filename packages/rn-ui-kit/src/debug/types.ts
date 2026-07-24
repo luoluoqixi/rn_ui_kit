@@ -1,8 +1,17 @@
+import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import type { ComponentProps, ComponentType, ReactNode } from "react";
 import type { YStack } from "tamagui";
 
+import type {
+  NativeSheetStackScreenOptions,
+  NativeSheetStackSheetProps,
+} from "../core/components/ui/sheet/native_sheet/types";
+
 export type RnUiKitDebugRouteKey = string;
 export type RnUiKitDebugSectionPresentation = "scroll" | "static";
+export type RnUiKitDebugPanelPageScreenOptions = NativeStackNavigationOptions;
+export type RnUiKitDebugPanelNativeSheetScreenOptions = NativeSheetStackScreenOptions;
+export type RnUiKitDebugPanelSheetProps = NativeSheetStackSheetProps;
 
 export type RnUiKitDebugSectionContentProps = {
   header?: ReactNode;
@@ -36,9 +45,15 @@ export type RnUiKitDebugPanelProps = ComponentProps<typeof YStack> & {
    * host：复用调用侧当前 Native Stack，并由面板自动管理宿主 route 参数和 header。
    */
   navigationMode?: "host" | "independent";
+  /** 普通调试页面的 Native Stack screenOptions 覆盖。未传时保留内置 Header。 */
+  pageScreenOptions?: RnUiKitDebugPanelPageScreenOptions;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
   pages?: RnUiKitDebugRouteDefinition[];
+  /** “以 NativeSheet 打开调试首页”使用的 Sheet 属性覆盖。未传时保持 88% 高度等默认值。 */
+  panelSheetProps?: RnUiKitDebugPanelSheetProps;
+  /** “以 NativeSheet 打开调试首页”内部导航的 screenOptions 覆盖。 */
+  nativeSheetScreenOptions?: RnUiKitDebugPanelNativeSheetScreenOptions;
   sheetMode?: boolean;
 };
 

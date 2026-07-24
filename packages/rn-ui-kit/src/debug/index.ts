@@ -10,6 +10,9 @@ export {
   rnUiKitDebugRouteDefinitions,
 } from "./routes";
 export type {
+  RnUiKitDebugPanelNativeSheetScreenOptions,
+  RnUiKitDebugPanelPageScreenOptions,
+  RnUiKitDebugPanelSheetProps,
   RnUiKitDebugPanelProps,
   RnUiKitDebugRouteDefinition,
   RnUiKitDebugRouteKey,

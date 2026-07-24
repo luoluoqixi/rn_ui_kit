@@ -47,7 +47,10 @@ import {
 import { blurActiveElementOnWeb } from "./web_focus";
 
 import type {
+  RnUiKitDebugPanelNativeSheetScreenOptions,
+  RnUiKitDebugPanelPageScreenOptions,
   RnUiKitDebugPanelProps,
+  RnUiKitDebugPanelSheetProps,
   RnUiKitDebugRouteDefinition,
   RnUiKitDebugRouteKey,
 } from "./types";
@@ -71,7 +74,7 @@ function getDebugPages(pages?: RnUiKitDebugRouteDefinition[]) {
   );
 }
 
-function useDebugStackScreenOptions() {
+function useDebugStackScreenOptions(overrides?: RnUiKitDebugPanelPageScreenOptions) {
   const appBackgroundColors = useAppBackgroundColors();
   const { resolvedColorScheme } = useColorSchemeSettings();
   const theme = useTheme();
@@ -87,6 +90,7 @@ function useDebugStackScreenOptions() {
         }),
         headerTintColor: theme.color10.val,
         headerTitleStyle: { color: theme.gray12.val },
+        ...overrides,
       }),
     [
       appBackgroundColors.header,
@@ -94,11 +98,14 @@ function useDebugStackScreenOptions() {
       resolvedColorScheme,
       theme.color10.val,
       theme.gray12.val,
+      overrides,
     ],
   );
 }
 
-function useDebugSheetStackScreenOptions() {
+function useDebugSheetStackScreenOptions(
+  overrides?: RnUiKitDebugPanelNativeSheetScreenOptions,
+) {
   const appBackgroundColors = useAppBackgroundColors();
   const theme = useTheme();
   const transparentHeader = isIos26Plus();
@@ -136,6 +143,7 @@ function useDebugSheetStackScreenOptions() {
     headerTransparent: transparentHeader || nativeScrollEdgeHeader,
     headerTintColor: theme.color10.val,
     headerTitleStyle: { color: theme.gray12.val },
+    ...overrides,
   };
 }
 
@@ -149,9 +157,12 @@ export function RnUiKitDebugPanel({
   defaultOpen = true,
   initialRouteKey = "components",
   navigationMode = "independent",
+  nativeSheetScreenOptions,
   onOpenChange,
   open: openProp,
+  pageScreenOptions,
   pages: pagesProp,
+  panelSheetProps,
   sheetMode = false,
   ...props
 }: RnUiKitDebugPanelProps) {
@@ -171,6 +182,8 @@ export function RnUiKitDebugPanel({
         onOpenChange={handleOpenChange}
         open={open}
         pages={pages}
+        nativeSheetScreenOptions={nativeSheetScreenOptions}
+        panelSheetProps={panelSheetProps}
         {...props}
       />
     );
@@ -180,7 +193,10 @@ export function RnUiKitDebugPanel({
     return (
       <RnUiKitDebugHostPanel
         backButtonLabel={backButtonLabel}
+        nativeSheetScreenOptions={nativeSheetScreenOptions}
+        pageScreenOptions={pageScreenOptions}
         pages={pages}
+        panelSheetProps={panelSheetProps}
         {...props}
       />
     );
@@ -189,7 +205,10 @@ export function RnUiKitDebugPanel({
   return (
     <RnUiKitDebugPanelContent
       initialRouteKey={initialRouteKey}
+      nativeSheetScreenOptions={nativeSheetScreenOptions}
+      pageScreenOptions={pageScreenOptions}
       pages={pages}
+      panelSheetProps={panelSheetProps}
       {...props}
     />
   );
@@ -197,15 +216,21 @@ export function RnUiKitDebugPanel({
 
 function RnUiKitDebugHostPanel({
   backButtonLabel,
+  nativeSheetScreenOptions,
+  pageScreenOptions,
   pages,
+  panelSheetProps,
   ...props
 }: ComponentProps<typeof YStack> & {
   backButtonLabel?: string;
+  nativeSheetScreenOptions?: RnUiKitDebugPanelNativeSheetScreenOptions;
+  pageScreenOptions?: RnUiKitDebugPanelPageScreenOptions;
   pages: RnUiKitDebugRouteDefinition[];
+  panelSheetProps?: RnUiKitDebugPanelSheetProps;
 }) {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const route = useRoute();
-  const debugStackScreenOptions = useDebugStackScreenOptions();
+  const debugStackScreenOptions = useDebugStackScreenOptions(pageScreenOptions);
   const headerTransparent = debugStackScreenOptions.headerTransparent === true;
   const routeParams = (route.params ?? {}) as Record<string, unknown>;
   const sectionKey =
@@ -237,12 +262,14 @@ function RnUiKitDebugHostPanel({
         headerBackTitle: showsExplicitRootBackLabel ? backButtonLabel : undefined,
         headerShown: true,
         title,
+        ...pageScreenOptions,
       }),
     );
   }, [
     backButtonLabel,
     debugStackScreenOptions,
     navigation,
+    pageScreenOptions,
     showsExplicitRootBackLabel,
     title,
   ]);
@@ -284,8 +311,10 @@ function RnUiKitDebugHostPanel({
   } else {
     content = (
       <RnUiKitDebugHostHomePage
+        nativeSheetScreenOptions={nativeSheetScreenOptions}
         onOpenSection={(key) => pushDebugRoute({ section: key })}
         pages={pages}
+        panelSheetProps={panelSheetProps}
       />
     );
   }
@@ -298,12 +327,16 @@ function RnUiKitDebugHostPanel({
 }
 
 function RnUiKitDebugHostHomePage({
+  nativeSheetScreenOptions,
   onOpenSection,
   pages: pagesProp,
+  panelSheetProps,
   ...props
 }: ComponentProps<typeof YStack> & {
+  nativeSheetScreenOptions?: RnUiKitDebugPanelNativeSheetScreenOptions;
   onOpenSection: (key: RnUiKitDebugRouteKey) => void;
   pages?: RnUiKitDebugRouteDefinition[];
+  panelSheetProps?: RnUiKitDebugPanelSheetProps;
 }) {
   const pages = getDebugPages(pagesProp);
   const [openSectionsInSheet, setOpenSectionsInSheet] = useState(false);
@@ -345,6 +378,8 @@ function RnUiKitDebugHostHomePage({
         onOpenChange={setPanelSheetOpen}
         open={panelSheetOpen}
         pages={pages}
+        nativeSheetScreenOptions={nativeSheetScreenOptions}
+        panelSheetProps={panelSheetProps}
         sheetMode
       />
     </YStack>
@@ -352,16 +387,18 @@ function RnUiKitDebugHostHomePage({
 }
 
 function RnUiKitDebugPanelSheet({
+  nativeSheetScreenOptions,
   onOpenChange,
   open,
   pages,
+  panelSheetProps,
   ...props
 }: RnUiKitDebugPanelProps & {
   onOpenChange: (open: boolean) => void;
   open: boolean;
   pages: RnUiKitDebugRouteDefinition[];
 }) {
-  const debugSheetStackScreenOptions = useDebugSheetStackScreenOptions();
+  const debugSheetStackScreenOptions = useDebugSheetStackScreenOptions(nativeSheetScreenOptions);
   const headerTransparent = debugSheetStackScreenOptions.headerTransparent === true;
   const [openSectionsInSheet, setOpenSectionsInSheet] = useState(false);
   const [sectionSheetPosition, setSectionSheetPosition] = useState(0);
@@ -398,7 +435,7 @@ function RnUiKitDebugPanelSheet({
         open={open}
         overlayPortalHostName={DEBUG_PANEL_SHEET_OVERLAY_HOST}
         screenOptions={debugSheetStackScreenOptions}
-        sheetProps={{ snapPoints: [88], snapPointsMode: "percent" }}
+        sheetProps={{ snapPoints: [88], snapPointsMode: "percent", ...panelSheetProps }}
       >
         <NativeSheetStack.Screen
           name="index"
@@ -458,10 +495,13 @@ function RnUiKitDebugPanelSheet({
 
 function RnUiKitDebugPanelContent({
   initialRouteKey = "components",
+  nativeSheetScreenOptions,
+  pageScreenOptions,
   pages,
+  panelSheetProps,
   ...props
 }: RnUiKitDebugPanelProps & { pages: RnUiKitDebugRouteDefinition[] }) {
-  const debugStackScreenOptions = useDebugStackScreenOptions();
+  const debugStackScreenOptions = useDebugStackScreenOptions(pageScreenOptions);
   const headerTransparent = debugStackScreenOptions.headerTransparent === true;
   const { resolvedColorScheme } = useColorSchemeSettings();
   const navigationTheme = resolvedColorScheme === "dark" ? DarkTheme : DefaultTheme;
@@ -550,6 +590,8 @@ function RnUiKitDebugPanelContent({
         onOpenChange={setPanelSheetOpen}
         open={panelSheetOpen}
         pages={pages}
+        nativeSheetScreenOptions={nativeSheetScreenOptions}
+        panelSheetProps={panelSheetProps}
         sheetMode
       />
     </YStack>
